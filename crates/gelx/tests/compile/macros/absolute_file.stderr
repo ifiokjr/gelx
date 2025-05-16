@@ -1,5 +1,5 @@
 error: absolute paths will only work on the current machine
- --> tests/compile/macros/absolute_file.rs:4:39
+ --> tests/compile/macros/absolute_file.rs:4:31
   |
 4 |     gelx_raw!(insert_user, file: "/absolute/path/to/queries/insert_user.edgeql");
-  |                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

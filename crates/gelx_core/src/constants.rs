@@ -1,9 +1,9 @@
 use proc_macro2::Punct;
 use proc_macro2::Spacing;
 use proc_macro2::TokenStream;
-use quote::format_ident;
 use quote::ToTokens;
 use quote::TokenStreamExt;
+use quote::format_ident;
 
 /// Query to get all types in the database.
 pub const TYPES_QUERY: &str = r#"WITH

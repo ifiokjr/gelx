@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use std::sync::Arc;
 
 use check_keyword::CheckKeyword;
@@ -62,7 +63,7 @@ pub async fn get_descriptor(query: &str) -> Result<CommandDataDescription1> {
 	let builder = Builder::new().build()?;
 	let state = Arc::new(PoolState::default());
 	let pool = Pool::new(&builder);
-	let mut pool_connection = pool.acquire().await?;
+	let mut pool_connection = Box::pin(pool.acquire()).await?;
 	let connection = pool_connection.inner();
 	let allow_capabilities = Capabilities::MODIFICATIONS | Capabilities::DDL;
 	let flags = CompilationOptions {
@@ -77,7 +78,7 @@ pub async fn get_descriptor(query: &str) -> Result<CommandDataDescription1> {
 	};
 
 	Ok(connection
-		.parse(&flags, query, &state, &Arc::new(Default::default()))
+		.parse(&flags, query, &state, &Arc::new(HashMap::default()))
 		.await?)
 }
 
@@ -381,9 +382,9 @@ fn explore_descriptor(
 		}
 		Descriptor::MultiRange(_) => todo!("`multirange` not in the `gel_protocol` crate"),
 		Descriptor::TypeAnnotation(_) => todo!("type annotations are not supported"),
-		Descriptor::Object(object_type_descriptor) => todo!("implement `Object`"),
-		Descriptor::Compound(compound_type_descriptor) => todo!("implement `Compound`"),
-		Descriptor::SQLRow(sqlrow_descriptor) => todo!("implement `SQLRow`"),
+		Descriptor::Object(_object_type_descriptor) => todo!("implement `Object`"),
+		Descriptor::Compound(_compound_type_descriptor) => todo!("implement `Compound`"),
+		Descriptor::SQLRow(_sqlrow_descriptor) => todo!("implement `SQLRow`"),
 	}
 }
 
@@ -591,8 +592,8 @@ fn uuid_to_token_name(uuid: &Uuid) -> TokenStream {
 }
 
 pub async fn get_types() -> Result<()> {
-	let client = create_client().await?;
-	let json = client.query_json(TYPES_QUERY, &()).await?;
+	let client = Box::pin(create_client()).await?;
+	let json = Box::pin(client.query_json(TYPES_QUERY, &())).await?;
 	log::debug!("{}", json.as_ref());
 
 	Ok(())

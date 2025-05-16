@@ -3,7 +3,7 @@ members = ["crates/*"]
 resolver = "2"
 
 [workspace.package]
-version = "0.2.1"
+version = "0.3.0"
 authors = ["Ifiok Jr. <ifiokotung@gmail.com>"]
 edition = "2024"
 homepage = "https://geldata.com"
@@ -43,15 +43,15 @@ typed-builder = "0.21"
 uuid = "1"
 
 # crates
-gelx = { path = "./crates/gelx", version = "0.2.1" }
-gelx_core = { path = "./crates/gelx_core", version = "0.2.1" }
-gelx_macros = { path = "./crates/gelx_macros", version = "0.2.1" }
+gelx = { path = "./crates/gelx", version = "0.3.0" }
+gelx_core = { path = "./crates/gelx_core", version = "0.3.0" }
+gelx_macros = { path = "./crates/gelx_macros", version = "0.3.0" }
 
 [workspace.metadata.bin]
-cargo-deny = { version = "0.16.1" }
-cargo-insta = { version = "1.39.0" }
-cargo-llvm-cov = { version = "0.6.10" }
-cargo-nextest = { version = "0.9.72" }
+cargo-deny = { version = "0.18.2" }
+cargo-insta = { version = "1.43.1" }
+cargo-llvm-cov = { version = "0.6.16" }
+cargo-nextest = { version = "0.9.96" }
 
 [workspace.lints.rust]
 # Group lints
