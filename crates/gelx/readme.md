@@ -26,7 +26,7 @@ Follow the [Quickstart Guide](https://docs.gel.com/get-started/quickstart) to ma
 
 ## Usage
 
-When working with `gel` you often need to write queries and also provide the typed for both the input and output. Your code is only checked at runtime which increases the risk of bugs and errors.
+When working with `gel` you often need to write queries and also provide the types for both the input and output. Your code is only checked at runtime which increases the risk of bugs and errors.
 
 Fortunately, `gel` has a query language that is typed and can be converted into types and queried for correctness at compile time.
 
@@ -231,7 +231,7 @@ Create a `gelx_cli` crate which supports generating the typed code into rust fil
 [docs-link]: https://docs.rs/gelx/
 [ci-status-image]: https://github.com/ifiokjr/gelx/workflows/ci/badge.svg
 [ci-status-link]: https://github.com/ifiokjr/gelx/actions?query=workflow:ci
-[unlicense-image]: https://img.shields.io/badge/license-Unlicence-blue.svg
+[unlicense-image]: https://img.shields.io/badge/license-Unlicense-blue.svg
 [unlicense-link]: https://opensource.org/license/unlicense
 [codecov-image]: https://codecov.io/github/ifiokjr/gelx/graph/badge.svg?token=87K799Q78I
 [codecov-link]: https://codecov.io/github/ifiokjr/gelx

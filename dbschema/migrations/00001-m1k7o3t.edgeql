@@ -14,10 +14,10 @@ CREATE MIGRATION m1k7o3tcbkvar3vkfeigwnorqbwahoxfrxrcfmqbte2tg7dhkd3zea
   CREATE ABSTRACT TYPE default::UpdatedAt {
       CREATE REQUIRED PROPERTY updated_at: std::datetime {
           CREATE REWRITE
-              INSERT 
+              INSERT
               USING (std::datetime_of_statement());
           CREATE REWRITE
-              UPDATE 
+              UPDATE
               USING (std::datetime_of_statement());
       };
   };
@@ -116,7 +116,7 @@ CREATE MIGRATION m1k7o3tcbkvar3vkfeigwnorqbwahoxfrxrcfmqbte2tg7dhkd3zea
           SET readonly := true;
           CREATE CONSTRAINT std::exclusive;
           CREATE REWRITE
-              INSERT 
+              INSERT
               USING (std::str_trim(std::str_lower(.email)));
       };
   };

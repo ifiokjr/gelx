@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.3.0](https://github.com/ifiokjr/gelx/compare/v0.2.1...v0.3.0) - 2025-05-16
+
+### <!-- 0 -->🎉 Added
+- [**breaking**] rename `edgedb_codegen` to `gelx`
+- [**breaking**] rename `edgedb_codegen_macros` to `gelx_macros`
+- [**breaking**] rename `edgedb_codegen_core` to `gelx_core`
+- [**breaking**] upgrade all `gel` libraries to latest versions as a replacement for previous `edgedb` dependencies
+
+### <!-- 3 -->📚 Documentation
+- improve main readme
+
 ## [0.2.0](https://github.com/ifiokjr/gelx/compare/gelx_core@v0.1.2...gelx_core@v0.2.0) - 2024-08-28
 
 ### <!-- 0 -->🎉 Added

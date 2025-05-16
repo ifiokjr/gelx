@@ -1,8 +1,12 @@
-# `gelx`
+<p align="center">
+  <a href="#">
+    <img width="300" src="./setup/assets/logo.svg"  />
+  </a>
+</p>
 
 <br />
 
-> Generate fully typed rust code from your gel schema and inline queries.
+> Generate fully typed rust code from your gel schema and inline queries with `gelx`.
 
 <br />
 
@@ -19,14 +23,14 @@ cargo add gelx
 Or directly add the following to your `Cargo.toml` file.
 
 ```toml
-gelx = "0.2"
+gelx = "0.3"
 ```
 
 Follow the [Quickstart Guide](https://docs.gel.com/get-started/quickstart) to make sure your gel instance is running. The macro relies on the running `gel` instance to parse the output of the provided query string.
 
 ## Usage
 
-When working with `gel` you often need to write queries and also provide the typed for both the input and output. Your code is only checked at runtime which increases the risk of bugs and errors.
+When working with `gel` you often need to write queries and also provide the types for both the input and output. Your code is only checked at runtime which increases the risk of bugs and errors.
 
 Fortunately, `gel` has a query language that is typed and can be converted into types and queried for correctness at compile time.
 
@@ -231,7 +235,7 @@ Create a `gelx_cli` crate which supports generating the typed code into rust fil
 [docs-link]: https://docs.rs/gelx/
 [ci-status-image]: https://github.com/ifiokjr/gelx/workflows/ci/badge.svg
 [ci-status-link]: https://github.com/ifiokjr/gelx/actions?query=workflow:ci
-[unlicense-image]: https://img.shields.io/badge/license-Unlicence-blue.svg
+[unlicense-image]: https://img.shields.io/badge/license-Unlicense-blue.svg
 [unlicense-link]: https://opensource.org/license/unlicense
 [codecov-image]: https://codecov.io/github/ifiokjr/gelx/graph/badge.svg?token=87K799Q78I
 [codecov-link]: https://codecov.io/github/ifiokjr/gelx
@@ -297,7 +301,7 @@ test:all
 - `lint:all`: Lint all project files.
 - `lint:clippy`: Check rust clippy lints.
 - `lint:format`: Check all formatting is correct.
-- `setup:ci`: Setup the github ci environment.
+- `setup:ci`: Setup the GitHub ci environment.
 - `setup:helix`: Setup the helix editor for development.
 - `setup:vscode`: Setup the vscode editor for development.
 - `test:all`: Test all project files.
