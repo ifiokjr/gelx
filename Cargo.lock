@@ -882,6 +882,7 @@ dependencies = [
  "prettyplease",
  "proc-macro2",
  "quote",
+ "regex",
  "serde",
  "syn",
  "thiserror 2.0.12",

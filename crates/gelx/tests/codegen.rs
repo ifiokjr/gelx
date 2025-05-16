@@ -60,7 +60,8 @@ async fn codegen_literals(testname: String, #[case] query: &str) -> Result<()> {
 
 	let relative_path = format!("tests/compile/codegen/{testname}.rs");
 	let descriptor = get_descriptor(query, Option::<&str>::None).await?;
-	let code = generate_rust_from_query(&descriptor, "example", query, &FeatureAliases::default())?;
+	let code =
+		generate_query_token_stream(&descriptor, "example", query, &FeatureAliases::default())?;
 	let content = prettify(&code.to_string())?;
 
 	// Check that the snapshot hasn't changed.
@@ -84,7 +85,7 @@ async fn codegen_files(#[case] path: &str) -> Result<()> {
 	let query = tokio::fs::read_to_string(&query_path).await?;
 	let descriptor = get_descriptor(&query, Option::<&str>::None).await?;
 	let code =
-		generate_rust_from_query(&descriptor, "example", &query, &FeatureAliases::default())?;
+		generate_query_token_stream(&descriptor, "example", &query, &FeatureAliases::default())?;
 	let content = prettify(&code.to_string())?;
 
 	// Check that the snapshot hasn't changed.

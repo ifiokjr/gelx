@@ -1,5 +1,5 @@
 use gelx_core::FeatureAliases;
-use gelx_core::generate_rust_from_query;
+use gelx_core::generate_query_token_stream;
 use gelx_core::get_descriptor_sync;
 use gelx_core::resolve_path;
 use proc_macro::TokenStream;
@@ -71,7 +71,7 @@ impl ToTokens for GelQueryInput {
 		let module_name = self.module.to_string();
 		let token_stream = get_descriptor_sync(&self.query, Option::<&str>::None)
 			.and_then(|descriptor| {
-				generate_rust_from_query(
+				generate_query_token_stream(
 					&descriptor,
 					&module_name,
 					&self.query,
