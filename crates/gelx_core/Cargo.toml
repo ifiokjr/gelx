@@ -14,18 +14,22 @@ description = "Utilities for codegen in the `gelx` crate."
 
 [dependencies]
 check_keyword = { workspace = true }
+gel-derive = { workspace = true }
 gel-errors = { workspace = true }
 gel-protocol = { workspace = true, features = ["all-types", "with-serde"] }
 gel-tokio = { workspace = true, features = ["unstable", "derive"] }
 heck = { workspace = true }
+indexmap = { workspace = true }
 log = { workspace = true }
 prettyplease = { workspace = true }
 proc-macro2 = { workspace = true }
 quote = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
 syn = { workspace = true }
 thiserror = { workspace = true }
 tokio = { workspace = true, features = ["macros", "rt-multi-thread", "process"] }
 typed-builder = { workspace = true }
+uuid = { workspace = true, features = ["serde"] }
 
 [dev-dependencies]
 assert2 = { workspace = true }
@@ -36,6 +40,9 @@ with_bigint = []
 with_bigdecimal = []
 with_chrono = []
 with_all = ["with_bigint", "with_bigdecimal", "with_chrono"]
+query = []
+serde = []
+builder = []
 
 [lints]
 workspace = true

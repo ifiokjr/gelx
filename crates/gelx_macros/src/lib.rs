@@ -1,3 +1,4 @@
+use gelx_core::FeatureAliases;
 use gelx_core::generate_rust_from_query;
 use gelx_core::get_descriptor_sync;
 use gelx_core::resolve_path;
@@ -68,8 +69,15 @@ impl Parse for GelQueryInput {
 impl ToTokens for GelQueryInput {
 	fn to_tokens(&self, tokens: &mut proc_macro2::TokenStream) {
 		let module_name = self.module.to_string();
-		let token_stream = get_descriptor_sync(&self.query)
-			.and_then(|descriptor| generate_rust_from_query(&descriptor, &module_name, &self.query))
+		let token_stream = get_descriptor_sync(&self.query, Option::<&str>::None)
+			.and_then(|descriptor| {
+				generate_rust_from_query(
+					&descriptor,
+					&module_name,
+					&self.query,
+					&FeatureAliases::default(),
+				)
+			})
 			.unwrap_or_else(|error| syn::Error::from(error).to_compile_error());
 
 		tokens.extend(token_stream);
