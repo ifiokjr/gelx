@@ -46,7 +46,6 @@ use gel_protocol::descriptors::TypePos;
 use gel_protocol::descriptors::Typedesc;
 use gel_protocol::model::Uuid;
 use gel_protocol::server_message::CommandDataDescription1;
-use gel_tokio::create_client;
 use gel_tokio::raw::Pool;
 use gel_tokio::raw::PoolState;
 use heck::ToPascalCase;
@@ -61,8 +60,8 @@ use typed_builder::TypedBuilder;
 
 pub use crate::constants::*;
 pub use crate::errors::*;
+pub use crate::types::*;
 pub use crate::utils::*;
-
 mod constants;
 mod errors;
 mod types;
@@ -106,7 +105,7 @@ pub fn get_descriptor_sync<P: AsRef<Path>>(
 	Ok(descriptor)
 }
 
-pub fn generate_rust_from_query(
+pub fn generate_query_token_stream(
 	descriptor: &CommandDataDescription1,
 	name: &str,
 	query: &str,
@@ -582,7 +581,7 @@ impl<'a> From<&'a TupleElement> for StructElement<'a> {
 	}
 }
 
-fn uuid_to_token_name(uuid: &Uuid) -> TokenStream {
+pub fn uuid_to_token_name(uuid: &Uuid) -> TokenStream {
 	match *uuid {
 		STD_UUID => quote!(#EXPORTS_IDENT::uuid::Uuid),
 		STD_STR => quote!(String),

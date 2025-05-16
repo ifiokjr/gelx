@@ -24,6 +24,7 @@ log = { workspace = true }
 prettyplease = { workspace = true }
 proc-macro2 = { workspace = true }
 quote = { workspace = true }
+regex = { workspace = true }
 serde = { workspace = true, features = ["derive"] }
 syn = { workspace = true }
 thiserror = { workspace = true }
