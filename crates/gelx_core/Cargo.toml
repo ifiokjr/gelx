@@ -1,0 +1,41 @@
+[package]
+name = "gelx_core"
+version = { workspace = true }
+authors = { workspace = true }
+categories = ["database"]
+edition = { workspace = true }
+homepage = { workspace = true }
+keywords = ["gel", "database", "typesafe", "checked", "macros"]
+license = { workspace = true }
+readme = "readme.md"
+repository = { workspace = true }
+rust-version = { workspace = true }
+description = "Utilities for codegen in the `gelx` crate."
+
+[dependencies]
+check_keyword = { workspace = true }
+gel-errors = { workspace = true }
+gel-protocol = { workspace = true, features = ["all-types", "with-serde"] }
+gel-tokio = { workspace = true, features = ["unstable", "derive"] }
+heck = { workspace = true }
+log = { workspace = true }
+prettyplease = { workspace = true }
+proc-macro2 = { workspace = true }
+quote = { workspace = true }
+syn = { workspace = true }
+thiserror = { workspace = true }
+tokio = { workspace = true, features = ["macros", "rt-multi-thread", "process"] }
+typed-builder = { workspace = true }
+
+[dev-dependencies]
+assert2 = { workspace = true }
+tokio = { workspace = true, features = ["time", "test-util"] }
+
+[features]
+with_bigint = []
+with_bigdecimal = []
+with_chrono = []
+with_all = ["with_bigint", "with_bigdecimal", "with_chrono"]
+
+[lints]
+workspace = true

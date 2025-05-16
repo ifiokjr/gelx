@@ -1,0 +1,11 @@
+error: no rules expected the token `invalid`
+ --> tests/compile/macros/incorrect_args.rs:4:32
+  |
+4 |     gelx!(example_module, invalid);
+  |                                   ^^^^^^^ no rules expected this token in macro call
+  |
+note: while trying to match meta-variable `$query:literal`
+ --> src/lib.rs
+  |
+  |     ($module:ident, $query:literal) => {
+  |                     ^^^^^^^^^^^^^^

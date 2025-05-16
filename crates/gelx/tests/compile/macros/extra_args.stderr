@@ -1,0 +1,5 @@
+error: unexpected token
+ --> tests/compile/macros/extra_args.rs:4:49
+  |
+4 |     gelx_raw!(example, query: "select bool", "more stuff", that is, "not allowed");
+  |                                                    ^

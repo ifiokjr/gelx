@@ -1,0 +1,105 @@
+[package]
+name = "gelx"
+version = { workspace = true }
+authors = { workspace = true }
+categories = ["database"]
+edition = { workspace = true }
+homepage = { workspace = true }
+keywords = ["gel", "database", "typesafe", "checked", "macros"]
+license = { workspace = true }
+readme = "readme.md"
+repository = { workspace = true }
+rust-version = { workspace = true }
+description = "Generate fully typed rust code from your EdgeDB schema and inline queries."
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
+
+[dependencies]
+bigdecimal = { workspace = true, optional = true }
+bytes = { workspace = true }
+chrono = { workspace = true, optional = true }
+document-features = { workspace = true }
+gel-derive = { workspace = true, optional = true }
+gel-errors = { workspace = true }
+gel-protocol = { workspace = true, features = ["all-types"] }
+gel-tokio = { workspace = true, features = ["unstable", "derive"], optional = true }
+gelx_macros = { workspace = true }
+num-bigint = { workspace = true, optional = true }
+num-traits = { workspace = true, optional = true }
+serde = { workspace = true, features = ["derive"], optional = true }
+serde_bytes = { workspace = true, optional = true }
+typed-builder = { workspace = true, optional = true }
+uuid = { workspace = true }
+
+[dev-dependencies]
+assert2 = { workspace = true }
+gelx_core = { workspace = true, features = ["with_all"] }
+insta = { workspace = true, features = ["ron", "yaml", "redactions"] }
+proc-macro2 = { workspace = true }
+rstest = { workspace = true }
+rustversion = { workspace = true }
+test-log = { workspace = true, features = ["log", "trace"] }
+tokio = { workspace = true, features = ["time", "test-util", "fs"] }
+trybuild = { workspace = true }
+
+[features]
+# ! #### Default
+
+## The default feature is `with_all`.
+default = ["with_all"]
+
+# ! #### Types
+
+## Include the `num-bigint` dependency.
+with_bigint = [
+	"gelx_macros/with_bigint",
+	"dep:num-bigint",
+	"dep:num-traits",
+	"gel-protocol/with-num-bigint",
+]
+
+## Use the `bigdecimal` crate.
+with_bigdecimal = [
+	"gelx_macros/with_bigdecimal",
+	"dep:bigdecimal",
+	"dep:num-bigint",
+	"dep:num-traits",
+	"gel-protocol/with-bigdecimal",
+]
+
+## Use the `chrono` crate for all dates.
+with_chrono = ["gelx_macros/with_chrono", "dep:chrono", "gel-protocol/with-chrono"]
+
+## Include all additional types. This is included by default. Use `default-features = false` to disable.
+with_all = [
+	"gelx_macros/with_all",
+	"with_bigint",
+	"with_bigdecimal",
+	"with_chrono",
+	"gel-protocol/all-types",
+]
+
+# ! #### Behavior
+
+## Use the `typed-builder` crate to generate the builders for the generated `Input` structs.
+builder = ["dep:typed-builder"]
+
+## Turn on the `query` and `transaction` methods and anything that relies on `gel-tokio`.
+## The reason to separate this feature is to enable usage of this macro in browser environments
+## where `gel-tokio` is not feasible.
+query = ["gelx_macros/query", "dep:gel-tokio", "dep:gel-derive"]
+
+## Enable serde for the generated code.
+serde = [
+	"gelx_macros/serde",
+	"gel-protocol/with-serde",
+	"dep:serde",
+	"dep:serde_bytes",
+	"uuid/serde",
+	"chrono/serde",
+]
+
+[lints]
+workspace = true

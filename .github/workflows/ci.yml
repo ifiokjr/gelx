@@ -11,8 +11,8 @@ on:
       - main
 
 env:
-  EDGEDB_INSTANCE: "edgedb_codegen"
-  EDGEDB_BRANCH: "main"
+  GEL_INSTANCE: "gelx"
+  GEL_BRANCH: "main"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -58,7 +58,7 @@ jobs:
     runs-on: "ubuntu-latest"
     strategy:
       matrix:
-        version: ["1.72.0", stable, beta, nightly]
+        version: ["1.85.0", stable, beta, nightly]
     env:
       RUSTUP_TOOLCHAIN: ${{ matrix.version }}
     steps:

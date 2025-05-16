@@ -37,7 +37,7 @@
 		"**/*.{json,jsonc,md,toml,rs,yml,yaml,sh,bash,nix}"
 	],
 	"excludes": [
-		"crates/edgedb_codegen/tests/compile",
+		"crates/gelx/tests/compile",
 		"pnpm-lock.yaml",
 		"**/dist",
 		".devenv/**",

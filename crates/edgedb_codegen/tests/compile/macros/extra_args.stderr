@@ -1,5 +1,0 @@
-error: unexpected token
- --> tests/compile/macros/extra_args.rs:4:49
-  |
-4 |     edgedb_query_raw!(example, query: "select bool", "more stuff", that is, "not allowed");
-  |                                                    ^

@@ -1,7 +1,0 @@
-error: EdgeQLSyntaxError: Unexpected 'invalid' (on line 1, column 1)
- --> tests/compile/macros/invalid_query.rs:4:2
-  |
-4 |     edgedb_query!(example_module, "invalid");
-  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  |
-  = note: this error originates in the macro `$crate::exports::edgedb_codegen_macros::edgedb_query_raw` which comes from the expansion of the macro `edgedb_query` (in Nightly builds, run with -Z macro-backtrace for more info)

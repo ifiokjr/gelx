@@ -6,13 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
-## [0.2.1](https://github.com/ifiokjr/edgedb_codegen/compare/v0.2.0...v0.2.1) - 2024-08-29
+## [0.2.1](https://github.com/ifiokjr/gelx/compare/v0.2.0...v0.2.1) - 2024-08-29
 
 ### <!-- 3 -->📚 Documentation
 - improve contributing section
 - add feature docs for `docs.rs`
 
-## [0.2.0](https://github.com/ifiokjr/edgedb_codegen/compare/v0.1.2...v0.2.0) - 2024-08-28
+## [0.2.0](https://github.com/ifiokjr/gelx/compare/v0.1.2...v0.2.0) - 2024-08-28
 
 ### <!-- 0 -->🎉 Added
 - [**breaking**] add optional `builder` feature limited to `Input`
@@ -23,7 +23,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### <!-- 6 -->🧪 Testing
 - improve coverage
 
-## [0.1.2](https://github.com/ifiokjr/edgedb_codegen/compare/v0.1.1...v0.1.2) - 2024-08-27
+## [0.1.2](https://github.com/ifiokjr/gelx/compare/v0.1.1...v0.1.2) - 2024-08-27
 
 ### <!-- 3 -->📚 Documentation
 - add coverage badge
@@ -35,13 +35,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### <!-- 7 -->⚙️ Miscellaneous Tasks
 - support testing multiple rust versions
 
-## [0.1.1](https://github.com/ifiokjr/edgedb_codegen/compare/v0.1.0...v0.1.1) - 2024-08-26
+## [0.1.1](https://github.com/ifiokjr/gelx/compare/v0.1.0...v0.1.1) - 2024-08-26
 
 ### <!-- 0 -->🎉 Added
 - add support for `Range` types
 
 ### <!-- 1 -->🐛 Bug Fixes
-- make `edgedb-derive` optional
+- make `gel-derive` optional
 
 ### <!-- 3 -->📚 Documentation
 - update readme
@@ -55,7 +55,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### <!-- 7 -->⚙️ Miscellaneous Tasks
 - improve changelog generation
 
-## [0.1.0](https://github.com/ifiokjr/edgedb_codegen/releases/tag/edgedb_codegen-v0.1.0) - 2024-08-25
+## [0.1.0](https://github.com/ifiokjr/gelx/releases/tag/gelx-v0.1.0) - 2024-08-25
 
 ### 🎉 Added
 

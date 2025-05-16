@@ -1,5 +1,0 @@
-error: absolute paths will only work on the current machine
- --> tests/compile/macros/absolute_file.rs:4:39
-  |
-4 |     edgedb_query_raw!(insert_user, file: "/absolute/path/to/queries/insert_user.edgeql");
-  |                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

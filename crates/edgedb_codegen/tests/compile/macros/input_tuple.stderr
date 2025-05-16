@@ -1,8 +1,0 @@
-error: proc macro panicked
- --> tests/compile/macros/input_tuple.rs:4:2
-  |
-4 |     edgedb_query!(example, "select <bool>$0");
-  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  |
-  = help: message: `"0"` is not a valid identifier
-  = note: this error originates in the macro `edgedb_query` (in Nightly builds, run with -Z macro-backtrace for more info)

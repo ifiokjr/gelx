@@ -1,0 +1,5 @@
+error: failed to read query file at $WORKSPACE/target/tests/trybuild/gelx/queries/example_module.edgeql: No such file or directory (os error 2)
+ --> tests/compile/macros/missing_file.rs:4:16
+  |
+4 |     gelx!(example_module);
+  |                   ^^^^^^^^^^^^^^

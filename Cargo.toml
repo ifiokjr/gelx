@@ -5,23 +5,23 @@ resolver = "2"
 [workspace.package]
 version = "0.2.1"
 authors = ["Ifiok Jr. <ifiokotung@gmail.com>"]
-edition = "2021"
-homepage = "https://edgedb.com"
+edition = "2024"
+homepage = "https://geldata.com"
 license = "Unlicense"
-repository = "https://github.com/ifiokjr/edgedb_codegen"
-rust-version = "1.72.0"
+repository = "https://github.com/ifiokjr/gelx"
+rust-version = "1.85.0"
 
 [workspace.dependencies]
 assert2 = "0.3"
 bigdecimal = "0.4"
 bytes = "1"
-check_keyword = "0.3"
+check_keyword = "0.4"
 chrono = "0.4"
 document-features = "0.2"
-edgedb-derive = "0.5"
-edgedb-errors = "0.4"
-edgedb-protocol = "0.6"
-edgedb-tokio = "0.5.1"
+gel-derive = "0.7"
+gel-errors = "0.5"
+gel-protocol = "0.8"
+gel-tokio = "0.10"
 heck = "0.5"
 insta = "1"
 log = "0.4"
@@ -30,22 +30,22 @@ num-traits = "0.2"
 prettyplease = "0.2"
 proc-macro2 = "1"
 quote = "1"
-rstest = "0.22"
+rstest = "0.25"
 rustversion = "1"
 serde = "1"
 serde_bytes = "0.11"
 syn = "2"
 test-log = "0.2"
-thiserror = "1"
+thiserror = "2"
 tokio = "1"
 trybuild = "1"
-typed-builder = "0.20"
+typed-builder = "0.21"
 uuid = "1"
 
 # crates
-edgedb_codegen = { path = "./crates/edgedb_codegen", version = "0.2.1" }
-edgedb_codegen_core = { path = "./crates/edgedb_codegen_core", version = "0.2.1" }
-edgedb_codegen_macros = { path = "./crates/edgedb_codegen_macros", version = "0.2.1" }
+gelx = { path = "./crates/gelx", version = "0.2.1" }
+gelx_core = { path = "./crates/gelx_core", version = "0.2.1" }
+gelx_macros = { path = "./crates/gelx_macros", version = "0.2.1" }
 
 [workspace.metadata.bin]
 cargo-deny = { version = "0.16.1" }
@@ -67,6 +67,7 @@ unused_lifetimes = "warn"
 unused_macro_rules = "warn"
 unused_qualifications = "warn"
 variant_size_differences = "warn"
+edition_2024_expr_fragment_specifier = "allow"
 
 [workspace.lints.clippy]
 # Group lints

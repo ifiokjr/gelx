@@ -1,0 +1,125 @@
+module default {
+  global current_user_id: uuid;
+
+  type Account extending CreatedAt, UpdatedAt {
+    required provider: AccountProvider;
+    required provider_account_id: str;
+    username: str;
+    access_token: str;
+    access_token_expires_at: datetime;
+    refresh_token: str;
+    refresh_token_expires_at: datetime;
+    scope: str;
+    required user: User {
+      on target delete delete source;
+    };
+  }
+
+  type Email extending VerifiedAt, CreatedAt, UpdatedAt {
+    required email: str {
+      constraint exclusive;
+      readonly := true;
+      rewrite insert using (str_trim(str_lower(.email)))
+    }
+    required primary: bool {
+      default := false;
+    }
+    required user: User {
+      on target delete delete source;
+    }
+    constraint exclusive on ((.user, .primary)) except (not .primary);
+  }
+
+  type Project extending CreatedAt, RelationshipTarget, UpdatedAt {
+    required name: str;
+    required slug: str {
+      constraint regexp(r'^(?=.{3,39}$)(?![_.-])(?!.*[_.-]{2})[a-zA-Z0-9._-]+(?<![_.-])$');
+    }
+    required creator: Actor {
+      on target delete restrict;
+    }
+    constraint exclusive on ((.creator, .slug));
+  }
+
+  type Relationship extending CreatedAt {
+    required actor: Actor {
+      readonly := true;
+    }
+    required target: RelationshipTarget {
+      readonly := true;
+    }
+    required relationship_type: RelationshipType {
+      readonly := true;
+    }
+    constraint exclusive on((.actor, .target, .relationship_type));
+  }
+
+  type Team extending Actor, CreatedAt, RelationshipTarget, UpdatedAt {
+    annotation description := "Teams are a collection of users that can create projects in easier ways for groups and organisations.";
+    required name: str {
+      annotation description := "The name of the team which is required";
+    }
+    description: str {
+      annotation description := "The description for the team.";
+    }
+  }
+
+  type User extending Actor, CreatedAt, RelationshipTarget, UpdatedAt {
+    name: str;
+    bio: str;
+    email := (
+      select assert_single((select .emails filter .primary = true))
+    );
+    emails := .<user[is Email];
+    accounts := .<user[is Account];
+  }
+
+  type Wallet extending CreatedAt, UpdatedAt {
+    required pubkey: str {
+      constraint exclusive;
+    }
+    required primary: bool {
+      default := false;
+    }
+    name: str;
+    description: str;
+    required actor: Actor {
+      on target delete delete source;
+    }
+    constraint exclusive on ((.actor, .primary)) except (not .primary)
+  }
+
+  abstract type Actor {
+    required slug: str {
+      constraint exclusive;
+      constraint regexp(r'^(?=.{3,39}$)(?![_.-])(?!.*[_.-]{2})[a-zA-Z0-9._-]+(?<![_.-])$');
+    }
+    multi wallets := .<actor[is Wallet];
+  }
+
+  abstract type CreatedAt {
+    required created_at: datetime {
+      default := datetime_of_statement();
+      readonly := true;
+    };
+  }
+
+  abstract type RelationshipTarget {
+    annotation description := "A potential target that can be followed, blocked and muted";
+  }
+
+  abstract type UpdatedAt {
+    required updated_at: datetime {
+      rewrite insert, update using (datetime_of_statement())
+    };
+  }
+
+  abstract type VerifiedAt {
+    verified_at: datetime;
+    property verified := exists .verified_at;
+  }
+
+  scalar type AccountProvider extending enum<Github>;
+  scalar type RelationshipType extending enum<Follow, Block, Mute>;
+  scalar type Role extending enum<None, Editor, Moderator, Admin, Owner>;
+}

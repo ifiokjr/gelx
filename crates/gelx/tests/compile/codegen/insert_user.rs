@@ -1,0 +1,62 @@
+fn main() {
+    pub mod example {
+        use ::gelx::exports as e;
+        /// Execute the desired query.
+        #[cfg(feature = "query")]
+        pub async fn query(
+            client: &e::gel_tokio::Client,
+            props: &Input,
+        ) -> core::result::Result<Output, e::gel_errors::Error> {
+            client.query_required_single(QUERY, props).await
+        }
+        /// Compose the query as part of a larger transaction.
+        #[cfg(feature = "query")]
+        pub async fn transaction(
+            conn: &mut e::gel_tokio::Transaction,
+            props: &Input,
+        ) -> core::result::Result<Output, e::gel_errors::Error> {
+            conn.query_required_single(QUERY, props).await
+        }
+        #[derive(Clone, Debug)]
+        #[cfg_attr(feature = "builder", derive(e::typed_builder::TypedBuilder))]
+        #[cfg_attr(feature = "query", derive(e::gel_derive::Queryable))]
+        #[cfg_attr(
+            feature = "serde",
+            derive(e::serde::Serialize, e::serde::Deserialize)
+        )]
+        pub struct Input {
+            #[cfg_attr(feature = "builder", builder(setter(into)))]
+            pub name: String,
+            #[cfg_attr(feature = "builder", builder(setter(into)))]
+            pub bio: String,
+            #[cfg_attr(feature = "builder", builder(setter(into)))]
+            pub slug: String,
+        }
+        impl e::gel_protocol::query_arg::QueryArgs for Input {
+            fn encode(
+                &self,
+                encoder: &mut e::gel_protocol::query_arg::Encoder,
+            ) -> core::result::Result<(), e::gel_errors::Error> {
+                let map = e::gel_protocol::named_args! {
+                    "name" => self.name.clone(), "bio" => self.bio.clone(), "slug" =>
+                    self.slug.clone(),
+                };
+                map.encode(encoder)
+            }
+        }
+        #[derive(Clone, Debug)]
+        #[cfg_attr(feature = "query", derive(e::gel_derive::Queryable))]
+        #[cfg_attr(
+            feature = "serde",
+            derive(e::serde::Serialize, e::serde::Deserialize)
+        )]
+        pub struct Output {
+            pub id: e::uuid::Uuid,
+            pub name: Option<String>,
+            pub bio: Option<String>,
+            pub slug: String,
+        }
+        /// The original query string provided to the macro. Can be reused in your codebase.
+        pub const QUERY: &str = "with NewUser := (insert User {\n  name := <str>$name,\n  bio := <str>$bio,\n  slug := <str>$slug,\n})\nselect NewUser {\n  id,\n  name,\n  bio,\n  slug,\n};\n";
+    }
+}

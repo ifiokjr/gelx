@@ -1,0 +1,8 @@
+error: proc macro panicked
+ --> tests/compile/macros/input_tuple.rs:4:2
+  |
+4 |     gelx!(example, "select <bool>$0");
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = help: message: `"0"` is not a valid identifier
+  = note: this error originates in the macro `gelx` (in Nightly builds, run with -Z macro-backtrace for more info)

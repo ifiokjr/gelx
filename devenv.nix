@@ -6,20 +6,15 @@
       pkgs.cargo-binstall
       pkgs.cargo-run-bin
       pkgs.dprint
-      pkgs.edgedb
+      pkgs.gel
       pkgs.nixfmt-rfc-style
       pkgs.rustup
       pkgs.shfmt
     ]
-    ++ lib.optionals pkgs.stdenv.isDarwin (
-      with pkgs.darwin.apple_sdk;
-      [
-        pkgs.libiconv
-        pkgs.coreutils
-        frameworks.Security
-        frameworks.System
-      ]
-    );
+    ++ lib.optionals pkgs.stdenv.isDarwin [
+      pkgs.libiconv
+      pkgs.coreutils
+    ];
 
   # disable dotenv since it breaks the variable interpolation supported by `direnv`
   dotenv.disableHint = true;
@@ -40,7 +35,7 @@
   scripts."db:destroy" = {
     exec = ''
       set -e
-      edgedb instance destroy -I $EDGEDB_INSTANCE --non-interactive --force
+      gel instance destroy -I $GEL_INSTANCE --non-interactive --force
     '';
     description = "Destroy the local database.";
   };
@@ -53,16 +48,16 @@
         export $(cat .env | xargs)
       fi
 
-      edgedb instance create --non-interactive $EDGEDB_INSTANCE $EDGEDB_BRANCH || true
-      edgedb instance start --instance $EDGEDB_INSTANCE
-      edgedb migrate
+      gel instance create --non-interactive $GEL_INSTANCE $GEL_BRANCH || true
+      gel instance start --instance $GEL_INSTANCE
+      gel migrate
     '';
     description = "Setup the local database.";
   };
   scripts."db:up" = {
     exec = ''
       set -e
-      edgedb watch --instance $EDGEDB_INSTANCE
+      gel watch --instance $GEL_INSTANCE
     '';
     description = "Watch changes to the local database.";
   };
