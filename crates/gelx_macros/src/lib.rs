@@ -27,17 +27,17 @@ use syn::parse_macro_input;
 /// ```
 #[proc_macro]
 pub fn gelx_raw(input: TokenStream) -> TokenStream {
-	parse_macro_input!(input as EdgedbQueryInput)
+	parse_macro_input!(input as GelQueryInput)
 		.to_token_stream()
 		.into()
 }
 
-pub(crate) struct EdgedbQueryInput {
+pub(crate) struct GelQueryInput {
 	pub(crate) module: syn::Ident,
 	pub(crate) query: String,
 }
 
-impl Parse for EdgedbQueryInput {
+impl Parse for GelQueryInput {
 	fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
 		let module: syn::Ident = input.parse()?;
 
@@ -65,7 +65,7 @@ impl Parse for EdgedbQueryInput {
 	}
 }
 
-impl ToTokens for EdgedbQueryInput {
+impl ToTokens for GelQueryInput {
 	fn to_tokens(&self, tokens: &mut proc_macro2::TokenStream) {
 		let module_name = self.module.to_string();
 		let token_stream = get_descriptor_sync(&self.query)

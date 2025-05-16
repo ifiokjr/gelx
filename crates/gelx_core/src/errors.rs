@@ -7,7 +7,7 @@ pub enum Error {
 	#[error("{0}")]
 	Syn(#[from] syn::Error),
 	#[error("{0}")]
-	Edgedb(#[from] gel_errors::Error),
+	Gel(#[from] gel_errors::Error),
 	#[error("{0}")]
 	Decode(#[from] DecodeError),
 	#[error("{0}")]

@@ -2,7 +2,7 @@
 
 <br />
 
-> Generate fully typed rust code from your EdgeDB schema and inline queries.
+> Generate fully typed rust code from your gel schema and inline queries.
 
 <br />
 

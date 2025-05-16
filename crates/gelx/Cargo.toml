@@ -10,7 +10,7 @@ license = { workspace = true }
 readme = "readme.md"
 repository = { workspace = true }
 rust-version = { workspace = true }
-description = "Generate fully typed rust code from your EdgeDB schema and inline queries."
+description = "Generate fully typed rust code from your gel schema and inline queries."
 
 [package.metadata.docs.rs]
 all-features = true
