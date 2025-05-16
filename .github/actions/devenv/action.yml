@@ -21,7 +21,7 @@ runs:
         restore-keys: ${{ runner.os }}-nix-cache-
 
     - name: install nix
-      uses: cachix/install-nix-action@v27
+      uses: cachix/install-nix-action@v31
       with:
         github_access_token: ${{ inputs.github-token }}
 
@@ -31,14 +31,14 @@ runs:
       shell: bash
 
     - name: enable cachix
-      uses: cachix/cachix-action@v15
+      uses: cachix/cachix-action@v16
       with:
         name: devenv
 
     - name: install devenv.sh
       run: |
         cachix use devenv
-        nix profile install --accept-flake-config github:cachix/devenv/v1.0.8
+        nix profile install nixpkgs#devenv
       shell: bash
 
     - name: build developer environment
