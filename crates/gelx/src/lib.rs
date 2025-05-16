@@ -53,13 +53,8 @@ macro_rules! gelx_file {
 }
 
 pub mod exports {
-	#[cfg(feature = "with_bigdecimal")]
-	#[cfg_attr(docsrs, doc(cfg(feature = "with_bigdecimal")))]
-	pub use bigdecimal;
 	pub use bytes;
-	#[cfg(feature = "with_chrono")]
-	#[cfg_attr(docsrs, doc(cfg(feature = "with_chrono")))]
-	pub use chrono;
+	use cfg_if::cfg_if;
 	#[cfg(feature = "query")]
 	#[cfg_attr(docsrs, doc(cfg(feature = "query")))]
 	pub use gel_derive;
@@ -88,4 +83,37 @@ pub mod exports {
 	#[cfg_attr(docsrs, doc(cfg(feature = "builder")))]
 	pub use typed_builder;
 	pub use uuid;
+
+	cfg_if! {
+		if #[cfg(feature = "with_bigdecimal")] {
+			#[cfg_attr(docsrs, doc(cfg(feature = "with_bigdecimal")))]
+			pub use bigdecimal;
+			pub type DecimalAlias = bigdecimal::BigDecimal;
+		} else {
+			pub type DecimalAlias = gel_protocol::model::Decimal;
+		}
+	}
+	cfg_if! {
+		if #[cfg(feature = "with_chrono")] {
+			#[cfg_attr(docsrs, doc(cfg(feature = "with_chrono")))]
+			pub use chrono;
+			pub type DateTimeAlias = chrono::DateTime<chrono::Utc>;
+			pub type LocalDatetimeAlias = chrono::NaiveDateTime;
+			pub type LocalDateAlias = chrono::NaiveDate;
+			pub type LocalTimeAlias = chrono::NaiveTime;
+		} else {
+			pub type DateTimeAlias = gel_protocol::model::Datetime;
+			pub type LocalDatetimeAlias = gel_protocol::model::LocalDatetime;
+			pub type LocalTimeAlias = gel_protocol::model::LocalTime;
+			pub type LocalDateAlias = gel_protocol::model::LocalDate;
+		}
+	}
+	cfg_if! {
+		if #[cfg(feature = "with_bigint")] {
+			#[cfg_attr(docsrs, doc(cfg(feature = "with_bigint")))]
+			pub type BigIntAlias = num_bigint::BigInt;
+		} else {
+			pub type BigIntAlias = gel_protocol::model::BigInt;
+		}
+	}
 }

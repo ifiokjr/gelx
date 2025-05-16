@@ -26,8 +26,9 @@ with_bigint = ["gelx_core/with_bigint"]
 with_bigdecimal = ["gelx_core/with_bigdecimal"]
 with_chrono = ["gelx_core/with_chrono"]
 with_all = ["gelx_core/with_all"]
-query = []
-serde = []
+query = ["gelx_core/query"]
+serde = ["gelx_core/serde"]
+builder = ["gelx_core/builder"]
 
 [lints]
 workspace = true

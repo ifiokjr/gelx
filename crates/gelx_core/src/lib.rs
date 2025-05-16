@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::path::Path;
 use std::sync::Arc;
 
 use check_keyword::CheckKeyword;
@@ -9,6 +10,10 @@ use gel_protocol::codec::CAL_LOCAL_TIME;
 use gel_protocol::codec::CAL_RELATIVE_DURATION;
 use gel_protocol::codec::CFG_MEMORY;
 use gel_protocol::codec::PGVECTOR_VECTOR;
+use gel_protocol::codec::POSTGIS_BOX_2D;
+use gel_protocol::codec::POSTGIS_BOX_3D;
+use gel_protocol::codec::POSTGIS_GEOGRAPHY;
+use gel_protocol::codec::POSTGIS_GEOMETRY;
 use gel_protocol::codec::STD_BIGINT;
 use gel_protocol::codec::STD_BOOL;
 use gel_protocol::codec::STD_BYTES;
@@ -21,6 +26,11 @@ use gel_protocol::codec::STD_INT16;
 use gel_protocol::codec::STD_INT32;
 use gel_protocol::codec::STD_INT64;
 use gel_protocol::codec::STD_JSON;
+use gel_protocol::codec::STD_PG_DATE;
+use gel_protocol::codec::STD_PG_INTERVAL;
+use gel_protocol::codec::STD_PG_JSON;
+use gel_protocol::codec::STD_PG_TIMESTAMP;
+use gel_protocol::codec::STD_PG_TIMESTAMPTZ;
 use gel_protocol::codec::STD_STR;
 use gel_protocol::codec::STD_UUID;
 use gel_protocol::common::Capabilities;
@@ -36,7 +46,6 @@ use gel_protocol::descriptors::TypePos;
 use gel_protocol::descriptors::Typedesc;
 use gel_protocol::model::Uuid;
 use gel_protocol::server_message::CommandDataDescription1;
-use gel_tokio::Builder;
 use gel_tokio::create_client;
 use gel_tokio::raw::Pool;
 use gel_tokio::raw::PoolState;
@@ -56,13 +65,17 @@ pub use crate::utils::*;
 
 mod constants;
 mod errors;
+mod types;
 mod utils;
 
 /// Get the descriptor asynchronously.
-pub async fn get_descriptor(query: &str) -> Result<CommandDataDescription1> {
-	let builder = Builder::new().build()?;
+pub async fn get_descriptor<P: AsRef<Path>>(
+	query: &str,
+	config_path: Option<P>,
+) -> Result<CommandDataDescription1> {
+	let config = create_gel_config(config_path)?;
 	let state = Arc::new(PoolState::default());
-	let pool = Pool::new(&builder);
+	let pool = Pool::new(&config);
 	let mut pool_connection = Box::pin(pool.acquire()).await?;
 	let connection = pool_connection.inner();
 	let allow_capabilities = Capabilities::MODIFICATIONS | Capabilities::DDL;
@@ -83,9 +96,12 @@ pub async fn get_descriptor(query: &str) -> Result<CommandDataDescription1> {
 }
 
 /// Get the descriptor synchronously.
-pub fn get_descriptor_sync(query: &str) -> Result<CommandDataDescription1> {
+pub fn get_descriptor_sync<P: AsRef<Path>>(
+	query: &str,
+	config_path: Option<P>,
+) -> Result<CommandDataDescription1> {
 	let rt = Runtime::new()?;
-	let descriptor = rt.block_on(async { get_descriptor(query).await })?;
+	let descriptor = rt.block_on(async { get_descriptor(query, config_path).await })?;
 
 	Ok(descriptor)
 }
@@ -94,6 +110,7 @@ pub fn generate_rust_from_query(
 	descriptor: &CommandDataDescription1,
 	name: &str,
 	query: &str,
+	feature_aliases: &FeatureAliases,
 ) -> Result<TokenStream> {
 	let input_ident = format_ident!("{INPUT_NAME}");
 	let output_ident = format_ident!("{OUTPUT_NAME}");
@@ -114,6 +131,7 @@ pub fn generate_rust_from_query(
 			.is_root()
 			.descriptor(input.root())
 			.root_name(INPUT_NAME)
+			.feature_aliases(feature_aliases)
 			.build(),
 		&mut tokens,
 	)?;
@@ -123,6 +141,7 @@ pub fn generate_rust_from_query(
 			.is_root()
 			.descriptor(output.root())
 			.root_name(OUTPUT_NAME)
+			.feature_aliases(feature_aliases)
 			.build(),
 		&mut tokens,
 	)?;
@@ -192,6 +211,7 @@ fn wrap_token_with_cardinality(
 
 #[derive(Debug, TypedBuilder)]
 struct ExploreDescriptorProps<'a> {
+	feature_aliases: &'a FeatureAliases,
 	typedesc: &'a Typedesc,
 	#[builder(setter(strip_bool(fallback = is_input_bool)))]
 	is_input: bool,
@@ -201,19 +221,32 @@ struct ExploreDescriptorProps<'a> {
 	root_name: &'a str,
 }
 
-type PartialExploreDescriptorProps<'a> =
-	ExploreDescriptorPropsBuilder<'a, ((&'a Typedesc,), (bool,), (bool,), (), ())>;
+type PartialExploreDescriptorProps<'a> = ExploreDescriptorPropsBuilder<
+	'a,
+	(
+		(&'a FeatureAliases,),
+		(&'a Typedesc,),
+		(bool,),
+		(bool,),
+		(),
+		(),
+	),
+>;
 
 impl<'a> ExploreDescriptorProps<'a> {
 	fn into_props(self) -> PartialExploreDescriptorProps<'a> {
 		let Self {
-			typedesc, is_input, ..
+			typedesc,
+			is_input,
+			feature_aliases,
+			..
 		} = self;
 
 		Self::builder()
 			.typedesc(typedesc)
 			.is_input_bool(is_input)
 			.is_root_bool(false)
+			.feature_aliases(feature_aliases)
 	}
 }
 
@@ -224,6 +257,7 @@ fn explore_descriptor(
 		is_root,
 		descriptor,
 		root_name,
+		feature_aliases,
 	}: ExploreDescriptorProps,
 	tokens: &mut TokenStream,
 ) -> Result<Option<TokenStream>> {
@@ -261,6 +295,7 @@ fn explore_descriptor(
 				typedesc,
 				root_name,
 				is_input,
+				feature_aliases,
 				tokens,
 			)?;
 
@@ -297,6 +332,7 @@ fn explore_descriptor(
 						.is_input_bool(is_input)
 						.descriptor(typedesc.get(*element).ok())
 						.root_name(&sub_root_name)
+						.feature_aliases(feature_aliases)
 						.build(),
 					tokens,
 				)?;
@@ -319,6 +355,7 @@ fn explore_descriptor(
 				typedesc,
 				root_name,
 				is_input,
+				feature_aliases,
 				tokens,
 			)?;
 
@@ -357,6 +394,7 @@ fn explore_descriptor(
 				typedesc,
 				root_name,
 				is_input,
+				feature_aliases,
 				tokens,
 			)?;
 
@@ -393,6 +431,7 @@ pub fn explore_object_shape_descriptor(
 	typedesc: &Typedesc,
 	root_name: &str,
 	is_input: bool,
+	aliases: &FeatureAliases,
 	tokens: &mut TokenStream,
 ) -> Result<Option<TokenStream>> {
 	let mut impl_named_args = vec![];
@@ -411,12 +450,13 @@ pub fn explore_object_shape_descriptor(
 			.is_input_bool(is_input)
 			.descriptor(descriptor)
 			.root_name(&sub_root_name)
+			.feature_aliases(aliases)
 			.build();
 		let output = explore_descriptor(sub_props, tokens)?;
 		let output_token = element.wrap(&output);
-		let serde_annotation = (&safe_name != name).then_some(quote!(
-			#[cfg_attr(feature = "serde", serde(rename = #name))]
-		));
+		let serde_annotation = (&safe_name != name)
+			.then_some(aliases.wrap_annotation(FeatureName::Serde, &quote!(serde(rename = #name))));
+
 		let builder_fields = {
 			match element.cardinality() {
 				Cardinality::AtMostOne => {
@@ -428,9 +468,9 @@ pub fn explore_object_shape_descriptor(
 				Cardinality::NoResult | Cardinality::AtLeastOne => None,
 			}
 		};
-		let builder_annotation = (is_input && builder_fields.is_some()).then_some(quote!(
-			#[cfg_attr(feature = "builder", builder(#builder_fields))]
-		));
+		let builder_annotation = (is_input && builder_fields.is_some()).then_some(
+			aliases.wrap_annotation(FeatureName::Builder, &quote!(builder(#builder_fields))),
+		);
 
 		struct_fields.push(quote! {
 			#serde_annotation
@@ -454,14 +494,10 @@ pub fn explore_object_shape_descriptor(
 			}
 		}
 	});
-	let typed_builder_tokens = is_input.then_some(
-		quote!(#[cfg_attr(feature = "builder", derive(#EXPORTS_IDENT::typed_builder::TypedBuilder))]),
-	);
+
+	let struct_derive_tokens = aliases.get_derive_features(is_input);
 	let struct_tokens = quote! {
-		#[derive(Clone, Debug)]
-		#typed_builder_tokens
-		#[cfg_attr(feature = "query", derive(#EXPORTS_IDENT::gel_derive::Queryable))]
-		#[cfg_attr(feature = "serde", derive(#EXPORTS_IDENT::serde::Serialize, #EXPORTS_IDENT::serde::Deserialize))]
+		#struct_derive_tokens
 		pub struct #root_ident {
 			#(#struct_fields)*
 		}
@@ -556,45 +592,24 @@ fn uuid_to_token_name(uuid: &Uuid) -> TokenStream {
 		STD_INT64 => quote!(i64),
 		STD_FLOAT32 => quote!(f32),
 		STD_FLOAT64 => quote!(f64),
-		#[cfg(not(feature = "with_bigdecimal"))]
-		STD_DECIMAL => quote!(#EXPORTS_IDENT::gel_protocol::model::Decimal),
-		#[cfg(feature = "with_bigdecimal")]
-		STD_DECIMAL => quote!(#EXPORTS_IDENT::bigdecimal::BigDecimal),
+		STD_DECIMAL => quote!(#EXPORTS_IDENT::DecimalAlias),
 		STD_BOOL => quote!(bool),
-		#[cfg(not(feature = "with_chrono"))]
-		STD_DATETIME => quote!(#EXPORTS_IDENT::gel_protocol::model::Datetime),
-		#[cfg(feature = "with_chrono")]
-		STD_DATETIME => quote!(#EXPORTS_IDENT::chrono::DateTime<#EXPORTS_IDENT::chrono::Utc>),
-		#[cfg(not(feature = "with_chrono"))]
-		CAL_LOCAL_DATETIME => quote!(#EXPORTS_IDENT::gel_protocol::model::LocalDatetime),
-		#[cfg(feature = "with_chrono")]
-		CAL_LOCAL_DATETIME => quote!(#EXPORTS_IDENT::chrono::NaiveDateTime),
-		#[cfg(not(feature = "with_chrono"))]
-		CAL_LOCAL_DATE => quote!(#EXPORTS_IDENT::gel_protocol::model::LocalDate),
-		#[cfg(feature = "with_chrono")]
-		CAL_LOCAL_DATE => quote!(#EXPORTS_IDENT::chrono::NaiveDate),
-		#[cfg(not(feature = "with_chrono"))]
-		CAL_LOCAL_TIME => quote!(#EXPORTS_IDENT::gel_protocol::model::LocalTime),
-		#[cfg(feature = "with_chrono")]
-		CAL_LOCAL_TIME => quote!(#EXPORTS_IDENT::chrono::NaiveTime),
+		STD_DATETIME | STD_PG_TIMESTAMPTZ => quote!(#EXPORTS_IDENT::DateTimeAlias),
+		CAL_LOCAL_DATETIME | STD_PG_TIMESTAMP => quote!(#EXPORTS_IDENT::LocalDatetimeAlias),
+		CAL_LOCAL_DATE | STD_PG_DATE => quote!(#EXPORTS_IDENT::LocalDateAlias),
+		CAL_LOCAL_TIME => quote!(#EXPORTS_IDENT::LocalTimeAlias),
 		STD_DURATION => quote!(#EXPORTS_IDENT::gel_protocol::model::Duration),
 		CAL_RELATIVE_DURATION => quote!(#EXPORTS_IDENT::gel_protocol::model::RelativeDuration),
 		CAL_DATE_DURATION => quote!(#EXPORTS_IDENT::gel_protocol::model::DateDuration),
-		STD_JSON => quote!(#EXPORTS_IDENT::gel_protocol::model::Json),
-		#[cfg(not(feature = "with_bigint"))]
-		STD_BIGINT => quote!(#EXPORTS_IDENT::gel_protocol::model::BigInt),
-		#[cfg(feature = "with_bigint")]
-		STD_BIGINT => quote!(#EXPORTS_IDENT::num_bigint::BigInt),
+		STD_JSON | STD_PG_JSON => quote!(#EXPORTS_IDENT::gel_protocol::model::Json),
+		STD_BIGINT => quote!(#EXPORTS_IDENT::BigIntAlias),
 		CFG_MEMORY => quote!(#EXPORTS_IDENT::gel_protocol::model::ConfigMemory),
 		PGVECTOR_VECTOR => quote!(#EXPORTS_IDENT::gel_protocol::model::Vector),
+		STD_PG_INTERVAL => todo!("STD_PG_INTERVAL not yet implemented"),
+		POSTGIS_GEOMETRY => todo!("POSTGIS_GEOMETRY not yet implemented"),
+		POSTGIS_GEOGRAPHY => todo!("POSTGIS_GEOGRAPHY not yet implemented"),
+		POSTGIS_BOX_2D => todo!("POSTGIS_BOX_2D not yet implemented"),
+		POSTGIS_BOX_3D => todo!("POSTGIS_BOX_3D not yet implemented"),
 		_ => quote!(()),
 	}
-}
-
-pub async fn get_types() -> Result<()> {
-	let client = Box::pin(create_client()).await?;
-	let json = Box::pin(client.query_json(TYPES_QUERY, &())).await?;
-	log::debug!("{}", json.as_ref());
-
-	Ok(())
 }

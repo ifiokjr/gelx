@@ -1,0 +1,16 @@
+[package]
+name = "gelx_cli"
+version = { workspace = true }
+authors = { workspace = true }
+edition = { workspace = true }
+homepage = { workspace = true }
+license = { workspace = true }
+repository = { workspace = true }
+rust-version = { workspace = true }
+
+[dependencies]
+clap = { workspace = true, features = ["derive"] }
+gelx_core = { workspace = true }
+
+[lints]
+workspace = true

@@ -19,6 +19,7 @@ rustdoc-args = ["--cfg", "docsrs"]
 [dependencies]
 bigdecimal = { workspace = true, optional = true }
 bytes = { workspace = true }
+cfg-if = { workspace = true }
 chrono = { workspace = true, optional = true }
 document-features = { workspace = true }
 gel-derive = { workspace = true, optional = true }
@@ -84,7 +85,7 @@ with_all = [
 # ! #### Behavior
 
 ## Use the `typed-builder` crate to generate the builders for the generated `Input` structs.
-builder = ["dep:typed-builder"]
+builder = ["dep:typed-builder", "gelx_macros/builder"]
 
 ## Turn on the `query` and `transaction` methods and anything that relies on `gel-tokio`.
 ## The reason to separate this feature is to enable usage of this macro in browser environments
