@@ -789,7 +789,7 @@ dependencies = [
 
 [[package]]
 name = "gelx"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "assert2",
  "bigdecimal",
@@ -819,7 +819,7 @@ dependencies = [
 
 [[package]]
 name = "gelx_core"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "assert2",
  "check_keyword",
@@ -839,7 +839,7 @@ dependencies = [
 
 [[package]]
 name = "gelx_macros"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "gelx_core",
  "proc-macro2",
