@@ -29,6 +29,7 @@ with_all = ["gelx_core/with_all"]
 query = ["gelx_core/query"]
 serde = ["gelx_core/serde"]
 builder = ["gelx_core/builder"]
+strum = ["gelx_core/strum"]
 
 [lints]
 workspace = true

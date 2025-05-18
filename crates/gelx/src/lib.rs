@@ -79,6 +79,9 @@ pub mod exports {
 	#[cfg(feature = "serde")]
 	#[cfg_attr(docsrs, doc(cfg(feature = "serde")))]
 	pub use serde;
+	#[cfg(feature = "strum")]
+	#[cfg_attr(docsrs, doc(cfg(feature = "strum")))]
+	pub use strum;
 	#[cfg(feature = "builder")]
 	#[cfg_attr(docsrs, doc(cfg(feature = "builder")))]
 	pub use typed_builder;
@@ -93,6 +96,7 @@ pub mod exports {
 			pub type DecimalAlias = gel_protocol::model::Decimal;
 		}
 	}
+
 	cfg_if! {
 		if #[cfg(feature = "with_chrono")] {
 			#[cfg_attr(docsrs, doc(cfg(feature = "with_chrono")))]
@@ -108,6 +112,7 @@ pub mod exports {
 			pub type LocalDateAlias = gel_protocol::model::LocalDate;
 		}
 	}
+
 	cfg_if! {
 		if #[cfg(feature = "with_bigint")] {
 			#[cfg_attr(docsrs, doc(cfg(feature = "with_bigint")))]
