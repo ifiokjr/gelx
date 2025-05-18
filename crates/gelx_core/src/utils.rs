@@ -10,6 +10,7 @@ use proc_macro2::TokenStream;
 use quote::quote;
 use tokio::io::AsyncWriteExt;
 use tokio::process::Command;
+use typed_builder::TypedBuilder;
 
 use crate::EXPORTS_IDENT;
 use crate::Result;
@@ -29,11 +30,13 @@ pub(crate) fn create_gel_config<P: AsRef<Path>>(config_path: Option<P>) -> Resul
 	Ok(config)
 }
 
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone, Default, TypedBuilder)]
+#[builder(field_defaults(default, setter(into, strip_option(fallback_suffix = "_opt"))))]
 pub struct FeatureAliases {
 	pub serde: Option<String>,
 	pub builder: Option<String>,
 	pub query: Option<String>,
+	pub strum: Option<String>,
 }
 
 /// The name of a feature.
@@ -42,33 +45,55 @@ pub enum FeatureName {
 	Serde,
 	Builder,
 	Query,
+	Strum,
 }
 
 type DeriveFeatures = IndexMap<Option<String>, Vec<TokenStream>>;
 
 impl FeatureAliases {
-	/// Returns a `TokenStream` of the derive features for the given aliases.
-	pub(crate) fn get_derive_features(&self, is_input: bool) -> TokenStream {
-		let mut features = DeriveFeatures::new();
+	fn get_derive_features(
+		&self,
+		features: &[FeatureName],
+		is_input: bool,
+		is_copy: bool,
+	) -> TokenStream {
+		let mut features_map = DeriveFeatures::new();
 		let mut tokens = TokenStream::new();
 
-		if cfg!(feature = "serde") {
-			let entry = features.entry(self.serde.clone()).or_default();
-			entry.push(quote!(#EXPORTS_IDENT::serde::Serialize));
-			entry.push(quote!(#EXPORTS_IDENT::serde::Deserialize));
+		if is_copy {
+			features_map.insert(None, vec![quote!(Copy)]);
 		}
 
-		if cfg!(feature = "builder") && is_input {
-			let entry = features.entry(self.builder.clone()).or_default();
-			entry.push(quote!(#EXPORTS_IDENT::typed_builder::TypedBuilder));
+		for feature in features {
+			match feature {
+				FeatureName::Serde => {
+					let entry = features_map.entry(self.serde.clone()).or_default();
+					entry.push(quote!(#EXPORTS_IDENT::serde::Serialize));
+					entry.push(quote!(#EXPORTS_IDENT::serde::Deserialize));
+				}
+				FeatureName::Builder => {
+					if is_input {
+						let entry = features_map.entry(self.builder.clone()).or_default();
+						entry.push(quote!(#EXPORTS_IDENT::typed_builder::TypedBuilder));
+					}
+				}
+				FeatureName::Query => {
+					let entry = features_map.entry(self.query.clone()).or_default();
+					entry.push(quote!(#EXPORTS_IDENT::gel_derive::Queryable));
+				}
+				FeatureName::Strum => {
+					let entry = features_map.entry(self.strum.clone()).or_default();
+					entry.push(quote!(#EXPORTS_IDENT::strum::AsRefStr));
+					entry.push(quote!(#EXPORTS_IDENT::strum::Display));
+					entry.push(quote!(#EXPORTS_IDENT::strum::EnumString));
+					entry.push(quote!(#EXPORTS_IDENT::strum::EnumIs));
+					entry.push(quote!(#EXPORTS_IDENT::strum::FromRepr));
+					entry.push(quote!(#EXPORTS_IDENT::strum::IntoStaticStr));
+				}
+			}
 		}
 
-		if cfg!(feature = "query") {
-			let entry = features.entry(self.query.clone()).or_default();
-			entry.push(quote!(#EXPORTS_IDENT::gel_derive::Queryable));
-		}
-
-		for (key, derive_tokens) in &features {
+		for (key, derive_tokens) in &features_map {
 			if let Some(key) = key {
 				tokens.extend(quote! {
 					#[cfg_attr(feature = #key, derive(#(#derive_tokens),*))]
@@ -81,6 +106,20 @@ impl FeatureAliases {
 		}
 
 		tokens
+	}
+
+	/// Returns a `TokenStream` of the derive features for a struct.
+	pub(crate) fn get_struct_derive_features(&self, is_input: bool) -> TokenStream {
+		self.get_derive_features(
+			&[FeatureName::Serde, FeatureName::Builder, FeatureName::Query],
+			is_input,
+			false,
+		)
+	}
+
+	/// Returns a `TokenStream` of the derive features for an enum.
+	pub(crate) fn get_enum_derive_features(&self) -> TokenStream {
+		self.get_derive_features(&[FeatureName::Query, FeatureName::Strum], false, true)
 	}
 
 	/// Wrap the provided `TokenStream` annotation if the
@@ -115,6 +154,14 @@ impl FeatureAliases {
 				}
 
 				&self.query
+			}
+
+			FeatureName::Strum => {
+				if !cfg!(feature = "strum") {
+					return empty_tokens;
+				}
+
+				&self.strum
 			}
 		};
 
