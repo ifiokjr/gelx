@@ -377,7 +377,7 @@ fn explore_descriptor(
 				Ok(result)
 			}
 		}
-		Descriptor::Enumeration(_) => {
+		Descriptor::Enumeration(enumeration) => {
 			let result = Some(quote!(String));
 
 			if is_root {
@@ -494,7 +494,7 @@ pub fn explore_object_shape_descriptor(
 		}
 	});
 
-	let struct_derive_tokens = aliases.get_derive_features(is_input);
+	let struct_derive_tokens = aliases.get_struct_derive_features(is_input);
 	let struct_tokens = quote! {
 		#struct_derive_tokens
 		pub struct #root_ident {

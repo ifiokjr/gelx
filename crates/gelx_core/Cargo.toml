@@ -26,6 +26,7 @@ proc-macro2 = { workspace = true }
 quote = { workspace = true }
 regex = { workspace = true }
 serde = { workspace = true, features = ["derive"] }
+strum = { workspace = true, features = ["derive"] }
 syn = { workspace = true }
 thiserror = { workspace = true }
 tokio = { workspace = true, features = ["macros", "rt-multi-thread", "process"] }
@@ -34,6 +35,7 @@ uuid = { workspace = true, features = ["serde"] }
 
 [dev-dependencies]
 assert2 = { workspace = true }
+insta = { workspace = true, features = ["ron", "yaml", "redactions"] }
 tokio = { workspace = true, features = ["time", "test-util"] }
 
 [features]
@@ -44,6 +46,7 @@ with_all = ["with_bigint", "with_bigdecimal", "with_chrono"]
 query = []
 serde = []
 builder = []
+strum = []
 
 [lints]
 workspace = true
