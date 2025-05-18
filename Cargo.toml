@@ -1,5 +1,5 @@
 [workspace]
-members = ["crates/*"]
+members = ["crates/*", "examples/*"]
 resolver = "2"
 
 [workspace.package]
@@ -43,6 +43,7 @@ syn = "2"
 test-log = "0.2"
 thiserror = "2"
 tokio = "1"
+toml = "0.8"
 trybuild = "1"
 typed-builder = "0.21"
 uuid = "1"

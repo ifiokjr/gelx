@@ -65,8 +65,9 @@
     exec = ''
       set -e
       cargo update
+      devenv update
     '';
-    description = "Update dependencies.";
+    description = "Update all project dependencies.";
   };
   scripts."build:all" = {
     exec = ''
