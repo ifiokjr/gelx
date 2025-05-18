@@ -237,9 +237,9 @@ checksum = "d71b6127be86fdcfddb610f7182ac57211d4b18a3e9c82eb2d17662f2227ad6a"
 
 [[package]]
 name = "cc"
-version = "1.2.22"
+version = "1.2.23"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "32db95edf998450acc7881c932f94cd9b05c87b4b2599e8bab064753da4acfd1"
+checksum = "5f4ac86a9e5bc1e2b3449ab9d7d3a6a405e3d1bb28d7b9be8614f55846ae3766"
 dependencies = [
  "shlex",
 ]
@@ -776,9 +776,9 @@ dependencies = [
 
 [[package]]
 name = "gel-stream"
-version = "0.4.1"
+version = "0.4.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cb477575c47313ddbcf9da3cd13829ba81652bad8a20e92b294dcef27b87d247"
+checksum = "0a3d58f04723506dc16207b0973f885d82af8e94ff6b7f950818179e14cf851e"
 dependencies = [
  "derive_more",
  "futures",
@@ -797,9 +797,9 @@ dependencies = [
 
 [[package]]
 name = "gel-tokio"
-version = "0.10.14"
+version = "0.10.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2c545753c847a197cead8c666f20d4fe2cee5a8aa5646349568184617db5ff7f"
+checksum = "cf8b68343538f8c93fff5cc1353b9bdd151d3bf782a71e38683a3357e3844a94"
 dependencies = [
  "anyhow",
  "arc-swap",
@@ -851,6 +851,7 @@ dependencies = [
  "rustversion",
  "serde",
  "serde_bytes",
+ "strum",
  "test-log",
  "tokio",
  "trybuild",
@@ -864,6 +865,7 @@ version = "0.3.0"
 dependencies = [
  "clap",
  "gelx_core",
+ "toml",
 ]
 
 [[package]]
@@ -878,17 +880,26 @@ dependencies = [
  "gel-tokio",
  "heck",
  "indexmap",
+ "insta",
  "log",
  "prettyplease",
  "proc-macro2",
  "quote",
  "regex",
  "serde",
+ "strum",
  "syn",
  "thiserror 2.0.12",
  "tokio",
  "typed-builder",
  "uuid",
+]
+
+[[package]]
+name = "gelx_example"
+version = "0.3.0"
+dependencies = [
+ "gelx",
 ]
 
 [[package]]
@@ -2214,6 +2225,28 @@ name = "strsim"
 version = "0.11.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7da8b5736845d9f2fcb837ea5d9e2628564b3b043a70948a3f0b778838c5fb4f"
+
+[[package]]
+name = "strum"
+version = "0.27.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f64def088c51c9510a8579e3c5d67c65349dcf755e5479ad3d010aa6454e2c32"
+dependencies = [
+ "strum_macros",
+]
+
+[[package]]
+name = "strum_macros"
+version = "0.27.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c77a8c5abcaf0f9ce05d62342b7d298c346515365c36b673df4ebe3ced01fde8"
+dependencies = [
+ "heck",
+ "proc-macro2",
+ "quote",
+ "rustversion",
+ "syn",
+]
 
 [[package]]
 name = "subtle"

@@ -1,5 +1,5 @@
 [package]
-name = "gelx_cli"
+name = "gelx_example"
 version = { workspace = true }
 authors = { workspace = true }
 edition = { workspace = true }
@@ -9,9 +9,14 @@ repository = { workspace = true }
 rust-version = { workspace = true }
 
 [dependencies]
-clap = { workspace = true, features = ["derive"] }
-gelx_core = { workspace = true }
-toml = { workspace = true }
+gelx = { workspace = true, features = ["with_all"] }
 
 [lints]
 workspace = true
+
+[features]
+ssr = ["gelx/query", "gelx/serde", "gelx/strum", "gelx/builder"]
+
+[package.metadata.gelx]
+queries = "./queries"
+features = { query = "ssr", serde = "ssr", strum = "ssr", builder = "ssr" }
