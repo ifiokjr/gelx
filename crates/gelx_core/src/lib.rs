@@ -405,7 +405,6 @@ fn explore_descriptor(
 		}
 
 		Descriptor::Enumeration(enumeration) => {
-			println!("enumeration: {enumeration:#?}");
 			// TODO: support ephemeral enums not defined in the schema
 			let result = if is_macro {
 				// Inline the enum in the macro output.

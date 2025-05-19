@@ -6,13 +6,8 @@ use gelx_generated::*;
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
 	let client = create_client().await?;
-	let query = select_user::query(
-		&client,
-		&select_user::Input {
-			slug: "test".to_string(),
-		},
-	)
-	.await?;
+	let props = select_user::Input::builder().slug("test").build();
+	let query = select_user::query(&client, &props).await?;
 
 	println!("{query:?}");
 	Ok(())

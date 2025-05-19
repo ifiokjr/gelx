@@ -133,12 +133,12 @@ Then use the `gelx` macro to import the query.
 
 ```rust
 use gel_errors::Error;
-use gel_tokio::create_client;
+use gelx::create_client;
 use gelx::gelx;
 
 // Creates a module called `select_user` with public functions `transaction` and
 // `query` as well as structs for the `Input` and `Output`.
-gelx_file!(select_user);
+gelx!(select_user);
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
