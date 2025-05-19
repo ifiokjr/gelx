@@ -3,7 +3,7 @@ members = ["crates/*", "examples/*"]
 resolver = "2"
 
 [workspace.package]
-version = "0.3.0"
+version = "0.4.0"
 authors = ["Ifiok Jr. <ifiokotung@gmail.com>"]
 edition = "2024"
 homepage = "https://geldata.com"
@@ -52,9 +52,9 @@ typed-builder = "0.21"
 uuid = "1"
 
 # crates
-gelx = { path = "./crates/gelx", version = "0.3.0" }
-gelx_core = { path = "./crates/gelx_core", version = "0.3.0" }
-gelx_macros = { path = "./crates/gelx_macros", version = "0.3.0" }
+gelx = { path = "./crates/gelx", version = "0.4.0" }
+gelx_core = { path = "./crates/gelx_core", version = "0.4.0" }
+gelx_macros = { path = "./crates/gelx_macros", version = "0.4.0" }
 
 [workspace.metadata.bin]
 cargo-deny = { version = "0.18.2" }

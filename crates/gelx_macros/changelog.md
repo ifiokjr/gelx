@@ -6,6 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.4.0](https://github.com/ifiokjr/gelx/compare/gelx_macros@v0.3.0...gelx_macros@v0.4.0) - 2025-05-19
+
+### <!-- 0 -->🎉 Added
+
+- add `GelxMetadata` and improve everything
+- add strum support
+- add `regex` dependency and refactor code generation functions
+- add `gelx_cli` crate and integrate `clap` for command-line interface
+
+### <!-- 3 -->📚 Documentation
+
+- small improvements
+
 ## [0.3.0](https://github.com/ifiokjr/gelx/compare/v0.2.1...v0.3.0) - 2025-05-16
 
 ### <!-- 0 -->🎉 Added
