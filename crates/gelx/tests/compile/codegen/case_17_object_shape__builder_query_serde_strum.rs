@@ -3,13 +3,13 @@ pub mod example {
     /// Execute the desired query.
     pub async fn query(
         client: &e::gel_tokio::Client,
-    ) -> core::result::Result<Vec<Output>, e::gel_errors::Error> {
+    ) -> ::core::result::Result<Vec<Output>, e::gel_errors::Error> {
         client.query(QUERY, &()).await
     }
     /// Compose the query as part of a larger transaction.
     pub async fn transaction(
         conn: &mut e::gel_tokio::Transaction,
-    ) -> core::result::Result<Vec<Output>, e::gel_errors::Error> {
+    ) -> ::core::result::Result<Vec<Output>, e::gel_errors::Error> {
         conn.query(QUERY, &()).await
     }
     pub type Input = ();

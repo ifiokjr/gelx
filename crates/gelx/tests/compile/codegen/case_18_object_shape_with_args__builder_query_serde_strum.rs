@@ -4,14 +4,14 @@ pub mod example {
     pub async fn query(
         client: &e::gel_tokio::Client,
         props: &Input,
-    ) -> core::result::Result<Vec<Output>, e::gel_errors::Error> {
+    ) -> ::core::result::Result<Vec<Output>, e::gel_errors::Error> {
         client.query(QUERY, props).await
     }
     /// Compose the query as part of a larger transaction.
     pub async fn transaction(
         conn: &mut e::gel_tokio::Transaction,
         props: &Input,
-    ) -> core::result::Result<Vec<Output>, e::gel_errors::Error> {
+    ) -> ::core::result::Result<Vec<Output>, e::gel_errors::Error> {
         conn.query(QUERY, props).await
     }
     #[derive(
