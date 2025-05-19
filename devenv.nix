@@ -64,7 +64,7 @@
   scripts."db:up" = {
     exec = ''
       set -e
-      gel watch --instance $GEL_INSTANCE
+      gel watch --instance $GEL_INSTANCE --migrate
     '';
     description = "Watch changes to the local database.";
   };
@@ -93,6 +93,7 @@
       set -e
       fix:clippy
       fix:format
+      fix:gelx
       cargo deny check
     '';
     description = "Fix all fixable lint issues.";
@@ -111,11 +112,20 @@
     '';
     description = "Fix fixable lint issues raised by rust clippy.";
   };
+  scripts."fix:gelx" = {
+    exec = ''
+      set -e
+      cd examples/gelx_example
+      gelx generate
+    '';
+    description = "Fix fixable lint issues raised by gelx.";
+  };
   scripts."lint:all" = {
     exec = ''
       set -e
       lint:clippy
       lint:format
+      lint:gelx
       cargo deny check
     '';
     description = "Lint all project files.";
@@ -133,6 +143,14 @@
       cargo clippy --all-features
     '';
     description = "Check rust clippy lints.";
+  };
+  scripts."lint:gelx" = {
+    exec = ''
+      set -e
+      cd examples/gelx_example
+      gelx check
+    '';
+    description = "Check gelx is formatted correctly.";
   };
   scripts."test:all" = {
     exec = ''

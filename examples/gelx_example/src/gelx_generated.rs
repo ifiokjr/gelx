@@ -107,7 +107,7 @@ pub mod select_user {
     pub async fn query(
         client: &e::gel_tokio::Client,
         props: &Input,
-    ) -> Result<Option<Output>, e::gel_errors::Error> {
+    ) -> core::result::Result<Option<Output>, e::gel_errors::Error> {
         client.query_single(QUERY, props).await
     }
     /// Compose the query as part of a larger transaction.
@@ -115,7 +115,7 @@ pub mod select_user {
     pub async fn transaction(
         conn: &mut e::gel_tokio::Transaction,
         props: &Input,
-    ) -> Result<Option<Output>, e::gel_errors::Error> {
+    ) -> core::result::Result<Option<Output>, e::gel_errors::Error> {
         conn.query_single(QUERY, props).await
     }
     #[derive(Clone, Debug, e::serde::Serialize, e::serde::Deserialize)]
@@ -127,11 +127,11 @@ pub mod select_user {
         #[cfg_attr(feature = "ssr", builder(setter(into)))]
         pub slug: String,
     }
-    impl gel_protocol::query_arg::QueryArgs for Input {
+    impl e::gel_protocol::query_arg::QueryArgs for Input {
         fn encode(
             &self,
-            encoder: &mut gel_protocol::query_arg::Encoder,
-        ) -> Result<(), e::gel_errors::Error> {
+            encoder: &mut e::gel_protocol::query_arg::Encoder,
+        ) -> core::result::Result<(), e::gel_errors::Error> {
             let map = e::gel_protocol::named_args! {
                 "slug" => self.slug.clone(),
             };
@@ -156,7 +156,7 @@ pub mod insert_user {
     pub async fn query(
         client: &e::gel_tokio::Client,
         props: &Input,
-    ) -> Result<Output, e::gel_errors::Error> {
+    ) -> core::result::Result<Output, e::gel_errors::Error> {
         client.query_required_single(QUERY, props).await
     }
     /// Compose the query as part of a larger transaction.
@@ -164,7 +164,7 @@ pub mod insert_user {
     pub async fn transaction(
         conn: &mut e::gel_tokio::Transaction,
         props: &Input,
-    ) -> Result<Output, e::gel_errors::Error> {
+    ) -> core::result::Result<Output, e::gel_errors::Error> {
         conn.query_required_single(QUERY, props).await
     }
     #[derive(Clone, Debug, e::serde::Serialize, e::serde::Deserialize)]
@@ -180,11 +180,11 @@ pub mod insert_user {
         #[cfg_attr(feature = "ssr", builder(setter(into)))]
         pub slug: String,
     }
-    impl gel_protocol::query_arg::QueryArgs for Input {
+    impl e::gel_protocol::query_arg::QueryArgs for Input {
         fn encode(
             &self,
-            encoder: &mut gel_protocol::query_arg::Encoder,
-        ) -> Result<(), e::gel_errors::Error> {
+            encoder: &mut e::gel_protocol::query_arg::Encoder,
+        ) -> core::result::Result<(), e::gel_errors::Error> {
             let map = e::gel_protocol::named_args! {
                 "name" => self.name.clone(), "bio" => self.bio.clone(), "slug" => self
                 .slug.clone(),
@@ -210,7 +210,7 @@ pub mod remove_user {
     pub async fn query(
         client: &e::gel_tokio::Client,
         props: &Input,
-    ) -> Result<Option<Output>, e::gel_errors::Error> {
+    ) -> core::result::Result<Option<Output>, e::gel_errors::Error> {
         client.query_single(QUERY, props).await
     }
     /// Compose the query as part of a larger transaction.
@@ -218,7 +218,7 @@ pub mod remove_user {
     pub async fn transaction(
         conn: &mut e::gel_tokio::Transaction,
         props: &Input,
-    ) -> Result<Option<Output>, e::gel_errors::Error> {
+    ) -> core::result::Result<Option<Output>, e::gel_errors::Error> {
         conn.query_single(QUERY, props).await
     }
     #[derive(Clone, Debug, e::serde::Serialize, e::serde::Deserialize)]
@@ -230,13 +230,13 @@ pub mod remove_user {
         #[cfg_attr(feature = "ssr", builder(setter(into)))]
         pub id: e::uuid::Uuid,
     }
-    impl gel_protocol::query_arg::QueryArgs for Input {
+    impl e::gel_protocol::query_arg::QueryArgs for Input {
         fn encode(
             &self,
-            encoder: &mut gel_protocol::query_arg::Encoder,
-        ) -> Result<(), e::gel_errors::Error> {
+            encoder: &mut e::gel_protocol::query_arg::Encoder,
+        ) -> core::result::Result<(), e::gel_errors::Error> {
             let map = e::gel_protocol::named_args! {
-                "id" => self.id,
+                "id" => self.id.clone(),
             };
             map.encode(encoder)
         }
