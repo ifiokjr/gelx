@@ -275,6 +275,7 @@ gelx!(
 - **`builder`** — Use the `typed-builder` crate to generate the builders for the generated `Input` structs.
 - **`query`** — Turn on the `query` and `transaction` methods and anything that relies on `gel-tokio`. The reason to separate this feature is to enable usage of this macro in browser environments where `gel-tokio` is not feasible.
 - **`serde`** — Enable serde for the generated code.
+- **`strum`** - Use the `strum` crate for deriving strings from the created enums.
 
 ## Contributing
 
