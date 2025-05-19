@@ -6,10 +6,34 @@ use proc_macro2::Span;
 use rstest::fixture;
 use rstest::rstest;
 
+fn get_features() -> String {
+	let mut features = Vec::new();
+
+	if cfg!(feature = "builder") {
+		features.push("builder");
+	}
+	if cfg!(feature = "query") {
+		features.push("query");
+	}
+	if cfg!(feature = "serde") {
+		features.push("serde");
+	}
+	if cfg!(feature = "strum") {
+		features.push("strum");
+	}
+
+	if !features.is_empty() {
+		features.insert(0, "_");
+	}
+
+	features.join("_")
+}
+
 macro_rules! set_snapshot_suffix {
     ($($expr:expr),*) => {
         let mut settings = insta::Settings::clone_current();
-        settings.set_snapshot_suffix(format!($($expr,)*));
+				let path = format!($($expr,)*);
+        settings.set_snapshot_suffix(format!("{path}{}", get_features()));
         let _guard = settings.bind_to_scope();
     }
 }
@@ -50,18 +74,19 @@ pub fn testname() -> String {
 	"select Team {**} filter .name like <str>$starts_with ++ '%' and .description like '%' ++ \
 	 <str>$ends_with;"
 )]
+#[case::enums("select Account { provider }")]
 #[case::types_query(TYPES_QUERY)]
 // #[case::range("select range(0, 10)")] // TODO: `Range` doesn't implement `Queryable` yet.
 // #[case::bytes("select b'bina\\x01ry'")] // TODO: bytes don't implement `DecodeScalar` yet.
 #[tokio::test]
 #[rustversion::attr(not(nightly), ignore = "requires nightly")]
-async fn codegen_literals(testname: String, #[case] query: &str) -> Result<()> {
+async fn codegen_literals(testname: String, #[case] query: &str) -> GelxResult<()> {
 	set_snapshot_suffix!("{}", testname);
 
-	let relative_path = format!("tests/compile/codegen/{testname}.rs");
-	let descriptor = get_descriptor(query, Option::<&str>::None).await?;
-	let code =
-		generate_query_token_stream(&descriptor, "example", query, &FeatureAliases::default())?;
+	let metadata = GelxMetadata::default();
+	let relative_path = format!("tests/compile/codegen/{testname}{}.rs", get_features());
+	let descriptor = get_descriptor(query, &metadata).await?;
+	let code = generate_query_token_stream(&descriptor, "example", query, &metadata, true)?;
 	let content = prettify(&code.to_string())?;
 
 	// Check that the snapshot hasn't changed.
@@ -77,15 +102,15 @@ async fn codegen_literals(testname: String, #[case] query: &str) -> Result<()> {
 #[case("insert_user")]
 #[case("remove_user")]
 #[tokio::test]
-async fn codegen_files(#[case] path: &str) -> Result<()> {
+async fn codegen_files(#[case] path: &str) -> GelxResult<()> {
 	set_snapshot_suffix!("{}", path);
 
+	let metadata = GelxMetadata::default();
 	let query_path = resolve_path(format!("queries/{path}.edgeql"), Span::call_site())?;
-	let relative_path = format!("tests/compile/codegen/{path}.rs");
+	let relative_path = format!("tests/compile/codegen/{path}{}.rs", get_features());
 	let query = tokio::fs::read_to_string(&query_path).await?;
-	let descriptor = get_descriptor(&query, Option::<&str>::None).await?;
-	let code =
-		generate_query_token_stream(&descriptor, "example", &query, &FeatureAliases::default())?;
+	let descriptor = get_descriptor(&query, &metadata).await?;
+	let code = generate_query_token_stream(&descriptor, "example", &query, &metadata, true)?;
 	let content = prettify(&code.to_string())?;
 
 	// Check that the snapshot hasn't changed.
@@ -99,7 +124,7 @@ async fn codegen_files(#[case] path: &str) -> Result<()> {
 
 const CRATE_DIR: &str = env!("CARGO_MANIFEST_DIR");
 
-async fn prepare_compile_test(content: &str, relative_path: &str) -> Result<()> {
+async fn prepare_compile_test(content: &str, relative_path: &str) -> GelxResult<()> {
 	let is_ci = std::env::var("CI")
 		.ok()
 		.is_some_and(|v| ["1", "true"].contains(&v.as_str()));
@@ -120,7 +145,50 @@ async fn prepare_compile_test(content: &str, relative_path: &str) -> Result<()> 
 	Ok(())
 }
 
-fn generate_contents(content: &str) -> Result<String> {
-	let updated = format!("fn main() {{\n{content}\n}}");
+fn generate_contents(content: &str) -> GelxResult<String> {
+	let updated = format!("{content}\n\nfn main() {{}}");
 	Ok(prettify(&updated)?)
+}
+
+#[tokio::test]
+async fn can_generate_enums() -> GelxResult<()> {
+	set_snapshot_suffix!("enums");
+
+	let relative_path = format!("tests/compile/codegen/enums{}.rs", get_features());
+	let tokens = generate_enums(Option::<&str>::None, &GelxMetadata::default(), false).await?;
+	let content = prettify(&tokens.to_string())?;
+	insta::assert_snapshot!(content);
+
+	// Ensure that the produced rust is valid.
+	prepare_compile_test(&content, &relative_path).await?;
+
+	Ok(())
+}
+#[tokio::test]
+async fn can_generate_aliased_enums() -> GelxResult<()> {
+	set_snapshot_suffix!("aliased_enums");
+
+	let relative_path = format!("tests/compile/codegen/aliased_enums{}.rs", get_features());
+	let tokens = generate_enums(
+		Option::<&str>::None,
+		&GelxMetadata::builder()
+			.features(
+				GelxFeatures::builder()
+					.query("ssr")
+					.builder("ssr")
+					.strum("ssr")
+					.build(),
+			)
+			.build(),
+		false,
+	)
+	.await?;
+
+	let content = prettify(&tokens.to_string())?;
+	insta::assert_snapshot!(content);
+
+	// Ensure that the produced rust is valid.
+	prepare_compile_test(&content, &relative_path).await?;
+
+	Ok(())
 }

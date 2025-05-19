@@ -874,13 +874,13 @@ version = "0.3.0"
 dependencies = [
  "assert2",
  "check_keyword",
+ "derive_more",
  "gel-derive",
  "gel-errors",
  "gel-protocol",
  "gel-tokio",
  "heck",
  "indexmap",
- "insta",
  "log",
  "prettyplease",
  "proc-macro2",
@@ -891,6 +891,8 @@ dependencies = [
  "syn",
  "thiserror 2.0.12",
  "tokio",
+ "toml",
+ "toml_edit",
  "typed-builder",
  "uuid",
 ]
@@ -899,7 +901,10 @@ dependencies = [
 name = "gelx_example"
 version = "0.3.0"
 dependencies = [
+ "gel-protocol",
  "gelx",
+ "serde",
+ "strum",
 ]
 
 [[package]]
