@@ -1,4 +1,4 @@
-use gelx_core::FeatureAliases;
+use gelx_core::GelxMetadata;
 use gelx_core::generate_query_token_stream;
 use gelx_core::get_descriptor_sync;
 use gelx_core::resolve_path;
@@ -68,14 +68,16 @@ impl Parse for GelQueryInput {
 
 impl ToTokens for GelQueryInput {
 	fn to_tokens(&self, tokens: &mut proc_macro2::TokenStream) {
+		let metadata = GelxMetadata::default();
 		let module_name = self.module.to_string();
-		let token_stream = get_descriptor_sync(&self.query, Option::<&str>::None)
+		let token_stream = get_descriptor_sync(&self.query, &metadata)
 			.and_then(|descriptor| {
 				generate_query_token_stream(
 					&descriptor,
 					&module_name,
 					&self.query,
-					&FeatureAliases::default(),
+					&GelxMetadata::default(),
+					true,
 				)
 			})
 			.unwrap_or_else(|error| syn::Error::from(error).to_compile_error());

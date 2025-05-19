@@ -1,5 +1,10 @@
+mod constants;
+mod enums;
+mod errors;
+mod metadata;
+mod utils;
+
 use std::collections::HashMap;
-use std::path::Path;
 use std::sync::Arc;
 
 use check_keyword::CheckKeyword;
@@ -39,6 +44,7 @@ use gel_protocol::common::CompilationOptions;
 use gel_protocol::common::InputLanguage;
 use gel_protocol::common::IoFormat;
 use gel_protocol::descriptors::Descriptor;
+use gel_protocol::descriptors::EnumerationTypeDescriptor;
 use gel_protocol::descriptors::InputShapeElement;
 use gel_protocol::descriptors::ShapeElement;
 use gel_protocol::descriptors::TupleElement;
@@ -59,20 +65,21 @@ use tokio::runtime::Runtime;
 use typed_builder::TypedBuilder;
 
 pub use crate::constants::*;
+pub use crate::enums::*;
 pub use crate::errors::*;
-pub use crate::types::*;
+pub use crate::metadata::*;
 pub use crate::utils::*;
-mod constants;
-mod errors;
-mod types;
-mod utils;
 
 /// Get the descriptor asynchronously.
-pub async fn get_descriptor<P: AsRef<Path>>(
+pub async fn get_descriptor(
 	query: &str,
-	config_path: Option<P>,
-) -> Result<CommandDataDescription1> {
-	let config = create_gel_config(config_path)?;
+	metadata: &GelxMetadata,
+) -> GelxResult<CommandDataDescription1> {
+	let config = create_gel_config(
+		metadata.gel_config_path.as_deref(),
+		metadata.gel_instance.as_deref(),
+		metadata.gel_branch.as_deref(),
+	)?;
 	let state = Arc::new(PoolState::default());
 	let pool = Pool::new(&config);
 	let mut pool_connection = Box::pin(pool.acquire()).await?;
@@ -95,12 +102,12 @@ pub async fn get_descriptor<P: AsRef<Path>>(
 }
 
 /// Get the descriptor synchronously.
-pub fn get_descriptor_sync<P: AsRef<Path>>(
+pub fn get_descriptor_sync(
 	query: &str,
-	config_path: Option<P>,
-) -> Result<CommandDataDescription1> {
+	metadata: &GelxMetadata,
+) -> GelxResult<CommandDataDescription1> {
 	let rt = Runtime::new()?;
-	let descriptor = rt.block_on(async { get_descriptor(query, config_path).await })?;
+	let descriptor = rt.block_on(async { get_descriptor(query, metadata).await })?;
 
 	Ok(descriptor)
 }
@@ -109,8 +116,9 @@ pub fn generate_query_token_stream(
 	descriptor: &CommandDataDescription1,
 	name: &str,
 	query: &str,
-	feature_aliases: &FeatureAliases,
-) -> Result<TokenStream> {
+	metadata: &GelxMetadata,
+	is_macro: bool,
+) -> GelxResult<TokenStream> {
 	let input_ident = format_ident!("{INPUT_NAME}");
 	let output_ident = format_ident!("{OUTPUT_NAME}");
 	let props_ident = format_ident!("{PROPS_NAME}");
@@ -130,7 +138,8 @@ pub fn generate_query_token_stream(
 			.is_root()
 			.descriptor(input.root())
 			.root_name(INPUT_NAME)
-			.feature_aliases(feature_aliases)
+			.metadata(metadata)
+			.is_macro_bool(is_macro)
 			.build(),
 		&mut tokens,
 	)?;
@@ -140,7 +149,8 @@ pub fn generate_query_token_stream(
 			.is_root()
 			.descriptor(output.root())
 			.root_name(OUTPUT_NAME)
-			.feature_aliases(feature_aliases)
+			.metadata(metadata)
+			.is_macro_bool(is_macro)
 			.build(),
 		&mut tokens,
 	)?;
@@ -210,8 +220,10 @@ fn wrap_token_with_cardinality(
 
 #[derive(Debug, TypedBuilder)]
 struct ExploreDescriptorProps<'a> {
-	feature_aliases: &'a FeatureAliases,
+	metadata: &'a GelxMetadata,
 	typedesc: &'a Typedesc,
+	#[builder(setter(strip_bool(fallback = is_macro_bool)))]
+	is_macro: bool,
 	#[builder(setter(strip_bool(fallback = is_input_bool)))]
 	is_input: bool,
 	#[builder(setter(strip_bool(fallback = is_root_bool)))]
@@ -223,8 +235,9 @@ struct ExploreDescriptorProps<'a> {
 type PartialExploreDescriptorProps<'a> = ExploreDescriptorPropsBuilder<
 	'a,
 	(
-		(&'a FeatureAliases,),
+		(&'a GelxMetadata,),
 		(&'a Typedesc,),
+		(bool,),
 		(bool,),
 		(bool,),
 		(),
@@ -237,15 +250,17 @@ impl<'a> ExploreDescriptorProps<'a> {
 		let Self {
 			typedesc,
 			is_input,
-			feature_aliases,
+			is_macro,
+			metadata,
 			..
 		} = self;
 
 		Self::builder()
 			.typedesc(typedesc)
 			.is_input_bool(is_input)
+			.is_macro_bool(is_macro)
 			.is_root_bool(false)
-			.feature_aliases(feature_aliases)
+			.metadata(metadata)
 	}
 }
 
@@ -256,10 +271,11 @@ fn explore_descriptor(
 		is_root,
 		descriptor,
 		root_name,
-		feature_aliases,
+		metadata,
+		is_macro,
 	}: ExploreDescriptorProps,
 	tokens: &mut TokenStream,
-) -> Result<Option<TokenStream>> {
+) -> GelxResult<Option<TokenStream>> {
 	let root_ident = format_ident!("{root_name}");
 
 	let Some(descriptor) = descriptor else {
@@ -288,18 +304,21 @@ fn explore_descriptor(
 				Ok(result)
 			}
 		}
+
 		Descriptor::ObjectShape(object) => {
 			let result = explore_object_shape_descriptor(
 				StructElement::from_shape(&object.elements),
 				typedesc,
 				root_name,
 				is_input,
-				feature_aliases,
+				metadata,
+				is_macro,
 				tokens,
 			)?;
 
 			Ok(result)
 		}
+
 		Descriptor::BaseScalar(base_scalar) => {
 			let result = uuid_to_token_name(&base_scalar.id);
 
@@ -310,6 +329,7 @@ fn explore_descriptor(
 				Ok(Some(result))
 			}
 		}
+
 		Descriptor::Scalar(scalar) => {
 			let result = uuid_to_token_name(&scalar.id);
 
@@ -320,6 +340,7 @@ fn explore_descriptor(
 				Ok(Some(result))
 			}
 		}
+
 		Descriptor::Tuple(tuple) => {
 			let mut tuple_tokens = Punctuated::<_, Token![,]>::new();
 
@@ -331,7 +352,7 @@ fn explore_descriptor(
 						.is_input_bool(is_input)
 						.descriptor(typedesc.get(*element).ok())
 						.root_name(&sub_root_name)
-						.feature_aliases(feature_aliases)
+						.metadata(metadata)
 						.build(),
 					tokens,
 				)?;
@@ -348,18 +369,21 @@ fn explore_descriptor(
 				Ok(Some(result))
 			}
 		}
+
 		Descriptor::NamedTuple(named_tuple) => {
 			let result = explore_object_shape_descriptor(
 				StructElement::from_named_tuple(&named_tuple.elements),
 				typedesc,
 				root_name,
 				is_input,
-				feature_aliases,
+				metadata,
+				is_macro,
 				tokens,
 			)?;
 
 			Ok(result)
 		}
+
 		Descriptor::Array(array) => {
 			let array_descriptor = typedesc.get(array.type_pos).ok();
 			let sub_root_name = format!("{root_name}Array");
@@ -377,28 +401,53 @@ fn explore_descriptor(
 				Ok(result)
 			}
 		}
+
 		Descriptor::Enumeration(enumeration) => {
-			let result = Some(quote!(String));
+			println!("enumeration: {enumeration:#?}");
+			// TODO: support ephemeral enums not defined in the schema
+			let result = if is_macro {
+				// Inline the enum in the macro output.
+				explore_enumeration_descriptor(enumeration, metadata, tokens, is_macro)
+			} else {
+				// Otherwise reference the enum from the generated module which this is a part
+				// of.
+				let Some(name) = &enumeration.name else {
+					return Ok(Some(quote!(String)));
+				};
+
+				if let Some((module_name, enum_name)) = name.split_once("::") {
+					let module_ident = format_ident!("{}", module_name.to_snake_case().into_safe());
+					let enum_ident = format_ident!("{}", enum_name.to_pascal_case().into_safe());
+
+					quote!(#module_ident::#enum_ident)
+				} else {
+					let enum_ident = format_ident!("{}", name.to_pascal_case().into_safe());
+					quote!(#enum_ident)
+				}
+			};
 
 			if is_root {
 				tokens.extend(quote!(pub type #root_ident = #result;));
 				Ok(Some(quote!(#root_ident)))
 			} else {
-				Ok(result)
+				Ok(Some(result))
 			}
 		}
+
 		Descriptor::InputShape(object) => {
 			let result = explore_object_shape_descriptor(
 				StructElement::from_input_shape(&object.elements),
 				typedesc,
 				root_name,
 				is_input,
-				feature_aliases,
+				metadata,
+				is_macro,
 				tokens,
 			)?;
 
 			Ok(result)
 		}
+
 		Descriptor::Range(range) => {
 			let range_descriptor = typedesc.get(range.type_pos).ok();
 			let sub_root_name = format!("{root_name}Range");
@@ -417,6 +466,7 @@ fn explore_descriptor(
 				Ok(result)
 			}
 		}
+
 		Descriptor::MultiRange(_) => todo!("`multirange` not in the `gel_protocol` crate"),
 		Descriptor::TypeAnnotation(_) => todo!("type annotations are not supported"),
 		Descriptor::Object(_object_type_descriptor) => todo!("implement `Object`"),
@@ -425,17 +475,39 @@ fn explore_descriptor(
 	}
 }
 
-pub fn explore_object_shape_descriptor(
+/// Explore the enumeration descriptor and return the root type. Defaults to
+/// `String` if the enumeration is valid.
+fn explore_enumeration_descriptor(
+	enumeration: &EnumerationTypeDescriptor,
+	metadata: &GelxMetadata,
+	tokens: &mut TokenStream,
+	is_macro: bool,
+) -> TokenStream {
+	let Some(name) = &enumeration.name else {
+		return quote!(String);
+	};
+
+	let name = name.to_pascal_case().into_safe();
+	let root_ident = format_ident!("{name}");
+
+	let enum_tokens = generate_enum(metadata, &enumeration.members, &name, is_macro);
+
+	tokens.extend(enum_tokens);
+	quote!(#root_ident)
+}
+
+fn explore_object_shape_descriptor(
 	elements: Vec<StructElement<'_>>,
 	typedesc: &Typedesc,
 	root_name: &str,
 	is_input: bool,
-	aliases: &FeatureAliases,
+	metadata: &GelxMetadata,
+	is_macro: bool,
 	tokens: &mut TokenStream,
-) -> Result<Option<TokenStream>> {
+) -> GelxResult<Option<TokenStream>> {
 	let mut impl_named_args = vec![];
 	let mut struct_fields = vec![];
-	let root_ident: syn::Ident = syn::parse_str(root_name)?;
+	let root_ident = format_ident!("{root_name}");
 
 	for element in elements {
 		let descriptor = typedesc.get(element.type_pos()).ok();
@@ -449,12 +521,16 @@ pub fn explore_object_shape_descriptor(
 			.is_input_bool(is_input)
 			.descriptor(descriptor)
 			.root_name(&sub_root_name)
-			.feature_aliases(aliases)
+			.metadata(metadata)
+			.is_macro_bool(is_macro)
 			.build();
 		let output = explore_descriptor(sub_props, tokens)?;
 		let output_token = element.wrap(&output);
-		let serde_annotation = (&safe_name != name)
-			.then_some(aliases.wrap_annotation(FeatureName::Serde, &quote!(serde(rename = #name))));
+		let serde_annotation = (&safe_name != name).then_some(metadata.features.wrap_annotation(
+			FeatureName::Serde,
+			&quote!(serde(rename = #name)),
+			is_macro,
+		));
 
 		let builder_fields = {
 			match element.cardinality() {
@@ -467,9 +543,12 @@ pub fn explore_object_shape_descriptor(
 				Cardinality::NoResult | Cardinality::AtLeastOne => None,
 			}
 		};
-		let builder_annotation = (is_input && builder_fields.is_some()).then_some(
-			aliases.wrap_annotation(FeatureName::Builder, &quote!(builder(#builder_fields))),
-		);
+		let builder_annotation =
+			(is_input && builder_fields.is_some()).then_some(metadata.features.wrap_annotation(
+				FeatureName::Builder,
+				&quote!(builder(#builder_fields)),
+				is_macro,
+			));
 
 		struct_fields.push(quote! {
 			#serde_annotation
@@ -494,7 +573,9 @@ pub fn explore_object_shape_descriptor(
 		}
 	});
 
-	let struct_derive_tokens = aliases.get_struct_derive_features(is_input);
+	let struct_derive_tokens = metadata
+		.features
+		.get_struct_derive_features(is_input, is_macro);
 	let struct_tokens = quote! {
 		#struct_derive_tokens
 		pub struct #root_ident {

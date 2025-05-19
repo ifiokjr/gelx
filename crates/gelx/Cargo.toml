@@ -5,7 +5,7 @@ authors = { workspace = true }
 categories = ["database"]
 edition = { workspace = true }
 homepage = { workspace = true }
-keywords = ["gel", "database", "typesafe", "checked", "macros"]
+keywords = ["gel", "database", "typesafe", "checked", "macros", "postgres", "codegen", "edgedb"]
 license = { workspace = true }
 readme = "readme.md"
 repository = { workspace = true }
@@ -91,6 +91,10 @@ builder = ["dep:typed-builder", "gelx_macros/builder"]
 ## Turn on the `query` and `transaction` methods and anything that relies on `gel-tokio`.
 ## The reason to separate this feature is to enable usage of this macro in browser environments
 ## where `gel-tokio` is not feasible.
+##
+## Adding this feature requires adding the `gel-protocol` dependency to your project.
+## This is because the `Queryable` derive macro requires the `gel-protocol` crate to be present
+## in the consuming crate.
 query = ["gelx_macros/query", "dep:gel-tokio", "dep:gel-derive"]
 
 ## Enable serde for the generated code.
@@ -104,6 +108,8 @@ serde = [
 ]
 
 ## Enable strum for the generated code.
+##
+## Adding this feature requires adding the `strum` dependency to your project.
 strum = [
 	"gelx_macros/strum",
 	"dep:strum",
