@@ -9,10 +9,8 @@ name = "gelx_cli"
 changelog_path = "crates/gelx_cli/changelog.md"
 git_release_enable = false
 git_release_name = "{{ package }}@v{{ version }}"
-git_tag_enable = false
+git_tag_enable = true
 git_tag_name = "{{ package }}@v{{ version }}"
-publish = false
-release = false
 
 [[package]]
 name = "gelx_macros"
