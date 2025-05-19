@@ -115,8 +115,7 @@
   scripts."fix:gelx" = {
     exec = ''
       set -e
-      cd examples/gelx_example
-      gelx generate
+      gelx generate --cwd examples/gelx_example
     '';
     description = "Fix fixable lint issues raised by gelx.";
   };
@@ -147,8 +146,7 @@
   scripts."lint:gelx" = {
     exec = ''
       set -e
-      cd examples/gelx_example
-      gelx check
+      gelx check --cwd examples/gelx_example
     '';
     description = "Check gelx is formatted correctly.";
   };

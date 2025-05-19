@@ -185,13 +185,13 @@ pub fn generate_query_token_stream(
 
 			/// Execute the desired query.
 			#query_annotation
-			pub async fn #query_ident(#(#query_props),*) -> core::result::Result<#returns, #EXPORTS_IDENT::gel_errors::Error> {
+			pub async fn #query_ident(#(#query_props),*) -> ::core::result::Result<#returns, #EXPORTS_IDENT::gel_errors::Error> {
 				#query_prop_ident.#query_method(#(#args),*).await
 			}
 
 			/// Compose the query as part of a larger transaction.
 			#query_annotation
-			pub async fn #transaction_ident(#(#transaction_props),*) -> core::result::Result<#returns, #EXPORTS_IDENT::gel_errors::Error> {
+			pub async fn #transaction_ident(#(#transaction_props),*) -> ::core::result::Result<#returns, #EXPORTS_IDENT::gel_errors::Error> {
 				#transaction_prop_ident.#query_method(#(#args),*).await
 			}
 

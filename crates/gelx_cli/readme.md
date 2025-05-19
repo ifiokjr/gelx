@@ -24,6 +24,10 @@ cargo install --git https://github.com/ifiokjr/gelx.git gelx_cli
 
 Ensure your Gel instance is running and accessible, as the CLI needs to connect to it to introspect the schema and query types.
 
+## Global Options
+
+- `--cwd <path>`: Specifies a working directory to run the command from. If provided, `gelx` will change to this directory before performing any operations. This is useful if you are invoking `gelx` from a directory different from your project's root.
+
 ## Usage
 
 The `gelx` CLI tool generates Rust code from `.edgeql` files located in your project. It reads configuration from your crate\'s `Cargo.toml` file, specifically under the `[package.metadata.gelx]` section.
