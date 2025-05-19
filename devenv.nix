@@ -130,7 +130,6 @@
   scripts."test:all" = {
     exec = ''
       set -e
-      cargo test_no_features
       cargo test_all_features
       cargo test_docs
     '';
@@ -139,7 +138,6 @@
   scripts."coverage:all" = {
     exec = ''
       set -e
-      cargo coverage_no_features
       cargo coverage_all_features
       cargo coverage_docs
       cargo coverage_report

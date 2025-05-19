@@ -12,12 +12,15 @@ fn get_features() -> String {
 	if cfg!(feature = "builder") {
 		features.push("builder");
 	}
+
 	if cfg!(feature = "query") {
 		features.push("query");
 	}
+
 	if cfg!(feature = "serde") {
 		features.push("serde");
 	}
+
 	if cfg!(feature = "strum") {
 		features.push("strum");
 	}
