@@ -12,8 +12,8 @@ use toml_edit::Item;
 use typed_builder::TypedBuilder;
 
 use crate::EXPORTS_IDENT;
-use crate::GelxError;
-use crate::GelxResult;
+use crate::GelxCoreError;
+use crate::GelxCoreResult;
 use crate::gelx_error;
 
 /// The metadata for the `gelx` crate. This can either be specified in the
@@ -33,7 +33,7 @@ use crate::gelx_error;
 /// features = { query = "ssr", strum = "ssr", builder = "ssr" }
 ///
 /// ## The location of the generated code when using the `gelx` cli.
-/// output_file = "./lib/gelx_generated.rs"
+/// output_file = "./src/gelx_generated.rs"
 ///
 /// ## The name of the arguments input struct. Will be transformed to PascalCase.
 /// input_struct_name = "Input"
@@ -102,19 +102,23 @@ pub struct GelxMetadata {
 }
 
 impl GelxMetadata {
-	pub fn try_new<P: AsRef<Path>>(path: P) -> GelxResult<Self> {
-		let toml_str: String = fs::read_to_string(get_package_root(path)?.join("Cargo.toml"))?;
+	pub fn try_new<P: AsRef<Path>>(path: P) -> GelxCoreResult<Self> {
+		let root = get_package_root(path)?;
+		let toml_str: String = fs::read_to_string(root.join("Cargo.toml"))?;
 		let doc = toml_str.parse::<DocumentMut>()?;
 
-		let metadata_str = if toml_has_path(doc.as_item(), vec!["package", "metadata", "gelx"]) {
-			doc["package"]["metadata"]["gelx"].to_string()
+		let mut metadata = if toml_has_path(doc.as_item(), vec!["package", "metadata", "gelx"]) {
+			let metadata_str = doc["package"]["metadata"]["gelx"].to_string();
+			toml::from_str::<Self>(&metadata_str)?
 		} else {
-			return Ok(Self::default());
+			Self::default()
 		};
 
-		let metadata_res = toml::from_str::<Self>(&metadata_str);
+		metadata.queries = root.join(metadata.queries);
+		metadata.output = root.join(metadata.output);
+		metadata.gel_config_path = metadata.gel_config_path.map(|p| root.join(p));
 
-		Ok(metadata_res?)
+		Ok(metadata)
 	}
 }
 
@@ -129,7 +133,7 @@ fn default_queries_path() -> PathBuf {
 }
 
 fn default_output_path() -> PathBuf {
-	PathBuf::from("lib/gelx_gen.rs")
+	PathBuf::from("src/gelx_generated.rs")
 }
 
 fn default_input_struct_name() -> String {
@@ -358,9 +362,24 @@ impl GelxFeatures {
 
 		quote!(#[cfg_attr(feature = #key, #tokens)])
 	}
+
+	/// Wrap the provided `TokenStream` annotation.
+	pub(crate) fn annotate(&self, feature: FeatureName, is_macro: bool) -> TokenStream {
+		let empty_tokens = TokenStream::new();
+
+		if !self.is_enabled(feature, is_macro) {
+			return empty_tokens;
+		}
+
+		let Some(alias) = self.alias(feature) else {
+			return empty_tokens;
+		};
+
+		quote!(#[cfg(feature = #alias)])
+	}
 }
 
-pub fn get_package_root<P: AsRef<Path>>(path: P) -> GelxResult<PathBuf> {
+pub fn get_package_root<P: AsRef<Path>>(path: P) -> GelxCoreResult<PathBuf> {
 	let path_ancestors = path.as_ref().ancestors();
 
 	for p in path_ancestors {

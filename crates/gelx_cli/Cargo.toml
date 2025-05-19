@@ -8,9 +8,14 @@ license = { workspace = true }
 repository = { workspace = true }
 rust-version = { workspace = true }
 
+[[bin]]
+name = "gelx"
+path = "src/main.rs"
+
 [dependencies]
 clap = { workspace = true, features = ["derive"] }
 gelx_core = { workspace = true }
+tokio = { workspace = true, features = ["full"] }
 toml = { workspace = true }
 
 [lints]

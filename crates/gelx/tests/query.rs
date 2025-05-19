@@ -2,7 +2,7 @@
 
 use gel_tokio::create_client;
 use gelx::gelx;
-use gelx_core::GelxResult;
+use gelx_core::GelxCoreResult;
 
 gelx!(insert_user);
 gelx!(remove_user);
@@ -13,7 +13,7 @@ gelx!(
 );
 
 #[tokio::test]
-pub async fn simple_query_with_input() -> GelxResult<()> {
+pub async fn simple_query_with_input() -> GelxCoreResult<()> {
 	let client = Box::pin(create_client()).await?;
 	let input = simple::Input {
 		custom: String::from("This is a custom field"),
@@ -31,7 +31,7 @@ pub async fn simple_query_with_input() -> GelxResult<()> {
 }
 
 #[tokio::test]
-pub async fn empty_set_query() -> GelxResult<()> {
+pub async fn empty_set_query() -> GelxCoreResult<()> {
 	let client = Box::pin(create_client()).await?;
 	let output = Box::pin(empty_set::query(&client)).await?;
 
@@ -41,7 +41,7 @@ pub async fn empty_set_query() -> GelxResult<()> {
 }
 
 #[tokio::test]
-pub async fn run_query() -> GelxResult<()> {
+pub async fn run_query() -> GelxCoreResult<()> {
 	let client = Box::pin(create_client()).await?;
 
 	let insert_props = insert_user::Input::builder()
@@ -67,7 +67,7 @@ pub async fn run_query() -> GelxResult<()> {
 }
 
 #[tokio::test]
-pub async fn run_transaction() -> GelxResult<()> {
+pub async fn run_transaction() -> GelxCoreResult<()> {
 	let client = Box::pin(create_client()).await?;
 
 	let result = Box::pin(client.transaction(|mut tx| {

@@ -1,5 +1,3 @@
-use std::path::Path;
-
 use check_keyword::CheckKeyword;
 use gel_derive::Queryable;
 use gel_tokio::Client;
@@ -14,37 +12,34 @@ use uuid::Uuid;
 
 use crate::EXPORTS_IDENT;
 use crate::FeatureName;
+use crate::GelxCoreResult;
 use crate::GelxMetadata;
-use crate::GelxResult;
 use crate::TYPES_QUERY;
 use crate::create_gel_config;
 
 /// Execute the types query to get the types of the current database.
-async fn types_query(client: &Client) -> GelxResult<Vec<TypesOutput>> {
+async fn types_query(client: &Client) -> GelxCoreResult<Vec<TypesOutput>> {
 	let result = Box::pin(client.query(TYPES_QUERY, &())).await?;
 
 	Ok(result)
 }
 
 /// Generate the custom enums.
-pub async fn generate_enums<P: AsRef<Path>>(
-	config_path: Option<P>,
+pub async fn generate_enums(
 	metadata: &GelxMetadata,
 	is_macro: bool,
-) -> GelxResult<TokenStream> {
+) -> GelxCoreResult<TokenStream> {
 	let mut tokens_map = indexmap! {
 		"default".to_string() => quote!(use ::gelx::exports as #EXPORTS_IDENT;),
 	};
 	let mut tokens: TokenStream = TokenStream::new();
 	let config = create_gel_config(
-		config_path,
+		metadata.gel_config_path.as_deref(),
 		metadata.gel_instance.as_deref(),
 		metadata.gel_branch.as_deref(),
 	)?;
 	let client = Client::new(&config);
 	let fetched_types = types_query(&client).await?;
-
-	// println!("TYPES: {:#?}", fetched_types);
 
 	for type_info in &fetched_types {
 		let Some(enum_values) = &type_info.enum_values else {

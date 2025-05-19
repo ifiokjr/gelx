@@ -74,7 +74,7 @@ pub use crate::utils::*;
 pub async fn get_descriptor(
 	query: &str,
 	metadata: &GelxMetadata,
-) -> GelxResult<CommandDataDescription1> {
+) -> GelxCoreResult<CommandDataDescription1> {
 	let config = create_gel_config(
 		metadata.gel_config_path.as_deref(),
 		metadata.gel_instance.as_deref(),
@@ -105,7 +105,7 @@ pub async fn get_descriptor(
 pub fn get_descriptor_sync(
 	query: &str,
 	metadata: &GelxMetadata,
-) -> GelxResult<CommandDataDescription1> {
+) -> GelxCoreResult<CommandDataDescription1> {
 	let rt = Runtime::new()?;
 	let descriptor = rt.block_on(async { get_descriptor(query, metadata).await })?;
 
@@ -118,7 +118,7 @@ pub fn generate_query_token_stream(
 	query: &str,
 	metadata: &GelxMetadata,
 	is_macro: bool,
-) -> GelxResult<TokenStream> {
+) -> GelxCoreResult<TokenStream> {
 	let input_ident = format_ident!("{INPUT_NAME}");
 	let output_ident = format_ident!("{OUTPUT_NAME}");
 	let props_ident = format_ident!("{PROPS_NAME}");
@@ -177,18 +177,20 @@ pub fn generate_query_token_stream(
 		transaction_props.push(quote!(#props_ident: &#input_ident));
 	}
 
+	let query_annotation = metadata.features.annotate(FeatureName::Query, is_macro);
+
 	let token_stream = quote! {
 		pub mod #module_name {
 			use ::gelx::exports as #EXPORTS_IDENT;
 
 			/// Execute the desired query.
-			#[cfg(feature = "query")]
+			#query_annotation
 			pub async fn #query_ident(#(#query_props),*) -> core::result::Result<#returns, #EXPORTS_IDENT::gel_errors::Error> {
 				#query_prop_ident.#query_method(#(#args),*).await
 			}
 
 			/// Compose the query as part of a larger transaction.
-			#[cfg(feature = "query")]
+			#query_annotation
 			pub async fn #transaction_ident(#(#transaction_props),*) -> core::result::Result<#returns, #EXPORTS_IDENT::gel_errors::Error> {
 				#transaction_prop_ident.#query_method(#(#args),*).await
 			}
@@ -275,7 +277,7 @@ fn explore_descriptor(
 		is_macro,
 	}: ExploreDescriptorProps,
 	tokens: &mut TokenStream,
-) -> GelxResult<Option<TokenStream>> {
+) -> GelxCoreResult<Option<TokenStream>> {
 	let root_ident = format_ident!("{root_name}");
 
 	let Some(descriptor) = descriptor else {
@@ -504,7 +506,7 @@ fn explore_object_shape_descriptor(
 	metadata: &GelxMetadata,
 	is_macro: bool,
 	tokens: &mut TokenStream,
-) -> GelxResult<Option<TokenStream>> {
+) -> GelxCoreResult<Option<TokenStream>> {
 	let mut impl_named_args = vec![];
 	let mut struct_fields = vec![];
 	let root_ident = format_ident!("{root_name}");

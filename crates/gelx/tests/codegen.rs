@@ -83,7 +83,7 @@ pub fn testname() -> String {
 // #[case::bytes("select b'bina\\x01ry'")] // TODO: bytes don't implement `DecodeScalar` yet.
 #[tokio::test]
 #[rustversion::attr(not(nightly), ignore = "requires nightly")]
-async fn codegen_literals(testname: String, #[case] query: &str) -> GelxResult<()> {
+async fn codegen_literals(testname: String, #[case] query: &str) -> GelxCoreResult<()> {
 	set_snapshot_suffix!("{}", testname);
 
 	let metadata = GelxMetadata::default();
@@ -105,7 +105,7 @@ async fn codegen_literals(testname: String, #[case] query: &str) -> GelxResult<(
 #[case("insert_user")]
 #[case("remove_user")]
 #[tokio::test]
-async fn codegen_files(#[case] path: &str) -> GelxResult<()> {
+async fn codegen_files(#[case] path: &str) -> GelxCoreResult<()> {
 	set_snapshot_suffix!("{}", path);
 
 	let metadata = GelxMetadata::default();
@@ -127,7 +127,7 @@ async fn codegen_files(#[case] path: &str) -> GelxResult<()> {
 
 const CRATE_DIR: &str = env!("CARGO_MANIFEST_DIR");
 
-async fn prepare_compile_test(content: &str, relative_path: &str) -> GelxResult<()> {
+async fn prepare_compile_test(content: &str, relative_path: &str) -> GelxCoreResult<()> {
 	let is_ci = std::env::var("CI")
 		.ok()
 		.is_some_and(|v| ["1", "true"].contains(&v.as_str()));
@@ -148,17 +148,18 @@ async fn prepare_compile_test(content: &str, relative_path: &str) -> GelxResult<
 	Ok(())
 }
 
-fn generate_contents(content: &str) -> GelxResult<String> {
+fn generate_contents(content: &str) -> GelxCoreResult<String> {
 	let updated = format!("{content}\n\nfn main() {{}}");
 	Ok(prettify(&updated)?)
 }
 
 #[tokio::test]
-async fn can_generate_enums() -> GelxResult<()> {
+async fn can_generate_enums() -> GelxCoreResult<()> {
 	set_snapshot_suffix!("enums");
 
+	let metadata = GelxMetadata::default();
 	let relative_path = format!("tests/compile/codegen/enums{}.rs", get_features());
-	let tokens = generate_enums(Option::<&str>::None, &GelxMetadata::default(), false).await?;
+	let tokens = generate_enums(&metadata, false).await?;
 	let content = prettify(&tokens.to_string())?;
 	insta::assert_snapshot!(content);
 
@@ -168,24 +169,20 @@ async fn can_generate_enums() -> GelxResult<()> {
 	Ok(())
 }
 #[tokio::test]
-async fn can_generate_aliased_enums() -> GelxResult<()> {
+async fn can_generate_aliased_enums() -> GelxCoreResult<()> {
 	set_snapshot_suffix!("aliased_enums");
 
+	let metadata = GelxMetadata::builder()
+		.features(
+			GelxFeatures::builder()
+				.query("ssr")
+				.builder("ssr")
+				.strum("ssr")
+				.build(),
+		)
+		.build();
 	let relative_path = format!("tests/compile/codegen/aliased_enums{}.rs", get_features());
-	let tokens = generate_enums(
-		Option::<&str>::None,
-		&GelxMetadata::builder()
-			.features(
-				GelxFeatures::builder()
-					.query("ssr")
-					.builder("ssr")
-					.strum("ssr")
-					.build(),
-			)
-			.build(),
-		false,
-	)
-	.await?;
+	let tokens = generate_enums(&metadata, false).await?;
 
 	let content = prettify(&tokens.to_string())?;
 	insta::assert_snapshot!(content);
