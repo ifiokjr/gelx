@@ -2,10 +2,10 @@
 name = "gelx_cli"
 version = { workspace = true }
 authors = { workspace = true }
-categories = ["database"]
+categories = ["database", "command-line-interface"]
 edition = { workspace = true }
 homepage = { workspace = true }
-keywords = ["gel", "database", "typesafe", "checked", "macros", "postgres", "codegen", "edgedb"]
+keywords = ["gel", "database", "typesafe", "codegen", "edgedb"]
 license = { workspace = true }
 readme = "readme.md"
 repository = { workspace = true }
