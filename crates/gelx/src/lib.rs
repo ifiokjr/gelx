@@ -3,6 +3,9 @@
 #![doc = document_features::document_features!()]
 #![cfg_attr(docsrs, feature(doc_cfg))]
 
+#[cfg(feature = "query")]
+pub use gel_tokio::create_client;
+
 /// Generates a query module from a query string.
 ///
 /// ```rust

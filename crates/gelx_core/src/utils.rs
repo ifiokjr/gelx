@@ -10,13 +10,13 @@ use proc_macro2::Span;
 use tokio::io::AsyncWriteExt;
 use tokio::process::Command;
 
-use crate::GelxResult;
+use crate::GelxCoreResult;
 
 pub(crate) fn create_gel_config<P: AsRef<Path>>(
 	config_path: Option<P>,
 	gel_instance: Option<&str>,
 	gel_branch: Option<&str>,
-) -> GelxResult<Config> {
+) -> GelxCoreResult<Config> {
 	let mut builder = Builder::new();
 
 	if let Some(instance) = gel_instance {
@@ -77,7 +77,7 @@ pub fn resolve_path(path: impl AsRef<Path>, error_span: Span) -> syn::Result<Pat
 }
 
 /// Will format the given source code using `rustfmt`.
-pub async fn rustfmt(source: &str) -> GelxResult<String> {
+pub async fn rustfmt(source: &str) -> GelxCoreResult<String> {
 	let source = prettify(source)?;
 
 	let mut process = Command::new("rustfmt")
@@ -110,7 +110,7 @@ mod tests {
 	use super::*;
 
 	#[tokio::test]
-	async fn can_format_file() -> GelxResult<()> {
+	async fn can_format_file() -> GelxCoreResult<()> {
 		let content = "struct Foo { content: String, allowed: bool, times: u64 }";
 		let formatted = rustfmt(content).await?;
 

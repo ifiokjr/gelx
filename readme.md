@@ -179,7 +179,7 @@ queries = "./queries"
 features = { query = "ssr", strum = "ssr", builder = "ssr" }
 
 ## The location of the generated code when using the `gelx` cli.
-output_file = "./lib/gelx_generated.rs"
+output_file = "./src/gelx_generated.rs"
 
 ## The name of the arguments input struct. Will be transformed to PascalCase.
 input_struct_name = "Input"

@@ -4,7 +4,7 @@ use proc_macro2::Span;
 use thiserror::Error as ThisError;
 
 #[derive(Debug, ThisError)]
-pub enum GelxError {
+pub enum GelxCoreError {
 	#[error("{0}")]
 	Syn(#[from] syn::Error),
 	#[error("{0}")]
@@ -25,18 +25,18 @@ pub enum GelxError {
 
 macro_rules! gelx_error {
 	($($args:expr),*) => {
-		GelxError::Custom(format!($($args),*))
+		GelxCoreError::Custom(format!($($args),*))
 	};
 }
 
 pub(crate) use gelx_error;
 
-pub type GelxResult<T> = Result<T, GelxError>;
+pub type GelxCoreResult<T> = Result<T, GelxCoreError>;
 
-impl From<GelxError> for syn::Error {
-	fn from(error: GelxError) -> Self {
+impl From<GelxCoreError> for syn::Error {
+	fn from(error: GelxCoreError) -> Self {
 		match error {
-			GelxError::Syn(error) => error,
+			GelxCoreError::Syn(error) => error,
 			_ => syn::Error::new(Span::call_site(), error.to_string()),
 		}
 	}

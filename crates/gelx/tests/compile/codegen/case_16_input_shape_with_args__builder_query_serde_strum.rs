@@ -1,7 +1,6 @@
 pub mod example {
     use ::gelx::exports as e;
     /// Execute the desired query.
-    #[cfg(feature = "query")]
     pub async fn query(
         client: &e::gel_tokio::Client,
         props: &Input,
@@ -9,7 +8,6 @@ pub mod example {
         client.query_required_single(QUERY, props).await
     }
     /// Compose the query as part of a larger transaction.
-    #[cfg(feature = "query")]
     pub async fn transaction(
         conn: &mut e::gel_tokio::Transaction,
         props: &Input,

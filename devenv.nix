@@ -26,6 +26,13 @@
     '';
     description = "Install all dependencies.";
   };
+  scripts."gelx" = {
+    exec = ''
+      set -e
+      cargo run --package gelx_cli --bin gelx -- $@
+    '';
+    description = "Install all dependencies.";
+  };
   scripts."install:cargo:bin" = {
     exec = ''
       cargo bin --install
