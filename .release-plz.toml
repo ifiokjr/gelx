@@ -3,6 +3,7 @@ name = "gelx"
 changelog_path = "changelog.md"
 git_release_name = "v{{ version }}"
 git_tag_name = "v{{ version }}"
+git_tag_enable = true
 
 [[package]]
 name = "gelx_cli"
