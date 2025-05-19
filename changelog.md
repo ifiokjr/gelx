@@ -6,6 +6,31 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.4.0](https://github.com/ifiokjr/gelx/compare/v0.3.0...v0.4.0) - 2025-05-19
+
+### <!-- 0 -->🎉 Added
+
+- [**breaking**] code the CLI for generating and checking code
+- add `GelxMetadata` and improve everything
+- add strum support
+- add `regex` dependency and refactor code generation functions
+- add `gelx_cli` crate and integrate `clap` for command-line interface
+
+### <!-- 3 -->📚 Documentation
+
+- update readme.md
+- small improvements
+
+### <!-- 6 -->🧪 Testing
+
+- fix broken doc tests
+- update codegen files
+- update snapshots
+
+### <!-- 7 -->⚙️ Miscellaneous Tasks
+
+- remove `test_no_features` due to issues
+
 ## [0.3.0](https://github.com/ifiokjr/gelx/compare/v0.2.1...v0.3.0) - 2025-05-16
 
 ### <!-- 0 -->🎉 Added
