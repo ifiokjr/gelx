@@ -137,8 +137,10 @@ async fn generate_all_queries_code(metadata: &GelxMetadata) -> GelxCoreResult<St
 	let enum_code = generate_enums(metadata, false).await?;
 	all_generated_code.push_str(&enum_code.to_string());
 
-	for entry in fs::read_dir(&metadata.queries)? {
-		let entry = entry?;
+	let mut entries = fs::read_dir(&metadata.queries)?.collect::<Result<Vec<_>, _>>()?;
+	entries.sort_by_key(fs::DirEntry::path);
+
+	for entry in entries {
 		let path = entry.path();
 
 		if path.is_file() && path.extension().is_some_and(|ext| ext == "edgeql") {
