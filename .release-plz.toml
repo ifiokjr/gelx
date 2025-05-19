@@ -30,6 +30,15 @@ git_release_name = "{{ package }}@v{{ version }}"
 git_tag_enable = true
 git_tag_name = "{{ package }}@v{{ version }}"
 
+# Examples
+
+[[package]]
+name = "gelx_example"
+git_release_enable = false
+git_tag_enable = false
+publish = false
+release = false
+
 [changelog]
 commit_parsers = [
 	{ message = "^feat", group = "<!-- 0 -->🎉 Added" },
