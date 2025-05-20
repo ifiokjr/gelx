@@ -24,6 +24,24 @@ cargo install --git https://github.com/ifiokjr/gelx.git gelx_cli
 
 Ensure your Gel instance is running and accessible, as the CLI needs to connect to it to introspect the schema and query types.
 
+Run `gelx help` to see the available commands and options.
+
+```bash
+Generate fully typed rust code from your gel schema and inline queries.
+
+Usage: gelx [OPTIONS] <COMMAND>
+
+Commands:
+  generate  Generates Rust code from the crate in the current directory
+  check     Checks if the generated Rust code is up-to-date
+  help      Print this message or the help of the given subcommand(s)
+
+Options:
+      --cwd <CWD>  Optional working directory to run the command from
+  -h, --help       Print help
+  -V, --version    Print version
+```
+
 ## Global Options
 
 - `--cwd <path>`: Specifies a working directory to run the command from. If provided, `gelx` will change to this directory before performing any operations. This is useful if you are invoking `gelx` from a directory different from your project's root.
@@ -38,40 +56,32 @@ The `gelx` CLI tool generates Rust code from `.edgeql` files located in your pro
 
 This command generates Rust code based on your `.edgeql` query files and the Gel schema.
 
-1. **Navigate to your crate\'s root directory:**
-   ```bash
-   cd path/to/your/crate
-   ```
-2. **Run the generate command:**
-   ```bash
-   gelx generate
-   ```
+```bash
+gelx generate --cwd path/to/your/crate
+```
 
-   The CLI will:
-   - Read configuration from `[package.metadata.gelx]` in your `Cargo.toml`.
-   - Scan the directory specified by `queries` (default: `./queries`) for `.edgeql` files.
-   - Connect to your Gel instance to get type information for each query.
-   - Generate corresponding Rust modules.
-   - Write the combined code to the file specified by `output_file` (default: `./src/gelx_generated.rs`).
+The CLI will:
+
+- Read configuration from `[package.metadata.gelx]` in your `Cargo.toml`.
+- Scan the directory specified by `queries` (default: `./queries`) for `.edgeql` files.
+- Connect to your Gel instance to get type information for each query.
+- Generate corresponding Rust modules.
+- Write the combined code to the file specified by `output_file` (default: `./src/gelx_generated.rs`).
 
 #### `gelx check`
 
 This command verifies if the currently generated code is up-to-date with your schema and query files. It\'s useful for CI pipelines to ensure that code generation has been run after any changes.
 
-1. **Navigate to your crate\'s root directory:**
-   ```bash
-   cd path/to/your/crate
-   ```
-2. **Run the check command:**
-   ```bash
-   gelx check
-   ```
+```bash
+gelx check --cwd path/to/your/crate
+```
 
-   The CLI will:
-   - Perform the same generation process as `gelx generate` in memory.
-   - Compare the newly generated code with the content of the existing `output_file`.
-   - If they match, it will exit successfully (status code 0).
-   - If they differ, it will print an error message and exit with a non-zero status code, indicating that `gelx generate` needs to be run.
+The CLI will:
+
+- Perform the same generation process as `gelx generate` in memory.
+- Compare the newly generated code with the content of the existing `output_file`.
+- If they match, it will exit successfully (status code 0).
+- If they differ, it will print an error message and exit with a non-zero status code, indicating that `gelx generate` needs to be run.
 
 ## Configuration
 
@@ -131,21 +141,9 @@ This crate is part of the `gelx` workspace. Please refer to the [main project's 
 Unlicense, see the [license file](https://github.com/ifiokjr/gelx/blob/main/LICENSE) in the root of the workspace.
 
 [crate-image]: https://img.shields.io/crates/v/gelx_cli.svg
-
-<!-- TODO: Update when/if gelx_cli is published separately -->
-
 [crate-link]: https://crates.io/crates/gelx_cli
-
-<!-- TODO: Update when/if gelx_cli is published separately -->
-
 [docs-image]: https://docs.rs/gelx_cli/badge.svg
-
-<!-- TODO: Update when/if gelx_cli has separate docs -->
-
 [docs-link]: https://docs.rs/gelx_cli/
-
-<!-- TODO: Update when/if gelx_cli has separate docs -->
-
 [ci-status-image]: https://github.com/ifiokjr/gelx/workflows/ci/badge.svg?branch=main
 [ci-status-link]: https://github.com/ifiokjr/gelx/actions?query=workflow%3Aci+branch%3Amain
 [unlicense-image]: https://img.shields.io/badge/license-Unlicense-blue.svg

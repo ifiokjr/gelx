@@ -25,10 +25,23 @@ pub use gel_tokio::create_client;
 ///
 /// The above code will find the file `<CRATE_ROOT>/queries/insert_user.edgeql`
 /// and run the query from there.
+///
+/// If you want to customise the module name generated for a specific query
+/// path, or just use a custom path for the generated macro in your codebase the
+/// following options is also available.
+///
+/// ```rust
+/// use gelx::gelx;
+///
+/// gelx!(custom_name_for_module, file: "queries/insert_user.edgeql");
+/// ```
 #[macro_export]
 macro_rules! gelx {
 	($module:ident, $query:literal) => {
 		$crate::exports::gelx_macros::gelx_raw!($module, query: $query);
+	};
+	($module:ident, file: $path:literal) => {
+		$crate::exports::gelx_macros::gelx_raw!($module, file: $path);
 	};
 	($module: ident) => {
 		$crate::exports::gelx_macros::gelx_raw!($module);
@@ -48,6 +61,10 @@ macro_rules! gelx {
 /// The above code can actually be replaced with the
 /// `gelx!(insert_user)` macro since the file is placed in the `queries`
 /// folder.
+#[deprecated(
+	since = "0.5.0",
+	note = "use `gelx!(insert_user, file: \"queries/insert_user.edgeql\")` instead"
+)]
 #[macro_export]
 macro_rules! gelx_file {
 	($module:ident, $path:literal) => {
