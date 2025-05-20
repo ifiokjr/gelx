@@ -1,43 +1,36 @@
-[[package]]
-name = "gelx"
-changelog_path = "changelog.md"
+[workspace]
 git_release_name = "v{{ version }}"
 git_tag_name = "v{{ version }}"
+publish = false
+release = false
+git_release_enable = false
+git_tag_enable = false
+
+[[package]]
+name = "gelx"
+changelog_path = "crates/gelx/changelog.md"
+publish = true
+release = true
 git_tag_enable = true
 git_release_enable = true
 
 [[package]]
 name = "gelx_cli"
 changelog_path = "crates/gelx_cli/changelog.md"
-git_release_name = "v{{ version }}"
-git_tag_name = "v{{ version }}"
-git_release_enable = false
-git_tag_enable = false
+publish = true
+release = true
 
 [[package]]
 name = "gelx_macros"
 changelog_path = "crates/gelx_macros/changelog.md"
-git_release_name = "v{{ version }}"
-git_tag_name = "v{{ version }}"
-git_release_enable = false
-git_tag_enable = false
+publish = true
+release = true
 
 [[package]]
 name = "gelx_core"
 changelog_path = "crates/gelx_core/changelog.md"
-git_release_name = "v{{ version }}"
-git_tag_name = "v{{ version }}"
-git_release_enable = false
-git_tag_enable = false
-
-# Examples
-
-[[package]]
-name = "gelx_example"
-git_release_enable = false
-git_tag_enable = false
-publish = false
-release = false
+publish = true
+release = true
 
 [changelog]
 commit_parsers = [
