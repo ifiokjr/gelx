@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.4.1](https://github.com/ifiokjr/gelx/compare/gelx_cli@v0.4.0...gelx_cli@v0.4.1) - 2025-05-20
+
+### <!-- 0 -->🎉 Added
+
+- *(gelx_cli)* add `--stdout` option for code generation
+- *(gelx)* `gelx!` can now take a custom path to the query
+
+### <!-- 6 -->🧪 Testing
+
+- *(gelx_cli)* hardcode `gelx` binary from `devenv` in test
+
 ## [0.4.0](https://github.com/ifiokjr/gelx/releases/tag/gelx_cli@v0.4.0) - 2025-05-19
 
 ### <!-- 0 -->🎉 Added

@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.4.1](https://github.com/ifiokjr/gelx/compare/v0.4.0...v0.4.1) - 2025-05-20
+
+### <!-- 0 -->🎉 Added
+
+- *(gelx)* `gelx!` can now take a custom path to the query
+
+### <!-- 1 -->🐛 Bug Fixes
+
+- *(gelx)* update deprecation notice for `gelx_file!` macro
+
 ## [0.4.0](https://github.com/ifiokjr/gelx/compare/v0.3.0...v0.4.0) - 2025-05-19
 
 ### <!-- 0 -->🎉 Added
