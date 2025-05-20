@@ -829,7 +829,7 @@ dependencies = [
 
 [[package]]
 name = "gelx"
-version = "0.4.0"
+version = "0.5.0"
 dependencies = [
  "assert2",
  "bigdecimal",
@@ -861,7 +861,7 @@ dependencies = [
 
 [[package]]
 name = "gelx_cli"
-version = "0.4.0"
+version = "0.5.0"
 dependencies = [
  "clap",
  "gelx_core",
@@ -874,7 +874,7 @@ dependencies = [
 
 [[package]]
 name = "gelx_core"
-version = "0.4.0"
+version = "0.5.0"
 dependencies = [
  "assert2",
  "check_keyword",
@@ -903,7 +903,7 @@ dependencies = [
 
 [[package]]
 name = "gelx_example"
-version = "0.4.0"
+version = "0.5.0"
 dependencies = [
  "anyhow",
  "gel-protocol",
@@ -915,7 +915,7 @@ dependencies = [
 
 [[package]]
 name = "gelx_macros"
-version = "0.4.0"
+version = "0.5.0"
 dependencies = [
  "gelx_core",
  "proc-macro2",
