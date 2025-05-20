@@ -1,6 +1,6 @@
 #![cfg_attr(docsrs, feature(doc_cfg))]
 #![doc(html_logo_url = "https://raw.githubusercontent.com/ifiokjr/gelx/main/setup/assets/logo.png")]
-#![doc = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../readme.md"))]
+#![doc = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/readme.md"))]
 //! <br />
 //! ## Features
 #![doc = document_features::document_features!()]
