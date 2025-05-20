@@ -62,7 +62,7 @@ macro_rules! gelx {
 /// `gelx!(insert_user)` macro since the file is placed in the `queries`
 /// folder.
 #[deprecated(
-	since = "0.5.0",
+	since = "0.4.1",
 	note = "use `gelx!(insert_user, file: \"queries/insert_user.edgeql\")` instead"
 )]
 #[macro_export]
