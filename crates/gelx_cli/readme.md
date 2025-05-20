@@ -115,50 +115,7 @@ The CLI will:
 
 The `gelx` CLI reads its configuration from the `Cargo.toml` file of the crate it is being run in. The configuration should be placed under the `[package.metadata.gelx]` table.
 
-Example `Cargo.toml` configuration:
-
-```toml
-[package.metadata.gelx]
-## The location of the queries relative to the root of the crate.
-queries = "./queries"
-
-## The features to enable and their aliases. By default all features are enabled.
-## To disable a feature set it to false. The available features are:
-## - query
-## - serde
-## - strum
-## - builder
-features = { query = "ssr", strum = "ssr", builder = "ssr" }
-
-## The location of the generated code when using the `gelx` cli.
-output_file = "./src/gelx_generated.rs"
-
-## The name of the arguments input struct. Will be transformed to PascalCase.
-input_struct_name = "Input"
-
-## The name of the exported output struct for generated queries. Will be transformed to PascalCase.
-output_struct_name = "Output"
-
-## The name of the query function exported.
-query_function_name = "query"
-
-## The name of the transaction function exported.
-transaction_function_name = "transaction"
-
-## The relative path to the `gel` config file. This is optional and if not provided the `gel`
-## config will be read from the environment variables.
-# gel_config_path = "./gel.toml"
-
-## The name of the `gel` instance to use. This is optional and if not provided the environment
-## variable `$GEL_INSTANCE` will be used.
-# gel_instance = "$GEL_INSTANCE"
-
-## The name of the `gel` branch to use. This is optional and if not provided the environment
-## variable `$GEL_BRANCH` will be used.
-# gel_branch = "$GEL_BRANCH"
-```
-
-Refer to the main `gelx` crate [readme.md](https://github.com/ifiokjr/gelx/blob/main/readme.md) for more details on the core library and its features.
+Refer to the main `gelx` crate [readme.md](https://github.com/ifiokjr/gelx/blob/main/readme.md#configuration) for all the configuration options.
 
 ## Contributing
 

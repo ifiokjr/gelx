@@ -1,3 +1,5 @@
+#![doc(html_logo_url = "https://raw.githubusercontent.com/ifiokjr/gelx/main/setup/assets/logo.png")]
+
 use std::fs;
 use std::io;
 use std::io::Write;
@@ -130,10 +132,10 @@ async fn handle_check(metadata: &GelxMetadata) -> GelxCoreResult<()> {
 }
 
 async fn generate_all_queries_code(metadata: &GelxMetadata) -> GelxCoreResult<String> {
-	if !metadata.queries.is_dir() {
+	if !metadata.queries_path.is_dir() {
 		return Err(GelxCoreError::Custom(format!(
 			"Queries directory not found: {}",
-			metadata.queries.display()
+			metadata.queries_path.display()
 		)));
 	}
 
@@ -150,7 +152,7 @@ async fn generate_all_queries_code(metadata: &GelxMetadata) -> GelxCoreResult<St
 	let enum_code = generate_enums(metadata, false).await?;
 	all_generated_code.push_str(&enum_code.to_string());
 
-	let mut entries = fs::read_dir(&metadata.queries)?.collect::<Result<Vec<_>, _>>()?;
+	let mut entries = fs::read_dir(&metadata.queries_path)?.collect::<Result<Vec<_>, _>>()?;
 	entries.sort_by_key(fs::DirEntry::path);
 
 	for entry in entries {
@@ -181,7 +183,7 @@ async fn generate_all_queries_code(metadata: &GelxMetadata) -> GelxCoreResult<St
 		// Only comments
 		eprintln!(
 			"Warning: No .edgeql files found in {}. Generated file will be empty.",
-			metadata.queries.display()
+			metadata.queries_path.display()
 		);
 	}
 

@@ -1,3 +1,5 @@
+#![doc(html_logo_url = "https://raw.githubusercontent.com/ifiokjr/gelx/main/setup/assets/logo.png")]
+
 use gelx_core::GelxMetadata;
 use gelx_core::generate_query_token_stream;
 use gelx_core::get_descriptor_sync;
