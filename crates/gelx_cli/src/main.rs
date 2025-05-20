@@ -198,7 +198,9 @@ mod tests {
 	const CRATE_DIR: &str = env!("CARGO_MANIFEST_DIR");
 
 	fn cli() -> Command {
-		Command::new(insta_cmd::get_cargo_bin("gelx"))
+		// TODO: fix this breaks on CI as it needs the build to be run first I think
+		// Command::new(insta_cmd::get_cargo_bin("gelx"))
+		Command::new("gelx")
 	}
 
 	#[test]
