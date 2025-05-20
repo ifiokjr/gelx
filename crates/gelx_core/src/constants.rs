@@ -140,14 +140,7 @@ impl AsRef<str> for IdentConst {
 	}
 }
 
-/// Name of the input struct.
-pub const INPUT_NAME: &str = "Input";
-/// Name of the output struct.
-pub const OUTPUT_NAME: &str = "Output";
 /// Name of the query function.
-pub const QUERY_NAME: &str = "query";
 pub const QUERY_PROP_NAME: &str = "client";
-pub const TRANSACTION_NAME: &str = "transaction";
 pub const TRANSACTION_PROP_NAME: &str = "conn";
 pub const PROPS_NAME: &str = "props";
-pub const QUERY_CONSTANT: IdentConst = IdentConst("QUERY");

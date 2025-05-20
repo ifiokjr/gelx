@@ -52,6 +52,9 @@ pub struct GelxMetadata {
 	#[builder(default = default_transaction_function_name())]
 	#[serde(default = "default_transaction_function_name")]
 	pub transaction_function_name: String,
+	#[builder(default = default_query_constant_name())]
+	#[serde(default = "default_query_constant_name")]
+	pub query_constant_name: String,
 	#[builder(default = default_exports_alias())]
 	#[serde(default = "default_exports_alias")]
 	pub exports_alias: String,
@@ -86,7 +89,27 @@ impl GelxMetadata {
 		Ok(metadata)
 	}
 
-	pub fn exports_ident(&self) -> Ident {
+	pub fn input_struct_ident(&self) -> Ident {
+		format_ident!("{}", self.input_struct_name)
+	}
+
+	pub fn output_struct_ident(&self) -> Ident {
+		format_ident!("{}", self.output_struct_name)
+	}
+
+	pub fn query_constant_ident(&self) -> Ident {
+		format_ident!("{}", self.query_constant_name)
+	}
+
+	pub fn query_function_ident(&self) -> Ident {
+		format_ident!("{}", self.query_function_name)
+	}
+
+	pub fn transaction_function_ident(&self) -> Ident {
+		format_ident!("{}", self.transaction_function_name)
+	}
+
+	pub fn exports_alias_ident(&self) -> Ident {
 		format_ident!("{}", self.exports_alias)
 	}
 }
@@ -105,10 +128,6 @@ fn default_output_path() -> PathBuf {
 	PathBuf::from("src/gelx_generated.rs")
 }
 
-fn default_exports_alias() -> String {
-	"__g".to_string()
-}
-
 fn default_input_struct_name() -> String {
 	"Input".to_string()
 }
@@ -123,6 +142,14 @@ fn default_query_function_name() -> String {
 
 fn default_transaction_function_name() -> String {
 	"transaction".to_string()
+}
+
+fn default_query_constant_name() -> String {
+	"QUERY".to_string()
+}
+
+fn default_exports_alias() -> String {
+	"__g".to_string()
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, derive_more::From)]

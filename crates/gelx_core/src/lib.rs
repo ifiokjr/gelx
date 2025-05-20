@@ -67,7 +67,10 @@ use syn::punctuated::Punctuated;
 use tokio::runtime::Runtime;
 use typed_builder::TypedBuilder;
 
-pub use crate::constants::*;
+use crate::constants::PROPS_NAME;
+use crate::constants::QUERY_PROP_NAME;
+use crate::constants::TRANSACTION_PROP_NAME;
+pub use crate::constants::TYPES_QUERY;
 pub use crate::enums::*;
 pub use crate::errors::*;
 pub use crate::metadata::*;
@@ -122,12 +125,13 @@ pub fn generate_query_token_stream(
 	metadata: &GelxMetadata,
 	is_macro: bool,
 ) -> GelxCoreResult<TokenStream> {
-	let input_ident = format_ident!("{INPUT_NAME}");
-	let output_ident = format_ident!("{OUTPUT_NAME}");
+	let input_ident = metadata.input_struct_ident();
+	let output_ident = metadata.output_struct_ident();
 	let props_ident = format_ident!("{PROPS_NAME}");
-	let query_ident = format_ident!("{QUERY_NAME}");
+
+	let query_ident = metadata.query_function_ident();
+	let transaction_ident = metadata.transaction_function_ident();
 	let query_prop_ident = format_ident!("{QUERY_PROP_NAME}");
-	let transaction_ident = format_ident!("{TRANSACTION_NAME}");
 	let transaction_prop_ident = format_ident!("{TRANSACTION_PROP_NAME}");
 	let module_name: Ident = format_ident!("{}", name.to_snake_case());
 	let input = descriptor.input.decode()?;
@@ -140,7 +144,7 @@ pub fn generate_query_token_stream(
 			.is_input()
 			.is_root()
 			.descriptor(input.root())
-			.root_name(INPUT_NAME)
+			.root_name(&metadata.input_struct_name)
 			.metadata(metadata)
 			.is_macro_bool(is_macro)
 			.build(),
@@ -151,7 +155,7 @@ pub fn generate_query_token_stream(
 			.typedesc(&output)
 			.is_root()
 			.descriptor(output.root())
-			.root_name(OUTPUT_NAME)
+			.root_name(&metadata.output_struct_name)
 			.metadata(metadata)
 			.is_macro_bool(is_macro)
 			.build(),
@@ -164,12 +168,13 @@ pub fn generate_query_token_stream(
 		Cardinality::One => quote!(query_required_single),
 		Cardinality::Many | Cardinality::AtLeastOne => quote!(query),
 	};
-	let exports_ident = metadata.exports_ident();
+	let exports_ident = metadata.exports_alias_ident();
+	let query_constant = metadata.query_constant_ident();
 	let mut query_props = vec![quote!(#query_prop_ident: &#exports_ident::gel_tokio::Client)];
 	let mut transaction_props =
 		vec![quote!(#transaction_prop_ident: &mut #exports_ident::gel_tokio::Transaction)];
 	let args = vec![
-		quote!(#QUERY_CONSTANT),
+		quote!(#query_constant),
 		input.root().map_or(quote!(&()), |_| quote!(#props_ident)),
 	];
 	let inner_return = output.root().map_or(quote!(()), |_| quote!(#output_ident));
@@ -201,7 +206,7 @@ pub fn generate_query_token_stream(
 			#tokens
 
 			/// The original query string provided to the macro. Can be reused in your codebase.
-			pub const #QUERY_CONSTANT: &str = #query;
+			pub const #query_constant: &str = #query;
 		}
 	};
 
@@ -282,7 +287,7 @@ fn explore_descriptor(
 	tokens: &mut TokenStream,
 ) -> GelxCoreResult<Option<TokenStream>> {
 	let root_ident = format_ident!("{root_name}");
-	let exports_ident = metadata.exports_ident();
+	let exports_ident = metadata.exports_alias_ident();
 	let Some(descriptor) = descriptor else {
 		if is_root {
 			tokens.extend(quote!(pub type #root_ident = ();));
@@ -512,7 +517,7 @@ fn explore_object_shape_descriptor(
 	let mut impl_named_args = vec![];
 	let mut struct_fields = vec![];
 	let root_ident = format_ident!("{root_name}");
-	let exports_ident = metadata.exports_ident();
+	let exports_ident = metadata.exports_alias_ident();
 	for element in elements {
 		let descriptor = typedesc.get(element.type_pos()).ok();
 		let name = &element.name();

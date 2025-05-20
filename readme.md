@@ -218,6 +218,9 @@ query_function_name = "query"
 ## The name of the transaction function exported.
 transaction_function_name = "transaction"
 
+## The name of the query constant exported.
+query_constant_name = "QUERY"
+
 ## The alias used for the `gelx::exports` module.
 exports_alias = "__g"
 

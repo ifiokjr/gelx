@@ -13,12 +13,12 @@ use uuid::Uuid;
 use crate::FeatureName;
 use crate::GelxCoreResult;
 use crate::GelxMetadata;
-use crate::TYPES_QUERY;
+use crate::constants::TYPES_QUERY;
 use crate::create_gel_config;
 
 /// Execute the types query to get the types of the current database.
 async fn types_query(client: &Client) -> GelxCoreResult<Vec<TypesOutput>> {
-	let result = Box::pin(client.query(TYPES_QUERY, &())).await?;
+	let result = client.query(TYPES_QUERY, &()).await?;
 
 	Ok(result)
 }
@@ -28,7 +28,7 @@ pub async fn generate_enums(
 	metadata: &GelxMetadata,
 	is_macro: bool,
 ) -> GelxCoreResult<TokenStream> {
-	let exports_ident = metadata.exports_ident();
+	let exports_ident = metadata.exports_alias_ident();
 	let mut tokens_map = indexmap! {
 		"default".to_string() => quote!(use ::gelx::exports as #exports_ident;),
 	};
@@ -95,7 +95,7 @@ pub(crate) fn generate_enum(
 	local_name: &str,
 	is_macro: bool,
 ) -> TokenStream {
-	let exports_ident = metadata.exports_ident();
+	let exports_ident = metadata.exports_alias_ident();
 	let pascal_local_name = format_ident!("{}", local_name.to_pascal_case().into_safe());
 	let enum_values_tokens = enum_values.iter().map(|value| {
 		let pascal_value = value.to_pascal_case();
