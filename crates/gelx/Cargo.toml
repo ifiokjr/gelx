@@ -5,7 +5,7 @@ authors = { workspace = true }
 categories = ["database"]
 edition = { workspace = true }
 homepage = { workspace = true }
-keywords = ["gel", "database", "typesafe", "checked", "macros", "postgres", "codegen", "edgedb"]
+keywords = ["gel", "database", "typesafe", "macros", "codegen"]
 license = { workspace = true }
 readme = "readme.md"
 repository = { workspace = true }
