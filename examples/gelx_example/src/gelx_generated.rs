@@ -5,34 +5,34 @@
 #![allow(unused)]
 #![allow(unused_qualifications)]
 #![allow(clippy::all)]
-use ::gelx::exports as e;
-#[derive(Clone, Debug, Copy, e::serde::Serialize, e::serde::Deserialize)]
+use ::gelx::exports as __g;
+#[derive(Clone, Debug, Copy, __g::serde::Serialize, __g::serde::Deserialize)]
 #[cfg_attr(
     feature = "ssr",
     derive(
-        e::gel_derive::Queryable,
-        e::strum::AsRefStr,
-        e::strum::Display,
-        e::strum::EnumString,
-        e::strum::EnumIs,
-        e::strum::FromRepr,
-        e::strum::IntoStaticStr
+        __g::gel_derive::Queryable,
+        __g::strum::AsRefStr,
+        __g::strum::Display,
+        __g::strum::EnumString,
+        __g::strum::EnumIs,
+        __g::strum::FromRepr,
+        __g::strum::IntoStaticStr
     )
 )]
 pub enum AccountProvider {
     Github,
 }
-#[derive(Clone, Debug, Copy, e::serde::Serialize, e::serde::Deserialize)]
+#[derive(Clone, Debug, Copy, __g::serde::Serialize, __g::serde::Deserialize)]
 #[cfg_attr(
     feature = "ssr",
     derive(
-        e::gel_derive::Queryable,
-        e::strum::AsRefStr,
-        e::strum::Display,
-        e::strum::EnumString,
-        e::strum::EnumIs,
-        e::strum::FromRepr,
-        e::strum::IntoStaticStr
+        __g::gel_derive::Queryable,
+        __g::strum::AsRefStr,
+        __g::strum::Display,
+        __g::strum::EnumString,
+        __g::strum::EnumIs,
+        __g::strum::FromRepr,
+        __g::strum::IntoStaticStr
     )
 )]
 pub enum RelationshipType {
@@ -40,17 +40,17 @@ pub enum RelationshipType {
     Block,
     Mute,
 }
-#[derive(Clone, Debug, Copy, e::serde::Serialize, e::serde::Deserialize)]
+#[derive(Clone, Debug, Copy, __g::serde::Serialize, __g::serde::Deserialize)]
 #[cfg_attr(
     feature = "ssr",
     derive(
-        e::gel_derive::Queryable,
-        e::strum::AsRefStr,
-        e::strum::Display,
-        e::strum::EnumString,
-        e::strum::EnumIs,
-        e::strum::FromRepr,
-        e::strum::IntoStaticStr
+        __g::gel_derive::Queryable,
+        __g::strum::AsRefStr,
+        __g::strum::Display,
+        __g::strum::EnumString,
+        __g::strum::EnumIs,
+        __g::strum::FromRepr,
+        __g::strum::IntoStaticStr
     )
 )]
 pub enum Role {
@@ -62,17 +62,17 @@ pub enum Role {
 }
 pub mod additional {
     use super::*;
-    #[derive(Clone, Debug, Copy, e::serde::Serialize, e::serde::Deserialize)]
+    #[derive(Clone, Debug, Copy, __g::serde::Serialize, __g::serde::Deserialize)]
     #[cfg_attr(
         feature = "ssr",
         derive(
-            e::gel_derive::Queryable,
-            e::strum::AsRefStr,
-            e::strum::Display,
-            e::strum::EnumString,
-            e::strum::EnumIs,
-            e::strum::FromRepr,
-            e::strum::IntoStaticStr
+            __g::gel_derive::Queryable,
+            __g::strum::AsRefStr,
+            __g::strum::Display,
+            __g::strum::EnumString,
+            __g::strum::EnumIs,
+            __g::strum::FromRepr,
+            __g::strum::IntoStaticStr
         )
     )]
     pub enum Awesomeness {
@@ -80,17 +80,17 @@ pub mod additional {
         Somewhat,
         NotReally,
     }
-    #[derive(Clone, Debug, Copy, e::serde::Serialize, e::serde::Deserialize)]
+    #[derive(Clone, Debug, Copy, __g::serde::Serialize, __g::serde::Deserialize)]
     #[cfg_attr(
         feature = "ssr",
         derive(
-            e::gel_derive::Queryable,
-            e::strum::AsRefStr,
-            e::strum::Display,
-            e::strum::EnumString,
-            e::strum::EnumIs,
-            e::strum::FromRepr,
-            e::strum::IntoStaticStr
+            __g::gel_derive::Queryable,
+            __g::strum::AsRefStr,
+            __g::strum::Display,
+            __g::strum::EnumString,
+            __g::strum::EnumIs,
+            __g::strum::FromRepr,
+            __g::strum::IntoStaticStr
         )
     )]
     pub enum Smartness {
@@ -106,27 +106,27 @@ pub mod additional {
     }
 }
 pub mod insert_user {
-    use ::gelx::exports as e;
+    use ::gelx::exports as __g;
     /// Execute the desired query.
     #[cfg(feature = "ssr")]
     pub async fn query(
-        client: &e::gel_tokio::Client,
+        client: &__g::gel_tokio::Client,
         props: &Input,
-    ) -> ::core::result::Result<Output, e::gel_errors::Error> {
+    ) -> ::core::result::Result<Output, __g::gel_errors::Error> {
         client.query_required_single(QUERY, props).await
     }
     /// Compose the query as part of a larger transaction.
     #[cfg(feature = "ssr")]
     pub async fn transaction(
-        conn: &mut e::gel_tokio::Transaction,
+        conn: &mut __g::gel_tokio::Transaction,
         props: &Input,
-    ) -> ::core::result::Result<Output, e::gel_errors::Error> {
+    ) -> ::core::result::Result<Output, __g::gel_errors::Error> {
         conn.query_required_single(QUERY, props).await
     }
-    #[derive(Clone, Debug, e::serde::Serialize, e::serde::Deserialize)]
+    #[derive(Clone, Debug, __g::serde::Serialize, __g::serde::Deserialize)]
     #[cfg_attr(
         feature = "ssr",
-        derive(e::typed_builder::TypedBuilder, e::gel_derive::Queryable)
+        derive(__g::typed_builder::TypedBuilder, __g::gel_derive::Queryable)
     )]
     pub struct Input {
         #[cfg_attr(feature = "ssr", builder(setter(into)))]
@@ -136,22 +136,22 @@ pub mod insert_user {
         #[cfg_attr(feature = "ssr", builder(setter(into)))]
         pub slug: String,
     }
-    impl e::gel_protocol::query_arg::QueryArgs for Input {
+    impl __g::gel_protocol::query_arg::QueryArgs for Input {
         fn encode(
             &self,
-            encoder: &mut e::gel_protocol::query_arg::Encoder,
-        ) -> core::result::Result<(), e::gel_errors::Error> {
-            let map = e::gel_protocol::named_args! {
+            encoder: &mut __g::gel_protocol::query_arg::Encoder,
+        ) -> core::result::Result<(), __g::gel_errors::Error> {
+            let map = __g::gel_protocol::named_args! {
                 "name" => self.name.clone(), "bio" => self.bio.clone(), "slug" => self
                 .slug.clone(),
             };
             map.encode(encoder)
         }
     }
-    #[derive(Clone, Debug, e::serde::Serialize, e::serde::Deserialize)]
-    #[cfg_attr(feature = "ssr", derive(e::gel_derive::Queryable))]
+    #[derive(Clone, Debug, __g::serde::Serialize, __g::serde::Deserialize)]
+    #[cfg_attr(feature = "ssr", derive(__g::gel_derive::Queryable))]
     pub struct Output {
-        pub id: e::uuid::Uuid,
+        pub id: __g::uuid::Uuid,
         pub name: Option<String>,
         pub bio: Option<String>,
         pub slug: String,
@@ -160,93 +160,93 @@ pub mod insert_user {
     pub const QUERY: &str = "with NewUser := (insert User {\n  name := <str>$name,\n  bio := <str>$bio,\n  slug := <str>$slug,\n})\nselect NewUser {\n  id,\n  name,\n  bio,\n  slug,\n};\n";
 }
 pub mod remove_user {
-    use ::gelx::exports as e;
+    use ::gelx::exports as __g;
     /// Execute the desired query.
     #[cfg(feature = "ssr")]
     pub async fn query(
-        client: &e::gel_tokio::Client,
+        client: &__g::gel_tokio::Client,
         props: &Input,
-    ) -> ::core::result::Result<Option<Output>, e::gel_errors::Error> {
+    ) -> ::core::result::Result<Option<Output>, __g::gel_errors::Error> {
         client.query_single(QUERY, props).await
     }
     /// Compose the query as part of a larger transaction.
     #[cfg(feature = "ssr")]
     pub async fn transaction(
-        conn: &mut e::gel_tokio::Transaction,
+        conn: &mut __g::gel_tokio::Transaction,
         props: &Input,
-    ) -> ::core::result::Result<Option<Output>, e::gel_errors::Error> {
+    ) -> ::core::result::Result<Option<Output>, __g::gel_errors::Error> {
         conn.query_single(QUERY, props).await
     }
-    #[derive(Clone, Debug, e::serde::Serialize, e::serde::Deserialize)]
+    #[derive(Clone, Debug, __g::serde::Serialize, __g::serde::Deserialize)]
     #[cfg_attr(
         feature = "ssr",
-        derive(e::typed_builder::TypedBuilder, e::gel_derive::Queryable)
+        derive(__g::typed_builder::TypedBuilder, __g::gel_derive::Queryable)
     )]
     pub struct Input {
         #[cfg_attr(feature = "ssr", builder(setter(into)))]
-        pub id: e::uuid::Uuid,
+        pub id: __g::uuid::Uuid,
     }
-    impl e::gel_protocol::query_arg::QueryArgs for Input {
+    impl __g::gel_protocol::query_arg::QueryArgs for Input {
         fn encode(
             &self,
-            encoder: &mut e::gel_protocol::query_arg::Encoder,
-        ) -> core::result::Result<(), e::gel_errors::Error> {
-            let map = e::gel_protocol::named_args! {
+            encoder: &mut __g::gel_protocol::query_arg::Encoder,
+        ) -> core::result::Result<(), __g::gel_errors::Error> {
+            let map = __g::gel_protocol::named_args! {
                 "id" => self.id.clone(),
             };
             map.encode(encoder)
         }
     }
-    #[derive(Clone, Debug, e::serde::Serialize, e::serde::Deserialize)]
-    #[cfg_attr(feature = "ssr", derive(e::gel_derive::Queryable))]
+    #[derive(Clone, Debug, __g::serde::Serialize, __g::serde::Deserialize)]
+    #[cfg_attr(feature = "ssr", derive(__g::gel_derive::Queryable))]
     pub struct Output {
-        pub id: e::uuid::Uuid,
+        pub id: __g::uuid::Uuid,
     }
     /// The original query string provided to the macro. Can be reused in your codebase.
     pub const QUERY: &str = "delete User filter .id = <uuid>$id;\n";
 }
 pub mod select_user {
-    use ::gelx::exports as e;
+    use ::gelx::exports as __g;
     /// Execute the desired query.
     #[cfg(feature = "ssr")]
     pub async fn query(
-        client: &e::gel_tokio::Client,
+        client: &__g::gel_tokio::Client,
         props: &Input,
-    ) -> ::core::result::Result<Option<Output>, e::gel_errors::Error> {
+    ) -> ::core::result::Result<Option<Output>, __g::gel_errors::Error> {
         client.query_single(QUERY, props).await
     }
     /// Compose the query as part of a larger transaction.
     #[cfg(feature = "ssr")]
     pub async fn transaction(
-        conn: &mut e::gel_tokio::Transaction,
+        conn: &mut __g::gel_tokio::Transaction,
         props: &Input,
-    ) -> ::core::result::Result<Option<Output>, e::gel_errors::Error> {
+    ) -> ::core::result::Result<Option<Output>, __g::gel_errors::Error> {
         conn.query_single(QUERY, props).await
     }
-    #[derive(Clone, Debug, e::serde::Serialize, e::serde::Deserialize)]
+    #[derive(Clone, Debug, __g::serde::Serialize, __g::serde::Deserialize)]
     #[cfg_attr(
         feature = "ssr",
-        derive(e::typed_builder::TypedBuilder, e::gel_derive::Queryable)
+        derive(__g::typed_builder::TypedBuilder, __g::gel_derive::Queryable)
     )]
     pub struct Input {
         #[cfg_attr(feature = "ssr", builder(setter(into)))]
         pub slug: String,
     }
-    impl e::gel_protocol::query_arg::QueryArgs for Input {
+    impl __g::gel_protocol::query_arg::QueryArgs for Input {
         fn encode(
             &self,
-            encoder: &mut e::gel_protocol::query_arg::Encoder,
-        ) -> core::result::Result<(), e::gel_errors::Error> {
-            let map = e::gel_protocol::named_args! {
+            encoder: &mut __g::gel_protocol::query_arg::Encoder,
+        ) -> core::result::Result<(), __g::gel_errors::Error> {
+            let map = __g::gel_protocol::named_args! {
                 "slug" => self.slug.clone(),
             };
             map.encode(encoder)
         }
     }
-    #[derive(Clone, Debug, e::serde::Serialize, e::serde::Deserialize)]
-    #[cfg_attr(feature = "ssr", derive(e::gel_derive::Queryable))]
+    #[derive(Clone, Debug, __g::serde::Serialize, __g::serde::Deserialize)]
+    #[cfg_attr(feature = "ssr", derive(__g::gel_derive::Queryable))]
     pub struct Output {
-        pub id: e::uuid::Uuid,
+        pub id: __g::uuid::Uuid,
         pub name: Option<String>,
         pub bio: Option<String>,
         pub slug: String,

@@ -10,7 +10,6 @@ use serde::Deserialize;
 use serde::Serialize;
 use uuid::Uuid;
 
-use crate::EXPORTS_IDENT;
 use crate::FeatureName;
 use crate::GelxCoreResult;
 use crate::GelxMetadata;
@@ -29,8 +28,9 @@ pub async fn generate_enums(
 	metadata: &GelxMetadata,
 	is_macro: bool,
 ) -> GelxCoreResult<TokenStream> {
+	let exports_ident = metadata.exports_ident();
 	let mut tokens_map = indexmap! {
-		"default".to_string() => quote!(use ::gelx::exports as #EXPORTS_IDENT;),
+		"default".to_string() => quote!(use ::gelx::exports as #exports_ident;),
 	};
 	let mut tokens: TokenStream = TokenStream::new();
 	let config = create_gel_config(
@@ -62,7 +62,7 @@ pub async fn generate_enums(
 			.entry(module_name.into_safe())
 			.or_insert_with(|| {
 				if module_name == "default" {
-					quote!(use ::gelx::exports as #EXPORTS_IDENT;)
+					quote!(use ::gelx::exports as #exports_ident;)
 				} else {
 					quote! { use super::*; }
 				}
@@ -95,6 +95,7 @@ pub(crate) fn generate_enum(
 	local_name: &str,
 	is_macro: bool,
 ) -> TokenStream {
+	let exports_ident = metadata.exports_ident();
 	let pascal_local_name = format_ident!("{}", local_name.to_pascal_case().into_safe());
 	let enum_values_tokens = enum_values.iter().map(|value| {
 		let pascal_value = value.to_pascal_case();
@@ -125,7 +126,9 @@ pub(crate) fn generate_enum(
 		}
 	});
 
-	let enum_derive = metadata.features.get_enum_derive_features(is_macro);
+	let enum_derive = metadata
+		.features
+		.get_enum_derive_features(&exports_ident, is_macro);
 	let enum_tokens = quote! {
 		#enum_derive
 		pub enum #pascal_local_name {

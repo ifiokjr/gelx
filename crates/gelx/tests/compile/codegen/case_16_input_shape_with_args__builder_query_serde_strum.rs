@@ -1,37 +1,37 @@
 pub mod example {
-    use ::gelx::exports as e;
+    use ::gelx::exports as __g;
     /// Execute the desired query.
     pub async fn query(
-        client: &e::gel_tokio::Client,
+        client: &__g::gel_tokio::Client,
         props: &Input,
-    ) -> ::core::result::Result<Output, e::gel_errors::Error> {
+    ) -> ::core::result::Result<Output, __g::gel_errors::Error> {
         client.query_required_single(QUERY, props).await
     }
     /// Compose the query as part of a larger transaction.
     pub async fn transaction(
-        conn: &mut e::gel_tokio::Transaction,
+        conn: &mut __g::gel_tokio::Transaction,
         props: &Input,
-    ) -> ::core::result::Result<Output, e::gel_errors::Error> {
+    ) -> ::core::result::Result<Output, __g::gel_errors::Error> {
         conn.query_required_single(QUERY, props).await
     }
     #[derive(
         Clone,
         Debug,
-        e::serde::Serialize,
-        e::serde::Deserialize,
-        e::typed_builder::TypedBuilder,
-        e::gel_derive::Queryable
+        __g::serde::Serialize,
+        __g::serde::Deserialize,
+        __g::typed_builder::TypedBuilder,
+        __g::gel_derive::Queryable
     )]
     pub struct Input {
         #[builder(setter(into))]
         pub custom: String,
     }
-    impl e::gel_protocol::query_arg::QueryArgs for Input {
+    impl __g::gel_protocol::query_arg::QueryArgs for Input {
         fn encode(
             &self,
-            encoder: &mut e::gel_protocol::query_arg::Encoder,
-        ) -> core::result::Result<(), e::gel_errors::Error> {
-            let map = e::gel_protocol::named_args! {
+            encoder: &mut __g::gel_protocol::query_arg::Encoder,
+        ) -> core::result::Result<(), __g::gel_errors::Error> {
+            let map = __g::gel_protocol::named_args! {
                 "custom" => self.custom.clone(),
             };
             map.encode(encoder)
@@ -40,9 +40,9 @@ pub mod example {
     #[derive(
         Clone,
         Debug,
-        e::serde::Serialize,
-        e::serde::Deserialize,
-        e::gel_derive::Queryable
+        __g::serde::Serialize,
+        __g::serde::Deserialize,
+        __g::gel_derive::Queryable
     )]
     pub struct Output {
         pub hello: String,

@@ -1,31 +1,31 @@
-use ::gelx::exports as e;
-#[derive(Clone, Debug, Copy, e::serde::Serialize, e::serde::Deserialize)]
+use ::gelx::exports as __g;
+#[derive(Clone, Debug, Copy, __g::serde::Serialize, __g::serde::Deserialize)]
 #[cfg_attr(
     feature = "ssr",
     derive(
-        e::gel_derive::Queryable,
-        e::strum::AsRefStr,
-        e::strum::Display,
-        e::strum::EnumString,
-        e::strum::EnumIs,
-        e::strum::FromRepr,
-        e::strum::IntoStaticStr
+        __g::gel_derive::Queryable,
+        __g::strum::AsRefStr,
+        __g::strum::Display,
+        __g::strum::EnumString,
+        __g::strum::EnumIs,
+        __g::strum::FromRepr,
+        __g::strum::IntoStaticStr
     )
 )]
 pub enum AccountProvider {
     Github,
 }
-#[derive(Clone, Debug, Copy, e::serde::Serialize, e::serde::Deserialize)]
+#[derive(Clone, Debug, Copy, __g::serde::Serialize, __g::serde::Deserialize)]
 #[cfg_attr(
     feature = "ssr",
     derive(
-        e::gel_derive::Queryable,
-        e::strum::AsRefStr,
-        e::strum::Display,
-        e::strum::EnumString,
-        e::strum::EnumIs,
-        e::strum::FromRepr,
-        e::strum::IntoStaticStr
+        __g::gel_derive::Queryable,
+        __g::strum::AsRefStr,
+        __g::strum::Display,
+        __g::strum::EnumString,
+        __g::strum::EnumIs,
+        __g::strum::FromRepr,
+        __g::strum::IntoStaticStr
     )
 )]
 pub enum RelationshipType {
@@ -33,17 +33,17 @@ pub enum RelationshipType {
     Block,
     Mute,
 }
-#[derive(Clone, Debug, Copy, e::serde::Serialize, e::serde::Deserialize)]
+#[derive(Clone, Debug, Copy, __g::serde::Serialize, __g::serde::Deserialize)]
 #[cfg_attr(
     feature = "ssr",
     derive(
-        e::gel_derive::Queryable,
-        e::strum::AsRefStr,
-        e::strum::Display,
-        e::strum::EnumString,
-        e::strum::EnumIs,
-        e::strum::FromRepr,
-        e::strum::IntoStaticStr
+        __g::gel_derive::Queryable,
+        __g::strum::AsRefStr,
+        __g::strum::Display,
+        __g::strum::EnumString,
+        __g::strum::EnumIs,
+        __g::strum::FromRepr,
+        __g::strum::IntoStaticStr
     )
 )]
 pub enum Role {
@@ -55,17 +55,17 @@ pub enum Role {
 }
 pub mod additional {
     use super::*;
-    #[derive(Clone, Debug, Copy, e::serde::Serialize, e::serde::Deserialize)]
+    #[derive(Clone, Debug, Copy, __g::serde::Serialize, __g::serde::Deserialize)]
     #[cfg_attr(
         feature = "ssr",
         derive(
-            e::gel_derive::Queryable,
-            e::strum::AsRefStr,
-            e::strum::Display,
-            e::strum::EnumString,
-            e::strum::EnumIs,
-            e::strum::FromRepr,
-            e::strum::IntoStaticStr
+            __g::gel_derive::Queryable,
+            __g::strum::AsRefStr,
+            __g::strum::Display,
+            __g::strum::EnumString,
+            __g::strum::EnumIs,
+            __g::strum::FromRepr,
+            __g::strum::IntoStaticStr
         )
     )]
     pub enum Awesomeness {
@@ -73,17 +73,17 @@ pub mod additional {
         Somewhat,
         NotReally,
     }
-    #[derive(Clone, Debug, Copy, e::serde::Serialize, e::serde::Deserialize)]
+    #[derive(Clone, Debug, Copy, __g::serde::Serialize, __g::serde::Deserialize)]
     #[cfg_attr(
         feature = "ssr",
         derive(
-            e::gel_derive::Queryable,
-            e::strum::AsRefStr,
-            e::strum::Display,
-            e::strum::EnumString,
-            e::strum::EnumIs,
-            e::strum::FromRepr,
-            e::strum::IntoStaticStr
+            __g::gel_derive::Queryable,
+            __g::strum::AsRefStr,
+            __g::strum::Display,
+            __g::strum::EnumString,
+            __g::strum::EnumIs,
+            __g::strum::FromRepr,
+            __g::strum::IntoStaticStr
         )
     )]
     pub enum Smartness {

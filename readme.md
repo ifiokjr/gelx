@@ -47,19 +47,19 @@ use gelx::gelx;
 // Creates a module called `simple` with a function called `query` and structs
 // for the `Input` and `Output`.
 gelx!(
-	simple,
+	example,
 	"select { hello := \"world\", custom := <str>$custom }"
 );
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
 	let client = create_client().await?;
-	let input = simple::Input {
+	let input = example::Input {
 		custom: String::from("custom"),
 	};
 
 	// For queries the following code can be used.
-	let output = simple::query(&client, &input).await?;
+	let output = example::query(&client, &input).await?;
 
 	Ok(())
 }
@@ -68,46 +68,48 @@ async fn main() -> Result<(), Error> {
 The macro above generates the following code:
 
 ```rust
-pub mod simple {
-	use ::gelx::exports as e;
+pub mod example {
+	use ::gelx::exports as __g;
 	/// Execute the desired query.
-	#[cfg(feature = "query")]
 	pub async fn query(
-		client: &e::gel_tokio::Client,
+		client: &__g::gel_tokio::Client,
 		props: &Input,
-	) -> core::result::Result<Output, e::gel_errors::Error> {
+	) -> ::core::result::Result<Output, __g::gel_errors::Error> {
 		client.query_required_single(QUERY, props).await
 	}
 	/// Compose the query as part of a larger transaction.
-	#[cfg(feature = "query")]
 	pub async fn transaction(
-		conn: &mut e::gel_tokio::Transaction,
+		conn: &mut __g::gel_tokio::Transaction,
 		props: &Input,
-	) -> core::result::Result<Output, e::gel_errors::Error> {
+	) -> ::core::result::Result<Output, __g::gel_errors::Error> {
 		conn.query_required_single(QUERY, props).await
 	}
-	#[derive(Clone, Debug)]
-	#[cfg_attr(feature = "builder", derive(e::typed_builder::TypedBuilder))]
-	#[cfg_attr(feature = "query", derive(e::gel_derive::Queryable))]
-	#[cfg_attr(feature = "serde", derive(e::serde::Serialize, e::serde::Deserialize))]
+	#[derive(
+		Clone,
+		Debug,
+		__g::serde::Serialize,
+		__g::serde::Deserialize,
+		__g::typed_builder::TypedBuilder,
+		__g::gel_derive::Queryable,
+	)]
 	pub struct Input {
-		#[cfg_attr(feature = "builder", builder(setter(into)))]
+		#[builder(setter(into))]
 		pub custom: String,
 	}
-	impl e::gel_protocol::query_arg::QueryArgs for Input {
+	impl __g::gel_protocol::query_arg::QueryArgs for Input {
 		fn encode(
 			&self,
-			encoder: &mut e::gel_protocol::query_arg::Encoder,
-		) -> core::result::Result<(), e::gel_errors::Error> {
-			let map = e::gel_protocol::named_args! {
+			encoder: &mut __g::gel_protocol::query_arg::Encoder,
+		) -> core::result::Result<(), __g::gel_errors::Error> {
+			let map = __g::gel_protocol::named_args! {
 				"custom" => self.custom.clone(),
 			};
 			map.encode(encoder)
 		}
 	}
-	#[derive(Clone, Debug)]
-	#[cfg_attr(feature = "query", derive(e::gel_derive::Queryable))]
-	#[cfg_attr(feature = "serde", derive(e::serde::Serialize, e::serde::Deserialize))]
+	#[derive(
+		Clone, Debug, __g::serde::Serialize, __g::serde::Deserialize, __g::gel_derive::Queryable,
+	)]
 	pub struct Output {
 		pub hello: String,
 		pub custom: String,

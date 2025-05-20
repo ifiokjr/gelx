@@ -61,6 +61,7 @@ use heck::ToSnakeCase;
 use proc_macro2::TokenStream;
 use quote::format_ident;
 use quote::quote;
+use syn::Ident;
 use syn::Token;
 use syn::punctuated::Punctuated;
 use tokio::runtime::Runtime;
@@ -128,7 +129,7 @@ pub fn generate_query_token_stream(
 	let query_prop_ident = format_ident!("{QUERY_PROP_NAME}");
 	let transaction_ident = format_ident!("{TRANSACTION_NAME}");
 	let transaction_prop_ident = format_ident!("{TRANSACTION_PROP_NAME}");
-	let module_name: syn::Ident = format_ident!("{}", name.to_snake_case());
+	let module_name: Ident = format_ident!("{}", name.to_snake_case());
 	let input = descriptor.input.decode()?;
 	let output = descriptor.output.decode()?;
 	let mut tokens: TokenStream = TokenStream::new();
@@ -163,10 +164,10 @@ pub fn generate_query_token_stream(
 		Cardinality::One => quote!(query_required_single),
 		Cardinality::Many | Cardinality::AtLeastOne => quote!(query),
 	};
-
-	let mut query_props = vec![quote!(#query_prop_ident: &#EXPORTS_IDENT::gel_tokio::Client)];
+	let exports_ident = metadata.exports_ident();
+	let mut query_props = vec![quote!(#query_prop_ident: &#exports_ident::gel_tokio::Client)];
 	let mut transaction_props =
-		vec![quote!(#transaction_prop_ident: &mut #EXPORTS_IDENT::gel_tokio::Transaction)];
+		vec![quote!(#transaction_prop_ident: &mut #exports_ident::gel_tokio::Transaction)];
 	let args = vec![
 		quote!(#QUERY_CONSTANT),
 		input.root().map_or(quote!(&()), |_| quote!(#props_ident)),
@@ -183,17 +184,17 @@ pub fn generate_query_token_stream(
 
 	let token_stream = quote! {
 		pub mod #module_name {
-			use ::gelx::exports as #EXPORTS_IDENT;
+			use ::gelx::exports as #exports_ident;
 
 			/// Execute the desired query.
 			#query_annotation
-			pub async fn #query_ident(#(#query_props),*) -> ::core::result::Result<#returns, #EXPORTS_IDENT::gel_errors::Error> {
+			pub async fn #query_ident(#(#query_props),*) -> ::core::result::Result<#returns, #exports_ident::gel_errors::Error> {
 				#query_prop_ident.#query_method(#(#args),*).await
 			}
 
 			/// Compose the query as part of a larger transaction.
 			#query_annotation
-			pub async fn #transaction_ident(#(#transaction_props),*) -> ::core::result::Result<#returns, #EXPORTS_IDENT::gel_errors::Error> {
+			pub async fn #transaction_ident(#(#transaction_props),*) -> ::core::result::Result<#returns, #exports_ident::gel_errors::Error> {
 				#transaction_prop_ident.#query_method(#(#args),*).await
 			}
 
@@ -281,7 +282,7 @@ fn explore_descriptor(
 	tokens: &mut TokenStream,
 ) -> GelxCoreResult<Option<TokenStream>> {
 	let root_ident = format_ident!("{root_name}");
-
+	let exports_ident = metadata.exports_ident();
 	let Some(descriptor) = descriptor else {
 		if is_root {
 			tokens.extend(quote!(pub type #root_ident = ();));
@@ -324,7 +325,7 @@ fn explore_descriptor(
 		}
 
 		Descriptor::BaseScalar(base_scalar) => {
-			let result = uuid_to_token_name(&base_scalar.id);
+			let result = uuid_to_token_name(&base_scalar.id, &exports_ident);
 
 			if is_root {
 				tokens.extend(quote!(pub type #root_ident = #result;));
@@ -335,7 +336,7 @@ fn explore_descriptor(
 		}
 
 		Descriptor::Scalar(scalar) => {
-			let result = uuid_to_token_name(&scalar.id);
+			let result = uuid_to_token_name(&scalar.id, &exports_ident);
 
 			if is_root {
 				tokens.extend(quote!(pub type #root_ident = #result;));
@@ -460,7 +461,7 @@ fn explore_descriptor(
 				.root_name(&sub_root_name)
 				.build();
 			let result = explore_descriptor(props, tokens)?
-				.map(|result| quote!(#EXPORTS_IDENT::gel_protocol::model::Range<#result>));
+				.map(|result| quote!(#exports_ident::gel_protocol::model::Range<#result>));
 
 			if is_root {
 				tokens.extend(quote!(pub type #root_ident = #result;));
@@ -511,7 +512,7 @@ fn explore_object_shape_descriptor(
 	let mut impl_named_args = vec![];
 	let mut struct_fields = vec![];
 	let root_ident = format_ident!("{root_name}");
-
+	let exports_ident = metadata.exports_ident();
 	for element in elements {
 		let descriptor = typedesc.get(element.type_pos()).ok();
 		let name = &element.name();
@@ -565,9 +566,9 @@ fn explore_object_shape_descriptor(
 	}
 
 	let impl_tokens = is_input.then_some(quote! {
-		impl #EXPORTS_IDENT::gel_protocol::query_arg::QueryArgs for #root_ident {
-			fn encode(&self, encoder: &mut #EXPORTS_IDENT::gel_protocol::query_arg::Encoder) -> core::result::Result<(), #EXPORTS_IDENT::gel_errors::Error> {
-				let map = #EXPORTS_IDENT::gel_protocol::named_args! {
+		impl #exports_ident::gel_protocol::query_arg::QueryArgs for #root_ident {
+			fn encode(&self, encoder: &mut #exports_ident::gel_protocol::query_arg::Encoder) -> core::result::Result<(), #exports_ident::gel_errors::Error> {
+				let map = #exports_ident::gel_protocol::named_args! {
 					#(#impl_named_args)*
 				};
 
@@ -576,9 +577,10 @@ fn explore_object_shape_descriptor(
 		}
 	});
 
-	let struct_derive_tokens = metadata
-		.features
-		.get_struct_derive_features(is_input, is_macro);
+	let struct_derive_tokens =
+		metadata
+			.features
+			.get_struct_derive_features(&exports_ident, is_input, is_macro);
 	let struct_tokens = quote! {
 		#struct_derive_tokens
 		pub struct #root_ident {
@@ -665,29 +667,29 @@ impl<'a> From<&'a TupleElement> for StructElement<'a> {
 	}
 }
 
-pub fn uuid_to_token_name(uuid: &Uuid) -> TokenStream {
+pub fn uuid_to_token_name(uuid: &Uuid, exports_ident: &Ident) -> TokenStream {
 	match *uuid {
-		STD_UUID => quote!(#EXPORTS_IDENT::uuid::Uuid),
+		STD_UUID => quote!(#exports_ident::uuid::Uuid),
 		STD_STR => quote!(String),
-		STD_BYTES => quote!(#EXPORTS_IDENT::bytes::Bytes),
+		STD_BYTES => quote!(#exports_ident::bytes::Bytes),
 		STD_INT16 => quote!(i16),
 		STD_INT32 => quote!(i32),
 		STD_INT64 => quote!(i64),
 		STD_FLOAT32 => quote!(f32),
 		STD_FLOAT64 => quote!(f64),
-		STD_DECIMAL => quote!(#EXPORTS_IDENT::DecimalAlias),
+		STD_DECIMAL => quote!(#exports_ident::DecimalAlias),
 		STD_BOOL => quote!(bool),
-		STD_DATETIME | STD_PG_TIMESTAMPTZ => quote!(#EXPORTS_IDENT::DateTimeAlias),
-		CAL_LOCAL_DATETIME | STD_PG_TIMESTAMP => quote!(#EXPORTS_IDENT::LocalDatetimeAlias),
-		CAL_LOCAL_DATE | STD_PG_DATE => quote!(#EXPORTS_IDENT::LocalDateAlias),
-		CAL_LOCAL_TIME => quote!(#EXPORTS_IDENT::LocalTimeAlias),
-		STD_DURATION => quote!(#EXPORTS_IDENT::gel_protocol::model::Duration),
-		CAL_RELATIVE_DURATION => quote!(#EXPORTS_IDENT::gel_protocol::model::RelativeDuration),
-		CAL_DATE_DURATION => quote!(#EXPORTS_IDENT::gel_protocol::model::DateDuration),
-		STD_JSON | STD_PG_JSON => quote!(#EXPORTS_IDENT::gel_protocol::model::Json),
-		STD_BIGINT => quote!(#EXPORTS_IDENT::BigIntAlias),
-		CFG_MEMORY => quote!(#EXPORTS_IDENT::gel_protocol::model::ConfigMemory),
-		PGVECTOR_VECTOR => quote!(#EXPORTS_IDENT::gel_protocol::model::Vector),
+		STD_DATETIME | STD_PG_TIMESTAMPTZ => quote!(#exports_ident::DateTimeAlias),
+		CAL_LOCAL_DATETIME | STD_PG_TIMESTAMP => quote!(#exports_ident::LocalDatetimeAlias),
+		CAL_LOCAL_DATE | STD_PG_DATE => quote!(#exports_ident::LocalDateAlias),
+		CAL_LOCAL_TIME => quote!(#exports_ident::LocalTimeAlias),
+		STD_DURATION => quote!(#exports_ident::gel_protocol::model::Duration),
+		CAL_RELATIVE_DURATION => quote!(#exports_ident::gel_protocol::model::RelativeDuration),
+		CAL_DATE_DURATION => quote!(#exports_ident::gel_protocol::model::DateDuration),
+		STD_JSON | STD_PG_JSON => quote!(#exports_ident::gel_protocol::model::Json),
+		STD_BIGINT => quote!(#exports_ident::BigIntAlias),
+		CFG_MEMORY => quote!(#exports_ident::gel_protocol::model::ConfigMemory),
+		PGVECTOR_VECTOR => quote!(#exports_ident::gel_protocol::model::Vector),
 		STD_PG_INTERVAL => todo!("STD_PG_INTERVAL not yet implemented"),
 		POSTGIS_GEOMETRY => todo!("POSTGIS_GEOMETRY not yet implemented"),
 		POSTGIS_GEOGRAPHY => todo!("POSTGIS_GEOGRAPHY not yet implemented"),

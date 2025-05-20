@@ -1,17 +1,17 @@
-use ::gelx::exports as e;
+use ::gelx::exports as __g;
 #[derive(
     Clone,
     Debug,
     Copy,
-    e::serde::Serialize,
-    e::serde::Deserialize,
-    e::gel_derive::Queryable,
-    e::strum::AsRefStr,
-    e::strum::Display,
-    e::strum::EnumString,
-    e::strum::EnumIs,
-    e::strum::FromRepr,
-    e::strum::IntoStaticStr
+    __g::serde::Serialize,
+    __g::serde::Deserialize,
+    __g::gel_derive::Queryable,
+    __g::strum::AsRefStr,
+    __g::strum::Display,
+    __g::strum::EnumString,
+    __g::strum::EnumIs,
+    __g::strum::FromRepr,
+    __g::strum::IntoStaticStr
 )]
 pub enum AccountProvider {
     Github,
@@ -20,15 +20,15 @@ pub enum AccountProvider {
     Clone,
     Debug,
     Copy,
-    e::serde::Serialize,
-    e::serde::Deserialize,
-    e::gel_derive::Queryable,
-    e::strum::AsRefStr,
-    e::strum::Display,
-    e::strum::EnumString,
-    e::strum::EnumIs,
-    e::strum::FromRepr,
-    e::strum::IntoStaticStr
+    __g::serde::Serialize,
+    __g::serde::Deserialize,
+    __g::gel_derive::Queryable,
+    __g::strum::AsRefStr,
+    __g::strum::Display,
+    __g::strum::EnumString,
+    __g::strum::EnumIs,
+    __g::strum::FromRepr,
+    __g::strum::IntoStaticStr
 )]
 pub enum RelationshipType {
     Follow,
@@ -39,15 +39,15 @@ pub enum RelationshipType {
     Clone,
     Debug,
     Copy,
-    e::serde::Serialize,
-    e::serde::Deserialize,
-    e::gel_derive::Queryable,
-    e::strum::AsRefStr,
-    e::strum::Display,
-    e::strum::EnumString,
-    e::strum::EnumIs,
-    e::strum::FromRepr,
-    e::strum::IntoStaticStr
+    __g::serde::Serialize,
+    __g::serde::Deserialize,
+    __g::gel_derive::Queryable,
+    __g::strum::AsRefStr,
+    __g::strum::Display,
+    __g::strum::EnumString,
+    __g::strum::EnumIs,
+    __g::strum::FromRepr,
+    __g::strum::IntoStaticStr
 )]
 pub enum Role {
     None,
@@ -62,15 +62,15 @@ pub mod additional {
         Clone,
         Debug,
         Copy,
-        e::serde::Serialize,
-        e::serde::Deserialize,
-        e::gel_derive::Queryable,
-        e::strum::AsRefStr,
-        e::strum::Display,
-        e::strum::EnumString,
-        e::strum::EnumIs,
-        e::strum::FromRepr,
-        e::strum::IntoStaticStr
+        __g::serde::Serialize,
+        __g::serde::Deserialize,
+        __g::gel_derive::Queryable,
+        __g::strum::AsRefStr,
+        __g::strum::Display,
+        __g::strum::EnumString,
+        __g::strum::EnumIs,
+        __g::strum::FromRepr,
+        __g::strum::IntoStaticStr
     )]
     pub enum Awesomeness {
         Very,
@@ -81,15 +81,15 @@ pub mod additional {
         Clone,
         Debug,
         Copy,
-        e::serde::Serialize,
-        e::serde::Deserialize,
-        e::gel_derive::Queryable,
-        e::strum::AsRefStr,
-        e::strum::Display,
-        e::strum::EnumString,
-        e::strum::EnumIs,
-        e::strum::FromRepr,
-        e::strum::IntoStaticStr
+        __g::serde::Serialize,
+        __g::serde::Deserialize,
+        __g::gel_derive::Queryable,
+        __g::strum::AsRefStr,
+        __g::strum::Display,
+        __g::strum::EnumString,
+        __g::strum::EnumIs,
+        __g::strum::FromRepr,
+        __g::strum::IntoStaticStr
     )]
     pub enum Smartness {
         #[serde(rename = "low")]

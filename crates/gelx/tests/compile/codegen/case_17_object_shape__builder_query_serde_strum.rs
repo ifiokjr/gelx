@@ -1,29 +1,29 @@
 pub mod example {
-    use ::gelx::exports as e;
+    use ::gelx::exports as __g;
     /// Execute the desired query.
     pub async fn query(
-        client: &e::gel_tokio::Client,
-    ) -> ::core::result::Result<Vec<Output>, e::gel_errors::Error> {
+        client: &__g::gel_tokio::Client,
+    ) -> ::core::result::Result<Vec<Output>, __g::gel_errors::Error> {
         client.query(QUERY, &()).await
     }
     /// Compose the query as part of a larger transaction.
     pub async fn transaction(
-        conn: &mut e::gel_tokio::Transaction,
-    ) -> ::core::result::Result<Vec<Output>, e::gel_errors::Error> {
+        conn: &mut __g::gel_tokio::Transaction,
+    ) -> ::core::result::Result<Vec<Output>, __g::gel_errors::Error> {
         conn.query(QUERY, &()).await
     }
     pub type Input = ();
     #[derive(
         Clone,
         Debug,
-        e::serde::Serialize,
-        e::serde::Deserialize,
-        e::gel_derive::Queryable
+        __g::serde::Serialize,
+        __g::serde::Deserialize,
+        __g::gel_derive::Queryable
     )]
     pub struct OutputWalletsSet {
-        pub created_at: e::DateTimeAlias,
-        pub id: e::uuid::Uuid,
-        pub updated_at: e::DateTimeAlias,
+        pub created_at: __g::DateTimeAlias,
+        pub id: __g::uuid::Uuid,
+        pub updated_at: __g::DateTimeAlias,
         pub primary: bool,
         pub description: Option<String>,
         pub name: Option<String>,
@@ -32,15 +32,15 @@ pub mod example {
     #[derive(
         Clone,
         Debug,
-        e::serde::Serialize,
-        e::serde::Deserialize,
-        e::gel_derive::Queryable
+        __g::serde::Serialize,
+        __g::serde::Deserialize,
+        __g::gel_derive::Queryable
     )]
     pub struct Output {
         pub slug: String,
-        pub id: e::uuid::Uuid,
-        pub created_at: e::DateTimeAlias,
-        pub updated_at: e::DateTimeAlias,
+        pub id: __g::uuid::Uuid,
+        pub created_at: __g::DateTimeAlias,
+        pub updated_at: __g::DateTimeAlias,
         pub description: Option<String>,
         pub name: String,
         pub wallets: Vec<OutputWalletsSet>,

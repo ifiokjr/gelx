@@ -150,5 +150,4 @@ pub const QUERY_PROP_NAME: &str = "client";
 pub const TRANSACTION_NAME: &str = "transaction";
 pub const TRANSACTION_PROP_NAME: &str = "conn";
 pub const PROPS_NAME: &str = "props";
-pub const EXPORTS_IDENT: IdentConst = IdentConst("e");
 pub const QUERY_CONSTANT: IdentConst = IdentConst("QUERY");

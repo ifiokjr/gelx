@@ -4,14 +4,15 @@ use std::path::PathBuf;
 
 use indexmap::IndexMap;
 use proc_macro2::TokenStream;
+use quote::format_ident;
 use quote::quote;
 use serde::Deserialize;
 use serde::Serialize;
+use syn::Ident;
 use toml_edit::DocumentMut;
 use toml_edit::Item;
 use typed_builder::TypedBuilder;
 
-use crate::EXPORTS_IDENT;
 use crate::GelxCoreError;
 use crate::GelxCoreResult;
 use crate::gelx_error;
@@ -19,46 +20,7 @@ use crate::gelx_error;
 /// The metadata for the `gelx` crate. This can either be specified in the
 /// `Cargo.toml` file or via CLI arguments.
 ///
-/// ```toml
-/// [package.metadata.gelx]
-/// ## The location of the queries relative to the root of the crate.
-/// queries = "./queries"
-///
-/// ## The features to enable and their aliases. By default all features are enabled.
-/// ## To disable a feature set it to false. The available features are:
-/// ## - query
-/// ## - serde
-/// ## - strum
-/// ## - builder
-/// features = { query = "ssr", strum = "ssr", builder = "ssr" }
-///
-/// ## The location of the generated code when using the `gelx` cli.
-/// output_file = "./src/gelx_generated.rs"
-///
-/// ## The name of the arguments input struct. Will be transformed to PascalCase.
-/// input_struct_name = "Input"
-///
-/// ## The name of the exported output struct for generated queries. Will be transformed to PascalCase.
-/// output_struct_name = "Output"
-///
-/// ## The name of the query function exported.
-/// query_function_name = "query"
-///
-/// ## The name of the transaction function exported.
-/// transaction_function_name = "transaction"
-///
-/// ## The relative path to the `gel` config file. This is optional and if not provided the `gel`
-/// ## config will be read from the environment variables.
-/// # gel_config_path = "./gel.toml"
-///
-/// ## The name of the `gel` instance to use. This is optional and if not provided the environment
-/// ## variable `$GEL_INSTANCE` will be used.
-/// # gel_instance = "$GEL_INSTANCE"
-///
-/// ## The name of the `gel` branch to use. This is optional and if not provided the environment
-/// ## variable `$GEL_BRANCH` will be used.
-/// # gel_branch = "$GEL_BRANCH"
-/// ```
+/// Refer to the main `gelx` crate [readme.md](https://github.com/ifiokjr/gelx/blob/main/readme.md#configuration) for all the configuration options.
 ///
 /// ```bash
 /// gelx generate
@@ -71,7 +33,7 @@ use crate::gelx_error;
 pub struct GelxMetadata {
 	#[builder(default = default_queries_path())]
 	#[serde(default = "default_queries_path")]
-	pub queries: PathBuf,
+	pub queries_path: PathBuf,
 	#[builder(default = GelxFeatures::default())]
 	#[serde(default = "GelxFeatures::default")]
 	pub features: GelxFeatures,
@@ -90,6 +52,9 @@ pub struct GelxMetadata {
 	#[builder(default = default_transaction_function_name())]
 	#[serde(default = "default_transaction_function_name")]
 	pub transaction_function_name: String,
+	#[builder(default = default_exports_alias())]
+	#[serde(default = "default_exports_alias")]
+	pub exports_alias: String,
 	#[builder(default)]
 	#[serde(default)]
 	pub gel_config_path: Option<PathBuf>,
@@ -114,11 +79,15 @@ impl GelxMetadata {
 			Self::default()
 		};
 
-		metadata.queries = root.join(metadata.queries);
+		metadata.queries_path = root.join(metadata.queries_path);
 		metadata.output = root.join(metadata.output);
 		metadata.gel_config_path = metadata.gel_config_path.map(|p| root.join(p));
 
 		Ok(metadata)
+	}
+
+	pub fn exports_ident(&self) -> Ident {
+		format_ident!("{}", self.exports_alias)
 	}
 }
 
@@ -134,6 +103,10 @@ fn default_queries_path() -> PathBuf {
 
 fn default_output_path() -> PathBuf {
 	PathBuf::from("src/gelx_generated.rs")
+}
+
+fn default_exports_alias() -> String {
+	"__g".to_string()
 }
 
 fn default_input_struct_name() -> String {
@@ -243,6 +216,7 @@ impl GelxFeatures {
 	fn get_derive_features(
 		&self,
 		features: &[FeatureName],
+		exports_ident: &Ident,
 		is_input: bool,
 		is_copy: bool,
 		is_macro: bool,
@@ -262,27 +236,27 @@ impl GelxFeatures {
 			match feature {
 				FeatureName::Serde => {
 					let entry = features_map.entry(self.serde.alias()).or_default();
-					entry.push(quote!(#EXPORTS_IDENT::serde::Serialize));
-					entry.push(quote!(#EXPORTS_IDENT::serde::Deserialize));
+					entry.push(quote!(#exports_ident::serde::Serialize));
+					entry.push(quote!(#exports_ident::serde::Deserialize));
 				}
 				FeatureName::Builder => {
 					if is_input {
 						let entry = features_map.entry(self.builder.alias()).or_default();
-						entry.push(quote!(#EXPORTS_IDENT::typed_builder::TypedBuilder));
+						entry.push(quote!(#exports_ident::typed_builder::TypedBuilder));
 					}
 				}
 				FeatureName::Query => {
 					let entry = features_map.entry(self.query.alias()).or_default();
-					entry.push(quote!(#EXPORTS_IDENT::gel_derive::Queryable));
+					entry.push(quote!(#exports_ident::gel_derive::Queryable));
 				}
 				FeatureName::Strum => {
 					let entry = features_map.entry(self.strum.alias()).or_default();
-					entry.push(quote!(#EXPORTS_IDENT::strum::AsRefStr));
-					entry.push(quote!(#EXPORTS_IDENT::strum::Display));
-					entry.push(quote!(#EXPORTS_IDENT::strum::EnumString));
-					entry.push(quote!(#EXPORTS_IDENT::strum::EnumIs));
-					entry.push(quote!(#EXPORTS_IDENT::strum::FromRepr));
-					entry.push(quote!(#EXPORTS_IDENT::strum::IntoStaticStr));
+					entry.push(quote!(#exports_ident::strum::AsRefStr));
+					entry.push(quote!(#exports_ident::strum::Display));
+					entry.push(quote!(#exports_ident::strum::EnumString));
+					entry.push(quote!(#exports_ident::strum::EnumIs));
+					entry.push(quote!(#exports_ident::strum::FromRepr));
+					entry.push(quote!(#exports_ident::strum::IntoStaticStr));
 				}
 			}
 		}
@@ -303,9 +277,15 @@ impl GelxFeatures {
 	}
 
 	/// Returns a `TokenStream` of the derive features for a struct.
-	pub(crate) fn get_struct_derive_features(&self, is_input: bool, is_macro: bool) -> TokenStream {
+	pub(crate) fn get_struct_derive_features(
+		&self,
+		exports_ident: &Ident,
+		is_input: bool,
+		is_macro: bool,
+	) -> TokenStream {
 		self.get_derive_features(
 			&[FeatureName::Serde, FeatureName::Builder, FeatureName::Query],
+			exports_ident,
 			is_input,
 			false,
 			is_macro,
@@ -313,9 +293,14 @@ impl GelxFeatures {
 	}
 
 	/// Returns a `TokenStream` of the derive features for an enum.
-	pub(crate) fn get_enum_derive_features(&self, is_macro: bool) -> TokenStream {
+	pub(crate) fn get_enum_derive_features(
+		&self,
+		exports_ident: &Ident,
+		is_macro: bool,
+	) -> TokenStream {
 		self.get_derive_features(
 			&[FeatureName::Serde, FeatureName::Query, FeatureName::Strum],
+			exports_ident,
 			false,
 			true,
 			is_macro,
