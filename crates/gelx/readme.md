@@ -14,10 +14,13 @@
 
 ## Installation
 
-To install the `gelx` crate you can use the following command.
+To install the `gelx` crate you can use the following commands.
 
 ```bash
-cargo add gelx gel-protocol strum
+cargo add gelx
+
+# Optional dependencies
+cargo add gel-protocol strum
 ```
 
 Or directly add the following to your `Cargo.toml` file.
@@ -25,17 +28,31 @@ Or directly add the following to your `Cargo.toml` file.
 ```toml
 [dependencies]
 gelx = "0.4"
+
+# Optional dependencies
 gel-protocol = "0.8" # needed for query feature
 strum = "0.27" # needed for strum feature
 ```
 
-Follow the [Quickstart Guide](https://docs.gel.com/get-started/quickstart) to make sure your gel instance is running. The macro relies on the running `gel` instance to parse the output of the provided query string.
+Make sure you've [installed](https://docs.geldata.com/reference/using/cli#ref-cli-gel-install) the `gel` CLI for your platform.
 
-## Macro Usage
+Once installed you should be able to run the following command to verify your installation.
 
-When working with `gel` you often need to write queries and also provide the types for both the input and output. Your code is only checked at runtime which increases the risk of bugs and errors.
+```bash
+gel --version
+```
 
-Fortunately, `gel` has a query language that is typed and can be converted into types and queried for correctness at compile time.
+And then initialize in the project directory.
+
+```bash
+gel init
+```
+
+## `gelx!`
+
+Working with the default `gel` requires writing queries and creating the expected types for both the input and output into these queries. The correctness of your code is only checked at runtime increasing the risk of bugs and errors.
+
+`gelx!` transforms your queries into types and functions, providing safety and peace of mind during the development of your project.
 
 ### Inline Queries
 
@@ -65,7 +82,7 @@ async fn main() -> Result<(), Error> {
 }
 ```
 
-The macro above generates the following code:
+The macro above generates the following code in the background::
 
 ```rust
 pub mod example {
@@ -196,12 +213,17 @@ The following configuration options are supported and the provided defaults will
 queries_path = "./queries"
 
 ## The features to enable and their aliases. By default all features are enabled.
-## To disable a feature set it to false. The available features are:
-## - `query ` - When this is enabled you will need to include the `gel-protocol` crate in your dependencies.
-## - `serde`
-## - `strum` - When this is enabled you will need to include the `strum` crate in your dependencies.
-## - `builder`
-features = { query = "ssr", strum = "ssr", builder = "ssr" }
+## To disable a feature set it to false. To alias a feature behind a feature flag
+## use the following format `feature = { query = "ssr" }`. This will enable the query
+## feature only when the `ssr` feature is enabled.
+##
+## The available features are:
+##
+## - `query` - When enabled you must include `gel-protocol` as a dependency.
+## - `serde` - Enable serde for the generated code.
+## - `strum` - When enabled you must include `strum` as a dependency.
+## - `builder` - Use the `typed-builder` crate to generate the builders for the generated `Input` structs.
+features = { query = true, strum = true, builder = true,  }
 
 ## The location of the generated code when using the `gelx` cli.
 output_file = "./src/gelx_generated.rs"
