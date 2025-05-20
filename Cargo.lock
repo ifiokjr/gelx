@@ -865,6 +865,8 @@ version = "0.4.0"
 dependencies = [
  "clap",
  "gelx_core",
+ "insta",
+ "insta-cmd",
  "similar",
  "tokio",
  "toml",
@@ -1207,6 +1209,17 @@ dependencies = [
  "ron",
  "serde",
  "similar",
+]
+
+[[package]]
+name = "insta-cmd"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ffeeefa927925cced49ccb01bf3e57c9d4cd132df21e576eb9415baeab2d3de6"
+dependencies = [
+ "insta",
+ "serde",
+ "serde_json",
 ]
 
 [[package]]

@@ -1,4 +1,6 @@
 use std::fs;
+use std::io;
+use std::io::Write;
 use std::path::PathBuf;
 
 use clap::Parser;
@@ -27,7 +29,11 @@ struct Cli {
 #[derive(Parser, Debug)]
 enum Commands {
 	/// Generates Rust code from the crate in the current directory.
-	Generate,
+	Generate {
+		/// Print the generated code to stdout instead of writing to a file.
+		#[clap(long)]
+		stdout: bool,
+	},
 	/// Checks if the generated Rust code is up-to-date
 	Check,
 }
@@ -61,24 +67,31 @@ async fn main() -> GelxCoreResult<()> {
 	let metadata = GelxMetadata::try_new(current_dir)?;
 
 	match cli.command {
-		Commands::Generate => handle_generate(&metadata).await,
+		Commands::Generate { stdout } => handle_generate(&metadata, stdout).await,
 		Commands::Check => handle_check(&metadata).await,
 	}
 }
 
-async fn handle_generate(metadata: &GelxMetadata) -> GelxCoreResult<()> {
+async fn handle_generate(metadata: &GelxMetadata, to_stdout: bool) -> GelxCoreResult<()> {
 	eprintln!("Generating code...");
 	let generated_code = generate_all_queries_code(metadata).await?;
 
-	if let Some(parent) = metadata.output.parent() {
-		fs::create_dir_all(parent)?;
-	}
+	if to_stdout {
+		let mut stdout = io::stdout();
+		stdout.write_all(generated_code.as_bytes())?;
+		stdout.flush()?;
+		eprintln!("Successfully printed generated code to stdout.");
+	} else {
+		if let Some(parent) = metadata.output.parent() {
+			fs::create_dir_all(parent)?;
+		}
 
-	fs::write(&metadata.output, &generated_code)?;
-	eprintln!(
-		"Successfully wrote generated code to {}",
-		metadata.output.display()
-	);
+		fs::write(&metadata.output, &generated_code)?;
+		eprintln!(
+			"Successfully wrote generated code to {}",
+			metadata.output.display()
+		);
+	}
 
 	Ok(())
 }
@@ -173,4 +186,30 @@ async fn generate_all_queries_code(metadata: &GelxMetadata) -> GelxCoreResult<St
 	}
 
 	Ok(prettify(&all_generated_code)?)
+}
+
+#[cfg(test)]
+mod tests {
+	use std::process::Command;
+	use std::process::Stdio;
+
+	use super::*;
+
+	const CRATE_DIR: &str = env!("CARGO_MANIFEST_DIR");
+
+	fn cli() -> Command {
+		Command::new(insta_cmd::get_cargo_bin("gelx"))
+	}
+
+	#[test]
+	fn generate_stdout() {
+		let path = PathBuf::from(CRATE_DIR).join("../../examples/gelx_example");
+		insta_cmd::assert_cmd_snapshot!(
+			cli()
+				.arg("generate")
+				.arg("--stdout")
+				.current_dir(path)
+				.stderr(Stdio::null())
+		);
+	}
 }

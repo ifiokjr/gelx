@@ -23,5 +23,9 @@ similar = { workspace = true }
 tokio = { workspace = true, features = ["full"] }
 toml = { workspace = true }
 
+[dev-dependencies]
+insta = { workspace = true }
+insta-cmd = { workspace = true }
+
 [lints]
 workspace = true

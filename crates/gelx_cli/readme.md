@@ -54,10 +54,27 @@ The `gelx` CLI tool generates Rust code from `.edgeql` files located in your pro
 
 #### `gelx generate`
 
+```bash
+Generates Rust code from the crate in the current directory
+
+Usage: gelx generate [OPTIONS]
+
+Options:
+      --stdout     Print the generated code to stdout instead of writing to a file
+      --cwd <CWD>  Optional working directory to run the command from
+  -h, --help       Print help
+```
+
 This command generates Rust code based on your `.edgeql` query files and the Gel schema.
 
 ```bash
 gelx generate --cwd path/to/your/crate
+```
+
+Or run the command with the `--stdout` flag to print the generated code to the terminal:
+
+```bash
+gelx generate --cwd path/to/your/crate --stdout
 ```
 
 The CLI will:
@@ -66,9 +83,20 @@ The CLI will:
 - Scan the directory specified by `queries` (default: `./queries`) for `.edgeql` files.
 - Connect to your Gel instance to get type information for each query.
 - Generate corresponding Rust modules.
-- Write the combined code to the file specified by `output_file` (default: `./src/gelx_generated.rs`).
+- If `--stdout` is used, print the combined code to the terminal.
+- Otherwise, write the combined code to the file specified by `output_file` (default: `./src/gelx_generated.rs`).
 
 #### `gelx check`
+
+```bash
+Checks if the generated Rust code is up-to-date
+
+Usage: gelx check [OPTIONS]
+
+Options:
+      --cwd <CWD>  Optional working directory to run the command from
+  -h, --help       Print help
+```
 
 This command verifies if the currently generated code is up-to-date with your schema and query files. It\'s useful for CI pipelines to ensure that code generation has been run after any changes.
 
