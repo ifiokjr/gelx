@@ -51,6 +51,7 @@ toml_edit = "0.22"
 trybuild = "1"
 typed-builder = "0.21"
 uuid = "1"
+vfs = "0.12"
 
 # crates
 gelx = { path = "./crates/gelx", version = "0.5.1" }

@@ -6,28 +6,27 @@ use proc_macro2::Span;
 use rstest::fixture;
 use rstest::rstest;
 
+#[allow(clippy::perf)]
 fn get_features() -> String {
 	let mut features = Vec::new();
 
-	if cfg!(feature = "builder") {
-		features.push("builder");
-	}
+	#[cfg(feature = "builder")]
+	features.push("builder");
 
-	if cfg!(feature = "query") {
-		features.push("query");
-	}
+	#[cfg(feature = "query")]
+	features.push("query");
 
-	if cfg!(feature = "serde") {
-		features.push("serde");
-	}
+	#[cfg(feature = "serde")]
+	features.push("serde");
 
-	if cfg!(feature = "strum") {
-		features.push("strum");
-	}
+	#[cfg(feature = "strum")]
+	features.push("strum");
 
 	if !features.is_empty() {
 		features.insert(0, "_");
 	}
+
+	println!("features: {features:?}");
 
 	features.join("_")
 }
@@ -135,14 +134,22 @@ async fn prepare_compile_test(content: &str, relative_path: &str) -> GelxCoreRes
 	let path = PathBuf::from(CRATE_DIR).join(relative_path);
 	let generated = generate_contents(content)?;
 
-	let should_update = match tokio::fs::read_to_string(&path).await {
-		Ok(current) => current != generated,
-		Err(_) => true,
-	};
+	#[cfg(all(
+		feature = "builder",
+		feature = "query",
+		feature = "serde",
+		feature = "strum"
+	))]
+	{
+		let should_update = match tokio::fs::read_to_string(&path).await {
+			Ok(current) => current != generated,
+			Err(_) => true,
+		};
 
-	if should_update {
-		assert2::assert!(!is_ci, "attempted updating compilation tests in CI");
-		tokio::fs::write(&path, generated).await?;
+		if should_update {
+			assert2::assert!(!is_ci, "attempted updating compilation tests in CI");
+			tokio::fs::write(&path, generated).await?;
+		}
 	}
 
 	Ok(())

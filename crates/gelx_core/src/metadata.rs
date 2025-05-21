@@ -226,6 +226,32 @@ pub enum FeatureName {
 	Strum,
 }
 
+impl FeatureName {
+	pub fn is_enabled(&self) -> bool {
+		#[cfg(feature = "serde")]
+		if self == &FeatureName::Serde {
+			return true;
+		}
+
+		#[cfg(feature = "builder")]
+		if self == &FeatureName::Builder {
+			return true;
+		}
+
+		#[cfg(feature = "query")]
+		if self == &FeatureName::Query {
+			return true;
+		}
+
+		#[cfg(feature = "strum")]
+		if self == &FeatureName::Strum {
+			return true;
+		}
+
+		false
+	}
+}
+
 #[derive(Clone, Debug, Serialize, Deserialize, Default, TypedBuilder)]
 #[builder(field_defaults(default, setter(into)))]
 pub struct GelxFeatures {
@@ -336,12 +362,12 @@ impl GelxFeatures {
 
 	pub(crate) fn is_enabled(&self, feature: FeatureName, is_macro: bool) -> bool {
 		match feature {
-			FeatureName::Serde => self.serde.is_enabled() && (!is_macro || cfg!(feature = "serde")),
+			FeatureName::Serde => self.serde.is_enabled() && (!is_macro || feature.is_enabled()),
 			FeatureName::Builder => {
-				self.builder.is_enabled() && (!is_macro || cfg!(feature = "builder"))
+				self.builder.is_enabled() && (!is_macro || feature.is_enabled())
 			}
-			FeatureName::Query => self.query.is_enabled() && (!is_macro || cfg!(feature = "query")),
-			FeatureName::Strum => self.strum.is_enabled() && (!is_macro || cfg!(feature = "strum")),
+			FeatureName::Query => self.query.is_enabled() && (!is_macro || feature.is_enabled()),
+			FeatureName::Strum => self.strum.is_enabled() && (!is_macro || feature.is_enabled()),
 		}
 	}
 

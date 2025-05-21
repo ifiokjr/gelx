@@ -1,4 +1,9 @@
-#![cfg(all(feature = "query", feature = "serde"))]
+#![cfg(all(
+	feature = "builder",
+	feature = "query",
+	feature = "serde",
+	feature = "strum"
+))]
 use std::thread;
 
 use rstest::fixture;
