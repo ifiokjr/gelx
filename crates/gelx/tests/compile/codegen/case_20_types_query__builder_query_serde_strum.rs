@@ -14,8 +14,8 @@ pub mod example {
     }
     pub type Input = ();
     #[derive(
-        Clone,
         Debug,
+        Clone,
         __g::serde::Serialize,
         __g::serde::Deserialize,
         __g::gel_derive::Queryable
@@ -24,8 +24,8 @@ pub mod example {
         pub id: __g::uuid::Uuid,
     }
     #[derive(
-        Clone,
         Debug,
+        Clone,
         __g::serde::Serialize,
         __g::serde::Deserialize,
         __g::gel_derive::Queryable
@@ -34,8 +34,8 @@ pub mod example {
         pub id: __g::uuid::Uuid,
     }
     #[derive(
-        Clone,
         Debug,
+        Clone,
         __g::serde::Serialize,
         __g::serde::Deserialize,
         __g::gel_derive::Queryable
@@ -44,8 +44,8 @@ pub mod example {
         pub id: __g::uuid::Uuid,
     }
     #[derive(
-        Clone,
         Debug,
+        Clone,
         __g::serde::Serialize,
         __g::serde::Deserialize,
         __g::gel_derive::Queryable
@@ -59,8 +59,8 @@ pub mod example {
         pub is_readonly: Option<bool>,
     }
     #[derive(
-        Clone,
         Debug,
+        Clone,
         __g::serde::Serialize,
         __g::serde::Deserialize,
         __g::gel_derive::Queryable
@@ -77,8 +77,8 @@ pub mod example {
         pub pointers: Vec<OutputPointersSetPointersSet>,
     }
     #[derive(
-        Clone,
         Debug,
+        Clone,
         __g::serde::Serialize,
         __g::serde::Deserialize,
         __g::gel_derive::Queryable
@@ -87,8 +87,8 @@ pub mod example {
         pub target: Option<String>,
     }
     #[derive(
-        Clone,
         Debug,
+        Clone,
         __g::serde::Serialize,
         __g::serde::Deserialize,
         __g::gel_derive::Queryable
@@ -102,8 +102,8 @@ pub mod example {
         pub is_exclusive: Option<bool>,
     }
     #[derive(
-        Clone,
         Debug,
+        Clone,
         __g::serde::Serialize,
         __g::serde::Deserialize,
         __g::gel_derive::Queryable
@@ -116,8 +116,8 @@ pub mod example {
         pub is_exclusive: bool,
     }
     #[derive(
-        Clone,
         Debug,
+        Clone,
         __g::serde::Serialize,
         __g::serde::Deserialize,
         __g::gel_derive::Queryable
@@ -127,8 +127,8 @@ pub mod example {
         pub name: Option<String>,
     }
     #[derive(
-        Clone,
         Debug,
+        Clone,
         __g::serde::Serialize,
         __g::serde::Deserialize,
         __g::gel_derive::Queryable

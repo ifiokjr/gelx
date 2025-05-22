@@ -17,15 +17,19 @@ pub mod example {
         conn.query(QUERY, &()).await
     }
     pub type Input = ();
+    #[derive(Debug, Clone)]
     pub struct OutputBasesSet {
         pub id: __g::uuid::Uuid,
     }
+    #[derive(Debug, Clone)]
     pub struct OutputUnionOfSet {
         pub id: __g::uuid::Uuid,
     }
+    #[derive(Debug, Clone)]
     pub struct OutputIntersectionOfSet {
         pub id: __g::uuid::Uuid,
     }
+    #[derive(Debug, Clone)]
     pub struct OutputPointersSetPointersSet {
         pub card: Option<String>,
         pub name: String,
@@ -34,6 +38,7 @@ pub mod example {
         pub is_computed: Option<bool>,
         pub is_readonly: Option<bool>,
     }
+    #[derive(Debug, Clone)]
     pub struct OutputPointersSet {
         pub card: Option<String>,
         pub name: String,
@@ -45,9 +50,11 @@ pub mod example {
         pub has_default: bool,
         pub pointers: Vec<OutputPointersSetPointersSet>,
     }
+    #[derive(Debug, Clone)]
     pub struct OutputExclusivesSet {
         pub target: Option<String>,
     }
+    #[derive(Debug, Clone)]
     pub struct OutputBacklinksSet {
         pub card: String,
         pub name: String,
@@ -56,6 +63,7 @@ pub mod example {
         pub kind: String,
         pub is_exclusive: Option<bool>,
     }
+    #[derive(Debug, Clone)]
     pub struct OutputBacklinkStubsArray {
         pub card: String,
         pub name: String,
@@ -63,10 +71,12 @@ pub mod example {
         pub kind: String,
         pub is_exclusive: bool,
     }
+    #[derive(Debug, Clone)]
     pub struct OutputTupleElementsSet {
         pub target_id: __g::uuid::Uuid,
         pub name: Option<String>,
     }
+    #[derive(Debug, Clone)]
     pub struct Output {
         pub id: __g::uuid::Uuid,
         pub name: String,

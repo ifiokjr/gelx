@@ -246,6 +246,12 @@ query_constant_name = "QUERY"
 ## The alias used for the `gelx::exports` module.
 exports_alias = "__g"
 
+## The macros which are always derived for the generated structs.
+struct_derive_macros = ["Debug", "Clone"]
+
+## The macros which are always derived for the generated enums.
+enum_derive_macros = ["Debug", "Clone", "Copy"]
+
 ## The relative path to the `gel` config file. This is optional and if not provided the `gel`
 ## config will be read from the environment variables.
 # gel_config_path = "./gel.toml"

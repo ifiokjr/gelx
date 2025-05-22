@@ -1,5 +1,5 @@
 use ::gelx::exports as __g;
-#[derive(Clone, Debug, Copy, __g::serde::Serialize, __g::serde::Deserialize)]
+#[derive(Debug, Clone, Copy, __g::serde::Serialize, __g::serde::Deserialize)]
 #[cfg_attr(
     feature = "ssr",
     derive(
@@ -15,7 +15,7 @@ use ::gelx::exports as __g;
 pub enum AccountProvider {
     Github,
 }
-#[derive(Clone, Debug, Copy, __g::serde::Serialize, __g::serde::Deserialize)]
+#[derive(Debug, Clone, Copy, __g::serde::Serialize, __g::serde::Deserialize)]
 #[cfg_attr(
     feature = "ssr",
     derive(
@@ -33,7 +33,7 @@ pub enum RelationshipType {
     Block,
     Mute,
 }
-#[derive(Clone, Debug, Copy, __g::serde::Serialize, __g::serde::Deserialize)]
+#[derive(Debug, Clone, Copy, __g::serde::Serialize, __g::serde::Deserialize)]
 #[cfg_attr(
     feature = "ssr",
     derive(
@@ -55,7 +55,7 @@ pub enum Role {
 }
 pub mod additional {
     use super::*;
-    #[derive(Clone, Debug, Copy, __g::serde::Serialize, __g::serde::Deserialize)]
+    #[derive(Debug, Clone, Copy, __g::serde::Serialize, __g::serde::Deserialize)]
     #[cfg_attr(
         feature = "ssr",
         derive(
@@ -73,7 +73,7 @@ pub mod additional {
         Somewhat,
         NotReally,
     }
-    #[derive(Clone, Debug, Copy, __g::serde::Serialize, __g::serde::Deserialize)]
+    #[derive(Debug, Clone, Copy, __g::serde::Serialize, __g::serde::Deserialize)]
     #[cfg_attr(
         feature = "ssr",
         derive(

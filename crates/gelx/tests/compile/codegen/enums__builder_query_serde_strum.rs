@@ -1,7 +1,7 @@
 use ::gelx::exports as __g;
 #[derive(
-    Clone,
     Debug,
+    Clone,
     Copy,
     __g::serde::Serialize,
     __g::serde::Deserialize,
@@ -17,8 +17,8 @@ pub enum AccountProvider {
     Github,
 }
 #[derive(
-    Clone,
     Debug,
+    Clone,
     Copy,
     __g::serde::Serialize,
     __g::serde::Deserialize,
@@ -36,8 +36,8 @@ pub enum RelationshipType {
     Mute,
 }
 #[derive(
-    Clone,
     Debug,
+    Clone,
     Copy,
     __g::serde::Serialize,
     __g::serde::Deserialize,
@@ -59,8 +59,8 @@ pub enum Role {
 pub mod additional {
     use super::*;
     #[derive(
-        Clone,
         Debug,
+        Clone,
         Copy,
         __g::serde::Serialize,
         __g::serde::Deserialize,
@@ -78,8 +78,8 @@ pub mod additional {
         NotReally,
     }
     #[derive(
-        Clone,
         Debug,
+        Clone,
         Copy,
         __g::serde::Serialize,
         __g::serde::Deserialize,

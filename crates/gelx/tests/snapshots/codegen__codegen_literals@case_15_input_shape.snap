@@ -17,12 +17,13 @@ pub mod example {
         conn.query_required_single(QUERY, &()).await
     }
     pub type Input = ();
-    #[derive(Clone, Debug, Copy)]
+    #[derive(Debug, Clone, Copy)]
     pub enum DefaultRelationshipType {
         Follow,
         Block,
         Mute,
     }
+    #[derive(Debug, Clone)]
     pub struct Output {
         pub my_string: DefaultRelationshipType,
         pub my_number: i64,

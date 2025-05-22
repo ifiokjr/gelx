@@ -17,6 +17,7 @@ pub mod example {
         conn.query(QUERY, &()).await
     }
     pub type Input = ();
+    #[derive(Debug, Clone)]
     pub struct OutputWalletsSet {
         pub created_at: __g::DateTimeAlias,
         pub id: __g::uuid::Uuid,
@@ -26,6 +27,7 @@ pub mod example {
         pub name: Option<String>,
         pub pubkey: String,
     }
+    #[derive(Debug, Clone)]
     pub struct Output {
         pub slug: String,
         pub id: __g::uuid::Uuid,

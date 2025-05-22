@@ -15,8 +15,8 @@ pub mod example {
         conn.query_required_single(QUERY, props).await
     }
     #[derive(
-        Clone,
         Debug,
+        Clone,
         __g::serde::Serialize,
         __g::serde::Deserialize,
         __g::typed_builder::TypedBuilder,
@@ -38,8 +38,8 @@ pub mod example {
         }
     }
     #[derive(
-        Clone,
         Debug,
+        Clone,
         __g::serde::Serialize,
         __g::serde::Deserialize,
         __g::gel_derive::Queryable

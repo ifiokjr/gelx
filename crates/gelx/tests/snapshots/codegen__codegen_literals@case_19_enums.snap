@@ -17,10 +17,11 @@ pub mod example {
         conn.query(QUERY, &()).await
     }
     pub type Input = ();
-    #[derive(Clone, Debug, Copy)]
+    #[derive(Debug, Clone, Copy)]
     pub enum DefaultAccountProvider {
         Github,
     }
+    #[derive(Debug, Clone)]
     pub struct Output {
         pub provider: DefaultAccountProvider,
     }

@@ -126,9 +126,11 @@ pub(crate) fn generate_enum(
 		}
 	});
 
-	let enum_derive = metadata
-		.features
-		.get_enum_derive_features(&exports_ident, is_macro);
+	let derive_macro_paths = metadata.enum_derive_macro_paths();
+	let enum_derive =
+		metadata
+			.features
+			.get_enum_derive_features(&exports_ident, &derive_macro_paths, is_macro);
 	let enum_tokens = quote! {
 		#enum_derive
 		pub enum #pascal_local_name {

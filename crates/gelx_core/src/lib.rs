@@ -582,10 +582,13 @@ fn explore_object_shape_descriptor(
 		}
 	});
 
-	let struct_derive_tokens =
-		metadata
-			.features
-			.get_struct_derive_features(&exports_ident, is_input, is_macro);
+	let derive_macro_paths = metadata.struct_derive_macro_paths();
+	let struct_derive_tokens = metadata.features.get_struct_derive_features(
+		&exports_ident,
+		&derive_macro_paths,
+		is_input,
+		is_macro,
+	);
 	let struct_tokens = quote! {
 		#struct_derive_tokens
 		pub struct #root_ident {

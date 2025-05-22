@@ -18,6 +18,7 @@ pub mod example {
     ) -> ::core::result::Result<Output, __g::gel_errors::Error> {
         conn.query_required_single(QUERY, props).await
     }
+    #[derive(Debug, Clone)]
     pub struct Input {
         pub name: String,
         pub bio: String,
@@ -35,6 +36,7 @@ pub mod example {
             map.encode(encoder)
         }
     }
+    #[derive(Debug, Clone)]
     pub struct Output {
         pub id: __g::uuid::Uuid,
         pub name: Option<String>,

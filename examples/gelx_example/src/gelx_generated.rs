@@ -6,7 +6,7 @@
 #![allow(unused_qualifications)]
 #![allow(clippy::all)]
 use ::gelx::exports as __g;
-#[derive(Clone, Debug, Copy, __g::serde::Serialize, __g::serde::Deserialize)]
+#[derive(Debug, Clone, Copy, __g::serde::Serialize, __g::serde::Deserialize)]
 #[cfg_attr(
     feature = "ssr",
     derive(
@@ -22,7 +22,7 @@ use ::gelx::exports as __g;
 pub enum AccountProvider {
     Github,
 }
-#[derive(Clone, Debug, Copy, __g::serde::Serialize, __g::serde::Deserialize)]
+#[derive(Debug, Clone, Copy, __g::serde::Serialize, __g::serde::Deserialize)]
 #[cfg_attr(
     feature = "ssr",
     derive(
@@ -40,7 +40,7 @@ pub enum RelationshipType {
     Block,
     Mute,
 }
-#[derive(Clone, Debug, Copy, __g::serde::Serialize, __g::serde::Deserialize)]
+#[derive(Debug, Clone, Copy, __g::serde::Serialize, __g::serde::Deserialize)]
 #[cfg_attr(
     feature = "ssr",
     derive(
@@ -62,7 +62,7 @@ pub enum Role {
 }
 pub mod additional {
     use super::*;
-    #[derive(Clone, Debug, Copy, __g::serde::Serialize, __g::serde::Deserialize)]
+    #[derive(Debug, Clone, Copy, __g::serde::Serialize, __g::serde::Deserialize)]
     #[cfg_attr(
         feature = "ssr",
         derive(
@@ -80,7 +80,7 @@ pub mod additional {
         Somewhat,
         NotReally,
     }
-    #[derive(Clone, Debug, Copy, __g::serde::Serialize, __g::serde::Deserialize)]
+    #[derive(Debug, Clone, Copy, __g::serde::Serialize, __g::serde::Deserialize)]
     #[cfg_attr(
         feature = "ssr",
         derive(
@@ -123,7 +123,7 @@ pub mod insert_user {
     ) -> ::core::result::Result<Output, __g::gel_errors::Error> {
         conn.query_required_single(QUERY, props).await
     }
-    #[derive(Clone, Debug, __g::serde::Serialize, __g::serde::Deserialize)]
+    #[derive(Debug, Clone, __g::serde::Serialize, __g::serde::Deserialize)]
     #[cfg_attr(
         feature = "ssr",
         derive(__g::typed_builder::TypedBuilder, __g::gel_derive::Queryable)
@@ -148,7 +148,7 @@ pub mod insert_user {
             map.encode(encoder)
         }
     }
-    #[derive(Clone, Debug, __g::serde::Serialize, __g::serde::Deserialize)]
+    #[derive(Debug, Clone, __g::serde::Serialize, __g::serde::Deserialize)]
     #[cfg_attr(feature = "ssr", derive(__g::gel_derive::Queryable))]
     pub struct Output {
         pub id: __g::uuid::Uuid,
@@ -177,7 +177,7 @@ pub mod remove_user {
     ) -> ::core::result::Result<Option<Output>, __g::gel_errors::Error> {
         conn.query_single(QUERY, props).await
     }
-    #[derive(Clone, Debug, __g::serde::Serialize, __g::serde::Deserialize)]
+    #[derive(Debug, Clone, __g::serde::Serialize, __g::serde::Deserialize)]
     #[cfg_attr(
         feature = "ssr",
         derive(__g::typed_builder::TypedBuilder, __g::gel_derive::Queryable)
@@ -197,7 +197,7 @@ pub mod remove_user {
             map.encode(encoder)
         }
     }
-    #[derive(Clone, Debug, __g::serde::Serialize, __g::serde::Deserialize)]
+    #[derive(Debug, Clone, __g::serde::Serialize, __g::serde::Deserialize)]
     #[cfg_attr(feature = "ssr", derive(__g::gel_derive::Queryable))]
     pub struct Output {
         pub id: __g::uuid::Uuid,
@@ -223,7 +223,7 @@ pub mod select_user {
     ) -> ::core::result::Result<Option<Output>, __g::gel_errors::Error> {
         conn.query_single(QUERY, props).await
     }
-    #[derive(Clone, Debug, __g::serde::Serialize, __g::serde::Deserialize)]
+    #[derive(Debug, Clone, __g::serde::Serialize, __g::serde::Deserialize)]
     #[cfg_attr(
         feature = "ssr",
         derive(__g::typed_builder::TypedBuilder, __g::gel_derive::Queryable)
@@ -243,7 +243,7 @@ pub mod select_user {
             map.encode(encoder)
         }
     }
-    #[derive(Clone, Debug, __g::serde::Serialize, __g::serde::Deserialize)]
+    #[derive(Debug, Clone, __g::serde::Serialize, __g::serde::Deserialize)]
     #[cfg_attr(feature = "ssr", derive(__g::gel_derive::Queryable))]
     pub struct Output {
         pub id: __g::uuid::Uuid,

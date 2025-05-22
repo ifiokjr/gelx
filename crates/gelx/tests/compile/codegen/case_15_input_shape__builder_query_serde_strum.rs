@@ -14,8 +14,8 @@ pub mod example {
     }
     pub type Input = ();
     #[derive(
-        Clone,
         Debug,
+        Clone,
         Copy,
         __g::serde::Serialize,
         __g::serde::Deserialize,
@@ -33,8 +33,8 @@ pub mod example {
         Mute,
     }
     #[derive(
-        Clone,
         Debug,
+        Clone,
         __g::serde::Serialize,
         __g::serde::Deserialize,
         __g::gel_derive::Queryable

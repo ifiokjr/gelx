@@ -58,6 +58,12 @@ pub struct GelxMetadata {
 	#[builder(default = default_exports_alias())]
 	#[serde(default = "default_exports_alias")]
 	pub exports_alias: String,
+	#[builder(default = default_struct_derive_macros())]
+	#[serde(default = "default_struct_derive_macros")]
+	pub struct_derive_macros: Vec<String>,
+	#[builder(default = default_enum_derive_macros())]
+	#[serde(default = "default_enum_derive_macros")]
+	pub enum_derive_macros: Vec<String>,
 	#[builder(default)]
 	#[serde(default)]
 	pub gel_config_path: Option<PathBuf>,
@@ -122,6 +128,20 @@ impl GelxMetadata {
 	pub fn exports_alias_ident(&self) -> Ident {
 		format_ident!("{}", self.exports_alias)
 	}
+
+	pub fn struct_derive_macro_paths(&self) -> Vec<syn::Path> {
+		self.struct_derive_macros
+			.iter()
+			.filter_map(|s| syn::parse_str::<syn::Path>(s).ok())
+			.collect()
+	}
+
+	pub fn enum_derive_macro_paths(&self) -> Vec<syn::Path> {
+		self.enum_derive_macros
+			.iter()
+			.filter_map(|s| syn::parse_str::<syn::Path>(s).ok())
+			.collect()
+	}
 }
 
 impl Default for GelxMetadata {
@@ -160,6 +180,14 @@ fn default_query_constant_name() -> String {
 
 fn default_exports_alias() -> String {
 	"__g".to_string()
+}
+
+fn default_struct_derive_macros() -> Vec<String> {
+	vec!["Debug".into(), "Clone".into()]
+}
+
+fn default_enum_derive_macros() -> Vec<String> {
+	vec!["Debug".into(), "Clone".into(), "Copy".into()]
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, derive_more::From)]
@@ -280,16 +308,14 @@ impl GelxFeatures {
 		&self,
 		features: &[FeatureName],
 		exports_ident: &Ident,
+		derive_macro_paths: &[syn::Path],
 		is_input: bool,
-		is_copy: bool,
 		is_macro: bool,
 	) -> TokenStream {
 		let mut features_map = IndexMap::<Option<String>, Vec<TokenStream>>::new();
 		let mut tokens = TokenStream::new();
 
-		if is_copy {
-			features_map.insert(None, vec![quote!(Copy)]);
-		}
+		features_map.insert(None, vec![quote!(#(#derive_macro_paths),*)]);
 
 		for feature in features {
 			if !self.is_enabled(*feature, is_macro) {
@@ -331,7 +357,7 @@ impl GelxFeatures {
 				});
 			} else {
 				tokens.extend(quote! {
-					#[derive(Clone, Debug, #(#derive_tokens),*)]
+					#[derive(#(#derive_tokens),*)]
 				});
 			}
 		}
@@ -343,14 +369,15 @@ impl GelxFeatures {
 	pub(crate) fn get_struct_derive_features(
 		&self,
 		exports_ident: &Ident,
+		derive_macro_paths: &[syn::Path],
 		is_input: bool,
 		is_macro: bool,
 	) -> TokenStream {
 		self.get_derive_features(
 			&[FeatureName::Serde, FeatureName::Builder, FeatureName::Query],
 			exports_ident,
+			derive_macro_paths,
 			is_input,
-			false,
 			is_macro,
 		)
 	}
@@ -359,13 +386,14 @@ impl GelxFeatures {
 	pub(crate) fn get_enum_derive_features(
 		&self,
 		exports_ident: &Ident,
+		derive_macro_paths: &[syn::Path],
 		is_macro: bool,
 	) -> TokenStream {
 		self.get_derive_features(
 			&[FeatureName::Serde, FeatureName::Query, FeatureName::Strum],
 			exports_ident,
+			derive_macro_paths,
 			false,
-			true,
 			is_macro,
 		)
 	}

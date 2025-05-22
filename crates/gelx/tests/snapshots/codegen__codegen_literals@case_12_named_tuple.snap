@@ -17,6 +17,7 @@ pub mod example {
         conn.query_required_single(QUERY, &()).await
     }
     pub type Input = ();
+    #[derive(Debug, Clone)]
     pub struct Output {
         pub fruit: String,
         pub quantity: f64,
