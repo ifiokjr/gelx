@@ -69,18 +69,28 @@ pub struct GelxMetadata {
 	pub gel_branch: Option<String>,
 }
 
-impl GelxMetadata {
-	pub fn try_new<P: AsRef<Path>>(path: P) -> GelxCoreResult<Self> {
-		let root = get_package_root(path)?;
-		let toml_str: String = fs::read_to_string(root.join("Cargo.toml"))?;
-		let doc = toml_str.parse::<DocumentMut>()?;
+impl TryFrom<&str> for GelxMetadata {
+	type Error = GelxCoreError;
 
-		let mut metadata = if toml_has_path(doc.as_item(), vec!["package", "metadata", "gelx"]) {
+	fn try_from(value: &str) -> Result<Self, Self::Error> {
+		let doc = value.parse::<DocumentMut>()?;
+
+		let metadata = if toml_has_path(doc.as_item(), vec!["package", "metadata", "gelx"]) {
 			let metadata_str = doc["package"]["metadata"]["gelx"].to_string();
 			toml::from_str::<Self>(&metadata_str)?
 		} else {
 			Self::default()
 		};
+
+		Ok(metadata)
+	}
+}
+
+impl GelxMetadata {
+	pub fn try_new<P: AsRef<Path>>(path: P) -> GelxCoreResult<Self> {
+		let root = get_package_root(path)?;
+		let toml_str: String = fs::read_to_string(root.join("Cargo.toml"))?;
+		let mut metadata = Self::try_from(toml_str.as_str())?;
 
 		metadata.queries_path = root.join(metadata.queries_path);
 		metadata.output = root.join(metadata.output);
