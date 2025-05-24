@@ -4,7 +4,7 @@ info:
   program: gelx
   args:
     - generate
-    - "--stdout"
+    - "--json"
 ---
 success: true
 exit_code: 0

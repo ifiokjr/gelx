@@ -1,9 +1,9 @@
 #![doc(html_logo_url = "https://raw.githubusercontent.com/ifiokjr/gelx/main/setup/assets/logo.png")]
 
 mod constants;
-mod enums;
 mod errors;
 mod metadata;
+mod types;
 mod utils;
 
 use std::collections::HashMap;
@@ -71,9 +71,9 @@ use crate::constants::PROPS_NAME;
 use crate::constants::QUERY_PROP_NAME;
 use crate::constants::TRANSACTION_PROP_NAME;
 pub use crate::constants::TYPES_QUERY;
-pub use crate::enums::*;
 pub use crate::errors::*;
 pub use crate::metadata::*;
+pub use crate::types::*;
 pub use crate::utils::*;
 
 /// Get the descriptor asynchronously.

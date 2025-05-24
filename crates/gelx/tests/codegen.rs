@@ -127,13 +127,6 @@ async fn codegen_files(#[case] path: &str) -> GelxCoreResult<()> {
 const CRATE_DIR: &str = env!("CARGO_MANIFEST_DIR");
 
 async fn prepare_compile_test(content: &str, relative_path: &str) -> GelxCoreResult<()> {
-	let is_ci = std::env::var("CI")
-		.ok()
-		.is_some_and(|v| ["1", "true"].contains(&v.as_str()));
-
-	let path = PathBuf::from(CRATE_DIR).join(relative_path);
-	let generated = generate_contents(content)?;
-
 	#[cfg(all(
 		feature = "builder",
 		feature = "query",
@@ -141,6 +134,13 @@ async fn prepare_compile_test(content: &str, relative_path: &str) -> GelxCoreRes
 		feature = "strum"
 	))]
 	{
+		let is_ci = std::env::var("CI")
+			.ok()
+			.is_some_and(|v| ["1", "true"].contains(&v.as_str()));
+
+		let path = PathBuf::from(CRATE_DIR).join(relative_path);
+		let generated = generate_contents(content)?;
+
 		let should_update = match tokio::fs::read_to_string(&path).await {
 			Ok(current) => current != generated,
 			Err(_) => true,
@@ -165,13 +165,10 @@ async fn can_generate_enums() -> GelxCoreResult<()> {
 	set_snapshot_suffix!("enums");
 
 	let metadata = GelxMetadata::default();
-	let relative_path = format!("tests/compile/codegen/enums{}.rs", get_features());
-	let tokens = generate_enums(&metadata, false).await?;
-	let content = prettify(&tokens.to_string())?;
-	insta::assert_snapshot!(content);
+	let outputs = generate_module_outputs(&metadata).await?;
+	let json = outputs.to_json_value()?;
 
-	// Ensure that the produced rust is valid.
-	prepare_compile_test(&content, &relative_path).await?;
+	insta::assert_yaml_snapshot!(json);
 
 	Ok(())
 }
@@ -188,14 +185,10 @@ async fn can_generate_aliased_enums() -> GelxCoreResult<()> {
 				.build(),
 		)
 		.build();
-	let relative_path = format!("tests/compile/codegen/aliased_enums{}.rs", get_features());
-	let tokens = generate_enums(&metadata, false).await?;
+	let outputs = generate_module_outputs(&metadata).await?;
+	let json = outputs.to_json_value()?;
 
-	let content = prettify(&tokens.to_string())?;
-	insta::assert_snapshot!(content);
-
-	// Ensure that the produced rust is valid.
-	prepare_compile_test(&content, &relative_path).await?;
+	insta::assert_yaml_snapshot!(json);
 
 	Ok(())
 }

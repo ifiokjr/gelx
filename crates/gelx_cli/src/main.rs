@@ -1,19 +1,22 @@
 #![doc(html_logo_url = "https://raw.githubusercontent.com/ifiokjr/gelx/main/setup/assets/logo.png")]
 
-use std::fs;
-use std::io;
-use std::io::Write;
+use std::collections::HashSet;
 use std::path::PathBuf;
 
 use clap::Parser;
+use futures::stream::StreamExt;
 use gelx_core::GelxCoreResult;
 use gelx_core::GelxMetadata;
-use gelx_core::generate_enums;
+use gelx_core::ModuleOutputs;
+use gelx_core::generate_module_outputs;
 use gelx_core::generate_query_token_stream;
 use gelx_core::get_descriptor;
-use gelx_core::prettify;
+use proc_macro2::TokenStream;
 use similar::ChangeTag;
 use similar::TextDiff;
+use vfs::async_vfs::AsyncMemoryFS;
+use vfs::async_vfs::AsyncPhysicalFS;
+use vfs::async_vfs::AsyncVfsPath;
 
 /// A CLI for generating typed Rust code from Gel queries
 #[derive(Parser, Debug)]
@@ -31,9 +34,10 @@ struct Cli {
 enum Commands {
 	/// Generates Rust code from the crate in the current directory.
 	Generate {
-		/// Print the generated code to stdout instead of writing to a file.
+		/// Print the generated code as JSON to stdout instead of writing to the
+		/// directory.
 		#[clap(long)]
-		stdout: bool,
+		json: bool,
 	},
 	/// Checks if the generated Rust code is up-to-date
 	Check,
@@ -65,107 +69,169 @@ async fn main() -> GelxCoreResult<()> {
 	// Load metadata from Cargo.toml or gelx.toml in the current (potentially
 	// changed) directory
 	let current_dir = std::env::current_dir()?;
-	let metadata = GelxMetadata::try_new(current_dir)?;
+	let metadata = GelxMetadata::try_new(&current_dir)?;
+	let root_path = metadata.root_path.clone().unwrap_or(current_dir);
+	let fs = AsyncPhysicalFS::new(&root_path);
+	let root_path = AsyncVfsPath::from(fs);
 
 	match cli.command {
-		Commands::Generate { stdout } => handle_generate(&metadata, stdout).await,
-		Commands::Check => handle_check(&metadata).await,
+		Commands::Generate { json } => handle_generate(&metadata, &root_path, json).await,
+		Commands::Check => handle_check(&metadata, &root_path).await,
 	}
 }
 
-async fn handle_generate(metadata: &GelxMetadata, to_stdout: bool) -> GelxCoreResult<()> {
+async fn handle_generate(
+	metadata: &GelxMetadata,
+	root_path: &AsyncVfsPath,
+	json: bool,
+) -> GelxCoreResult<()> {
 	eprintln!("Generating code...");
-	let generated_code = generate_all_queries_code(metadata).await?;
+	let outputs = generate_outputs(metadata, root_path).await?;
+	let output_path = root_path.join(metadata.output_path.display().to_string())?;
 
-	if to_stdout {
-		let mut stdout = io::stdout();
-		stdout.write_all(generated_code.as_bytes())?;
-		stdout.flush()?;
-		eprintln!("Successfully printed generated code to stdout.");
+	if json {
+		let json = outputs.to_json_value()?;
+		println!("{}", serde_json::to_string_pretty(&json)?);
 	} else {
-		if let Some(parent) = metadata.output.parent() {
-			fs::create_dir_all(parent)?;
-		}
+		output_path.create_dir_all().await?;
+		outputs.write_to_vfs(&output_path).await?;
 
-		fs::write(&metadata.output, &generated_code)?;
 		eprintln!(
 			"Successfully wrote generated code to {}",
-			metadata.output.display()
+			metadata.output_path.display()
 		);
 	}
 
 	Ok(())
 }
 
-async fn handle_check(metadata: &GelxMetadata) -> GelxCoreResult<()> {
-	eprintln!("Checking code...");
-	let generated_code = generate_all_queries_code(metadata).await?;
+enum Comparison {
+	/// The file was added.
+	Add(String),
+	/// The file was removed.
+	Remove(String),
+	/// There are changes to the file.
+	Change(String, Vec<String>),
+}
 
-	if !metadata.output.exists() {
+async fn handle_check(metadata: &GelxMetadata, root_path: &AsyncVfsPath) -> GelxCoreResult<()> {
+	eprintln!("Checking code...");
+	let generated_code = generate_outputs(metadata, root_path).await?;
+	let memfs = AsyncMemoryFS::new();
+	let existing_output_path = root_path.join(metadata.output_path.display().to_string())?;
+	let generated_output_path = AsyncVfsPath::from(memfs);
+	generated_code.write_to_vfs(&generated_output_path).await?;
+
+	// compare two vfs paths.
+
+	// if !root_path.join("")
+
+	if !existing_output_path.exists().await? {
 		eprintln!(
 			"Error: Output file {} does not exist. Run `gelx generate` first.",
-			metadata.output.display()
+			metadata.output_path.display()
 		);
 		std::process::exit(1);
 	}
 
-	let existing_code = fs::read_to_string(&metadata.output)?;
+	let mut shared = HashSet::new();
+	let mut comparison = Vec::new();
 
-	if generated_code != existing_code {
-		let diff = TextDiff::from_lines(&existing_code, &generated_code);
+	while let Some(entry) = generated_output_path.walk_dir().await?.next().await {
+		let entry = entry?;
 
-		for change in diff.iter_all_changes() {
-			let sign = match change.tag() {
-				ChangeTag::Delete => "-",
-				ChangeTag::Insert => "+",
-				ChangeTag::Equal => " ",
-			};
-			eprintln!("{sign}{change}");
+		let Some(relative_path) = entry.as_str().strip_prefix(generated_output_path.as_str())
+		else {
+			continue;
+		};
+
+		let existing_output_path = existing_output_path.join(relative_path)?;
+
+		if !existing_output_path.exists().await? {
+			comparison.push(Comparison::Add(relative_path.to_string()));
+			continue;
 		}
 
-		std::process::exit(1);
+		let generated_content = entry.read_to_string().await?;
+		let existing_content = existing_output_path.read_to_string().await?;
+		shared.insert(relative_path.to_string());
+
+		if generated_content != existing_content {
+			let diff = TextDiff::from_lines(&existing_content, &generated_content);
+			let mut changes = Vec::new();
+
+			for change in diff.iter_all_changes() {
+				let sign = match change.tag() {
+					ChangeTag::Delete => "-",
+					ChangeTag::Insert => "+",
+					ChangeTag::Equal => " ",
+				};
+				changes.push(format!("{sign}{change}"));
+			}
+
+			comparison.push(Comparison::Change(relative_path.to_string(), changes));
+		}
 	}
 
-	eprintln!("Generated code is up-to-date.");
-	Ok(())
+	while let Some(entry) = existing_output_path.walk_dir().await?.next().await {
+		let entry = entry?;
+
+		let Some(relative_path) = entry.as_str().strip_prefix(existing_output_path.as_str()) else {
+			continue;
+		};
+
+		if !shared.contains(relative_path) {
+			comparison.push(Comparison::Remove(relative_path.to_string()));
+		}
+	}
+
+	if comparison.is_empty() {
+		eprintln!("Generated code is up-to-date.");
+		std::process::exit(0);
+	}
+
+	for change in comparison {
+		match change {
+			Comparison::Add(path) => {
+				eprintln!("Added: {}", existing_output_path.join(&path)?.as_str());
+			}
+			Comparison::Remove(path) => {
+				eprintln!("Removed: {}", existing_output_path.join(&path)?.as_str());
+			}
+			Comparison::Change(path, diffs) => {
+				eprintln!("Changed: {}", existing_output_path.join(&path)?.as_str());
+
+				for diff in diffs {
+					eprintln!("{diff}");
+				}
+			}
+		}
+	}
+
+	std::process::exit(1);
 }
 
-async fn generate_all_queries_code(metadata: &GelxMetadata) -> GelxCoreResult<String> {
-	if !metadata.queries_path.is_dir() {
-		fs::create_dir_all(&metadata.queries_path)?;
-		eprintln!(
-			"Created queries directory: {}",
-			metadata.queries_path.display()
-		);
-	}
+async fn generate_outputs(
+	metadata: &GelxMetadata,
+	root_path: &AsyncVfsPath,
+) -> GelxCoreResult<ModuleOutputs> {
+	let mut query_tokens = TokenStream::new();
+	let queries_path = root_path.join(metadata.queries_path.display().to_string())?;
 
-	let mut all_generated_code = String::new();
+	if queries_path.is_dir().await? {
+		let mut paths = queries_path.read_dir().await?.collect::<Vec<_>>().await;
+		paths.sort_by_key(|path| path.as_str().to_string());
 
-	all_generated_code.push_str("//! This file is generated by `gelx generate`.\n");
-	all_generated_code.push_str("//! It is not intended for manual editing.\n");
-	all_generated_code.push_str("//! To update it, run `gelx generate`.\n");
-	all_generated_code.push_str("#![cfg_attr(rustfmt, rustfmt_skip)]\n");
-	all_generated_code.push_str("#![allow(unused)]\n");
-	all_generated_code.push_str("#![allow(unused_qualifications)]\n");
-	all_generated_code.push_str("#![allow(clippy::all)]\n");
+		for path in paths {
+			if !path.is_file().await? || path.extension().is_none_or(|ext| ext != "edgeql") {
+				continue;
+			}
 
-	let num_of_lines = all_generated_code.lines().count();
-	let enum_code = generate_enums(metadata, false).await?;
-	all_generated_code.push_str(&enum_code.to_string());
+			let query_content = path.read_to_string().await?;
+			let filename = path.filename();
+			let module_name = filename.to_string();
 
-	let mut entries = fs::read_dir(&metadata.queries_path)?.collect::<Result<Vec<_>, _>>()?;
-	entries.sort_by_key(fs::DirEntry::path);
-
-	for entry in entries {
-		let path = entry.path();
-
-		if path.is_file() && path.extension().is_some_and(|ext| ext == "edgeql") {
-			let query_content = fs::read_to_string(&path)?;
-			let file_stem = path.file_stem().unwrap_or_default().to_string_lossy();
-			// Use metadata for naming conventions if available, otherwise defaults.
-			let module_name = file_stem.to_string();
-
-			eprintln!("Processing query: {}", path.display());
+			eprintln!("Processing query: {}", path.as_str());
 			let descriptor = get_descriptor(&query_content, metadata).await?;
 			let token_stream = generate_query_token_stream(
 				&descriptor,
@@ -175,20 +241,14 @@ async fn generate_all_queries_code(metadata: &GelxMetadata) -> GelxCoreResult<St
 				false,
 			)?;
 
-			all_generated_code.push_str(&token_stream.to_string());
-			all_generated_code.push('\n');
+			query_tokens.extend(token_stream);
 		}
 	}
 
-	if all_generated_code.lines().count() <= num_of_lines {
-		// Only comments
-		eprintln!(
-			"Warning: No .edgeql files found in {}. Generated file will be empty.",
-			metadata.queries_path.display()
-		);
-	}
+	let mut outputs = generate_module_outputs(metadata).await?;
+	outputs.append_to_root(&query_tokens);
 
-	Ok(prettify(&all_generated_code)?)
+	Ok(outputs)
 }
 
 #[cfg(test)]
@@ -212,7 +272,7 @@ mod tests {
 		insta_cmd::assert_cmd_snapshot!(
 			cli()
 				.arg("generate")
-				.arg("--stdout")
+				.arg("--json")
 				.current_dir(path)
 				.stderr(Stdio::null())
 		);

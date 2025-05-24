@@ -60,7 +60,7 @@ Generates Rust code from the crate in the current directory
 Usage: gelx generate [OPTIONS]
 
 Options:
-      --stdout     Print the generated code to stdout instead of writing to a file
+      --json       Print the generated code as JSON to stdout instead of writing to a file
       --cwd <CWD>  Optional working directory to run the command from
   -h, --help       Print help
 ```
@@ -71,10 +71,10 @@ This command generates Rust code based on your `.edgeql` query files and the Gel
 gelx generate --cwd path/to/your/crate
 ```
 
-Or run the command with the `--stdout` flag to print the generated code to the terminal:
+Or run the command with the `--json` flag to print the generated code to the terminal as JSON:
 
 ```bash
-gelx generate --cwd path/to/your/crate --stdout
+gelx generate --cwd path/to/your/crate --json
 ```
 
 The CLI will:
@@ -83,8 +83,8 @@ The CLI will:
 - Scan the directory specified by `queries` (default: `./queries`) for `.edgeql` files.
 - Connect to your Gel instance to get type information for each query.
 - Generate corresponding Rust modules.
-- If `--stdout` is used, print the combined code to the terminal.
-- Otherwise, write the combined code to the file specified by `output_file` (default: `./src/gelx_generated.rs`).
+- If `--json` is used, print the combined code to the terminal as JSON.
+- Otherwise, write the combined code to the folder specified by `output_path` (default: `./src/db`).
 
 #### `gelx check`
 

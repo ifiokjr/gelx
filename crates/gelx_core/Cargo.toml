@@ -13,8 +13,11 @@ rust-version = { workspace = true }
 description = "Utilities for codegen in the `gelx` crate."
 
 [dependencies]
+async-std = { workspace = true }
+bitflags = { workspace = true }
 check_keyword = { workspace = true }
-derive_more = { workspace = true, features = ["from", "into"] }
+derive_more = { workspace = true, features = ["from", "into", "into_iterator", "deref", "deref_mut"] }
+futures = { workspace = true }
 gel-derive = { workspace = true }
 gel-errors = { workspace = true }
 gel-protocol = { workspace = true, features = ["all-types", "with-serde"] }
@@ -27,14 +30,17 @@ proc-macro2 = { workspace = true }
 quote = { workspace = true }
 regex = { workspace = true }
 serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+serde_with = { workspace = true }
 strum = { workspace = true, features = ["derive"] }
-syn = { workspace = true }
+syn = { workspace = true, features = ["extra-traits"] }
 thiserror = { workspace = true }
 tokio = { workspace = true, features = ["macros", "rt-multi-thread", "process"] }
 toml = { workspace = true }
 toml_edit = { workspace = true }
 typed-builder = { workspace = true }
 uuid = { workspace = true, features = ["serde"] }
+vfs = { workspace = true, features = ["async-vfs"] }
 
 [dev-dependencies]
 assert2 = { workspace = true }

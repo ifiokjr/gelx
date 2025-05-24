@@ -20,6 +20,10 @@ pub enum GelxCoreError {
 	#[error("{0}")]
 	TomlEdit(#[from] toml_edit::TomlError),
 	#[error("{0}")]
+	Vfs(#[from] vfs::VfsError),
+	#[error("{0}")]
+	SerdeJson(#[from] serde_json::Error),
+	#[error("{0}")]
 	Custom(String),
 }
 

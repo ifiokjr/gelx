@@ -39,7 +39,7 @@ pub struct GelxMetadata {
 	pub features: GelxFeatures,
 	#[builder(default = default_output_path())]
 	#[serde(default = "default_output_path")]
-	pub output: PathBuf,
+	pub output_path: PathBuf,
 	#[builder(default = default_input_struct_name())]
 	#[serde(default = "default_input_struct_name")]
 	pub input_struct_name: String,
@@ -73,6 +73,11 @@ pub struct GelxMetadata {
 	#[builder(default)]
 	#[serde(default)]
 	pub gel_branch: Option<String>,
+	/// The directory of the root of the rust crate. The folder containing the
+	/// parent `Cargo.toml` file.
+	#[builder(default)]
+	#[serde(skip, default)]
+	pub root_path: Option<PathBuf>,
 }
 
 impl TryFrom<&str> for GelxMetadata {
@@ -98,9 +103,7 @@ impl GelxMetadata {
 		let toml_str: String = fs::read_to_string(root.join("Cargo.toml"))?;
 		let mut metadata = Self::try_from(toml_str.as_str())?;
 
-		metadata.queries_path = root.join(metadata.queries_path);
-		metadata.output = root.join(metadata.output);
-		metadata.gel_config_path = metadata.gel_config_path.map(|p| root.join(p));
+		metadata.root_path = root.parent().map(Path::to_path_buf);
 
 		Ok(metadata)
 	}
@@ -155,7 +158,7 @@ fn default_queries_path() -> PathBuf {
 }
 
 fn default_output_path() -> PathBuf {
-	PathBuf::from("src/gelx_generated.rs")
+	PathBuf::from("src/db")
 }
 
 fn default_input_struct_name() -> String {

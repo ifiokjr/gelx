@@ -226,7 +226,7 @@ queries_path = "./queries"
 features = { query = true, strum = true, builder = true,  }
 
 ## The location of the generated code when using the `gelx` cli.
-output_file = "./src/gelx_generated.rs"
+output_path = "./src/db"
 
 ## The name of the arguments input struct. Will be transformed to PascalCase.
 input_struct_name = "Input"

@@ -26,7 +26,7 @@ ssr = ["gelx/query", "gelx/serde", "gelx/strum", "gelx/builder"]
 [package.metadata.gelx]
 queries_path = "./queries"
 features = { query = "ssr", strum = "ssr", builder = "ssr" }
-output_file = "./src/gelx_generated.rs"
+output_path = "./src/db"
 input_struct_name = "Input"
 output_struct_name = "Output"
 query_function_name = "query"
