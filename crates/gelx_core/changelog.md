@@ -6,6 +6,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.6.0](https://github.com/ifiokjr/gelx/compare/v0.5.1...v0.6.0) - 2025-05-24
+
+### <!-- 0 -->🎉 Added
+
+- *(gelx)* update config to `output_path` and generate code in folder rather than file
+- *(gelx_core)* add derive macros configuration for structs and enums
+
+### <!-- 2 -->🚜 Refactor
+
+- remove `vfs` and complete refactor
+- *(gelx_core)* implement `TryFrom<`&str>` for `GelxMetadata`
+
+### <!-- 6 -->🧪 Testing
+
+- *(gelx)* improve feature testing
+
 ## [0.5.0](https://github.com/ifiokjr/gelx/compare/v0.4.0...v0.5.0) - 2025-05-20
 
 ### <!-- 0 -->🎉 Added
