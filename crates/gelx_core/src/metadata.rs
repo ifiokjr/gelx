@@ -100,10 +100,11 @@ impl TryFrom<&str> for GelxMetadata {
 impl GelxMetadata {
 	pub fn try_new<P: AsRef<Path>>(path: P) -> GelxCoreResult<Self> {
 		let root = get_package_root(path)?;
+
 		let toml_str: String = fs::read_to_string(root.join("Cargo.toml"))?;
 		let mut metadata = Self::try_from(toml_str.as_str())?;
 
-		metadata.root_path = root.parent().map(Path::to_path_buf);
+		metadata.root_path = Some(root);
 
 		Ok(metadata)
 	}

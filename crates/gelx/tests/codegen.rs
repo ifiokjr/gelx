@@ -26,8 +26,6 @@ fn get_features() -> String {
 		features.insert(0, "_");
 	}
 
-	println!("features: {features:?}");
-
 	features.join("_")
 }
 
@@ -166,9 +164,13 @@ async fn can_generate_enums() -> GelxCoreResult<()> {
 
 	let metadata = GelxMetadata::default();
 	let outputs = generate_module_outputs(&metadata).await?;
-	let json = outputs.to_json_value()?;
-
-	insta::assert_yaml_snapshot!(json);
+	let map = outputs.to_map()?;
+	let value = map
+		.iter()
+		.map(|(path, content)| format!("{}\n{content}", path.display()))
+		.collect::<Vec<_>>()
+		.join("\n\n");
+	insta::assert_snapshot!(value);
 
 	Ok(())
 }
@@ -186,9 +188,13 @@ async fn can_generate_aliased_enums() -> GelxCoreResult<()> {
 		)
 		.build();
 	let outputs = generate_module_outputs(&metadata).await?;
-	let json = outputs.to_json_value()?;
-
-	insta::assert_yaml_snapshot!(json);
+	let map = outputs.to_map()?;
+	let value = map
+		.iter()
+		.map(|(path, content)| format!("{}\n{content}", path.display()))
+		.collect::<Vec<_>>()
+		.join("\n\n");
+	insta::assert_snapshot!(value);
 
 	Ok(())
 }

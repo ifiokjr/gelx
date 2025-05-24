@@ -38,7 +38,7 @@ uuid = { workspace = true }
 [dev-dependencies]
 assert2 = { workspace = true }
 gelx_core = { workspace = true, features = ["with_all"] }
-insta = { workspace = true, features = ["ron", "yaml", "redactions"] }
+insta = { workspace = true, features = ["ron", "json", "redactions"] }
 proc-macro2 = { workspace = true }
 rstest = { workspace = true }
 rustversion = { workspace = true }

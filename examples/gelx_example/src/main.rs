@@ -1,7 +1,7 @@
-mod gelx_generated;
+mod db;
 
+use db::*;
 use gelx::create_client;
-use gelx_generated::*;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {

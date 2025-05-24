@@ -3,7 +3,6 @@ use std::hash::Hash;
 use std::path::Path;
 use std::path::PathBuf;
 
-use async_std::io::WriteExt;
 use check_keyword::CheckKeyword;
 use gel_derive::Queryable;
 use gel_protocol::common::Cardinality;
@@ -17,13 +16,10 @@ use quote::format_ident;
 use quote::quote;
 use serde::Deserialize;
 use serde::Serialize;
-use serde_json::Map;
-use serde_json::Value;
 use serde_with::DisplayFromStr;
 use serde_with::serde_as;
+use tokio::fs;
 use uuid::Uuid;
-use vfs::async_vfs::AsyncFileSystem;
-use vfs::async_vfs::AsyncVfsPath;
 
 use crate::FeatureName;
 use crate::GelxCoreError;
@@ -40,7 +36,7 @@ async fn types_query(client: &Client) -> GelxCoreResult<Vec<TypesOutput>> {
 	Ok(result)
 }
 
-const SYSTEM_NAMESPACES: &[&str] = &["std", "sys", "cfg", "schema"];
+const SYSTEM_NAMESPACES: &[&str] = &["std", "sys", "cfg", "schema", "multirange"];
 fn is_system_namespace(name: impl AsRef<str>) -> bool {
 	let name = name.as_ref();
 	SYSTEM_NAMESPACES.contains(&name)
@@ -61,11 +57,26 @@ impl<T: AsRef<str>> ToModuleName for T {
 pub struct ModuleName {
 	pub modules: Vec<String>,
 	pub name: String,
+	pub child: Option<Box<ModuleName>>,
 }
 
 impl<T: AsRef<str>> From<T> for ModuleName {
 	fn from(s: T) -> Self {
-		let all = s.as_ref().split("::").collect::<Vec<_>>();
+		let mut parent = None;
+		let mut value = s.as_ref();
+
+		if value.ends_with('>') {
+			let Some((parent_name, child_name)) = value.split_once('<') else {
+				panic!("cannot parse module name: `{value}`");
+			};
+
+			value = parent_name;
+			parent = Some(Box::new(Self::from(
+				child_name.trim_end_matches('>').to_string(),
+			)));
+		}
+
+		let all = value.split("::").collect::<Vec<_>>();
 		let name = all.last().unwrap();
 		let modules = all
 			.iter()
@@ -76,17 +87,26 @@ impl<T: AsRef<str>> From<T> for ModuleName {
 		Self {
 			modules,
 			name: (*name).to_string(),
+			child: parent,
 		}
 	}
 }
 
 impl ModuleName {
-	pub fn modules_name(&self) -> String {
-		self.modules.join("::")
-	}
-
 	pub fn original_name(&self) -> String {
-		self.modules_name() + "::" + &self.name
+		let modules = self.modules.join("::");
+
+		let parent_name = if modules.is_empty() {
+			self.name.clone()
+		} else {
+			format!("{modules}::{}", self.name)
+		};
+
+		if let Some(child) = &self.child {
+			format!("{parent_name}<{}>", child.original_name())
+		} else {
+			parent_name
+		}
 	}
 
 	pub fn is_system_namespace(&self) -> bool {
@@ -116,16 +136,46 @@ impl ModuleOutputs {
 		Self(outputs)
 	}
 
-	pub async fn write_to_vfs(&self, path: &AsyncVfsPath) -> GelxCoreResult<()> {
+	/// Try to read the module outputs from the path.
+	pub async fn try_new(path: &PathBuf, base: &PathBuf) -> GelxCoreResult<ModuleOutputs> {
+		let mut outputs = Self::new(Vec::new());
+		let mut read_dir = fs::read_dir(path).await?;
+
+		while let Some(entry) = read_dir.next_entry().await? {
+			let path = entry.path();
+
+			if path.is_dir() {
+				outputs.extend(Box::pin(ModuleOutputs::try_new(&path, base)).await?);
+				continue;
+			}
+
+			let tokens = fs::read_to_string(&path).await?.parse::<TokenStream>()?;
+
+			if let Ok(path) = path.strip_prefix(base) {
+				outputs.push(ModuleOutput {
+					path: path.to_path_buf(),
+					tokens,
+				});
+			}
+		}
+
+		Ok(outputs)
+	}
+
+	pub async fn write_to_fs(&self, path: impl AsRef<Path>) -> GelxCoreResult<()> {
+		let path = path.as_ref();
+
 		let futures = self.iter().map(|output| {
 			async move {
+				eprintln!("Writing to {}", output.path.display());
 				let content = prettify(&output.tokens.to_string())?;
-				let current_path = path.join(output.path.display().to_string().as_str())?;
-				current_path
-					.create_file()
-					.await?
-					.write_all(content.as_bytes())
-					.await?;
+				let current_path = path.join(&output.path);
+
+				if let Some(parent) = current_path.parent() {
+					fs::create_dir_all(parent).await?;
+				}
+
+				fs::write(&current_path, content.as_bytes()).await?;
 
 				Ok::<_, GelxCoreError>(())
 			}
@@ -136,17 +186,21 @@ impl ModuleOutputs {
 		Ok(())
 	}
 
-	pub fn to_json_value(&self) -> GelxCoreResult<Value> {
-		let mut map = Map::new();
+	/// Convert the module outputs to a map of path to code.
+	///
+	/// The path is the path to the module.
+	/// The code is the code of the module.
+	pub fn to_map(&self) -> GelxCoreResult<IndexMap<PathBuf, String>> {
+		let mut map = IndexMap::new();
 
 		for module_output in self.iter() {
-			let path = module_output.path.display().to_string();
-			let tokens = prettify(&module_output.tokens.to_string())?;
+			let path = module_output.path.clone();
+			let code = prettify(&module_output.tokens.to_string())?;
 
-			map.insert(path, Value::String(tokens));
+			map.insert(path, code);
 		}
 
-		Ok(Value::Object(map))
+		Ok(map)
 	}
 
 	pub fn append_to_root(&mut self, tokens: &TokenStream) {
@@ -181,6 +235,13 @@ impl<'a> ModuleTree<'a> {
 
 		for (_, type_info) in types_ref {
 			let name = type_info.name().to_module_name();
+
+			// TODO: manage the child types which have subtypes later on, for now we just
+			// skip them
+			if name.child.is_some() {
+				continue;
+			}
+
 			root.insert(name.modules.as_slice(), type_info);
 		}
 
@@ -257,6 +318,10 @@ impl<'a> ModuleNode<'a> {
 	}
 
 	pub fn generate_module_output(&self, path: PathBuf, outputs: &mut Vec<ModuleOutput>) {
+		if !self.is_user_defined() {
+			return;
+		}
+
 		let current_path = path.join(self.filename());
 
 		outputs.push(ModuleOutput {
@@ -290,6 +355,16 @@ impl<'a> ModuleNode<'a> {
 		let mut tokens = TokenStream::new();
 		let exports_ident = self.metadata.exports_alias_ident();
 
+		tokens.extend(quote!(
+			//! This file is generated by `gelx generate`.
+			//! It is not intended for manual editing.
+			//! To update it, run `gelx generate`.
+			#![cfg_attr(rustfmt, rustfmt_skip)]
+			#![allow(unused)]
+			#![allow(unused_qualifications)]
+			#![allow(clippy::all)]
+		));
+
 		if self.is_root() {
 			let default_import = self.children.get("default").map(|default_child| {
 				let safe_name = format_ident!("{}", default_child.safe_name());
@@ -297,14 +372,6 @@ impl<'a> ModuleNode<'a> {
 			});
 
 			tokens.extend(quote! {
-				//! This file is generated by `gelx generate`.
-				//! It is not intended for manual editing.
-				//! To update it, run `gelx generate`.
-				#![cfg_attr(rustfmt, rustfmt_skip)]
-				#![allow(unused)]
-				#![allow(unused_qualifications)]
-				#![allow(clippy::all)]
-
 				use ::gelx::exports as #exports_ident;
 				#default_import
 			});
@@ -315,6 +382,10 @@ impl<'a> ModuleNode<'a> {
 		}
 
 		for (_, node) in &self.children {
+			if !node.is_user_defined() {
+				continue;
+			}
+
 			let filename = node.filename();
 			let safe_name = format_ident!("{}", node.safe_name());
 
@@ -327,25 +398,33 @@ impl<'a> ModuleNode<'a> {
 		tokens
 	}
 
-	pub fn to_token_stream(&self) -> TokenStream {
-		let mut tokens = TokenStream::new();
-		let types = self
-			.types
+	pub fn is_user_defined(&self) -> bool {
+		self.children.values().any(ModuleNode::is_user_defined)
+			|| !self.user_defined_types().is_empty()
+	}
+
+	pub fn user_defined_types(&self) -> Vec<&Type> {
+		self.types
 			.iter()
 			.filter_map(|(_, type_info)| {
 				type_info
 					.name()
 					.to_module_name()
 					.is_user_defined()
-					.then_some(type_info)
+					.then_some(*type_info)
 			})
-			.collect::<Vec<_>>();
+			.collect::<Vec<_>>()
+	}
+
+	pub fn to_token_stream(&self) -> TokenStream {
+		let mut tokens = TokenStream::new();
+		let types = self.user_defined_types();
+
+		tokens.extend(self.imports_token_stream());
 
 		if types.is_empty() {
 			return tokens;
 		}
-
-		tokens.extend(self.imports_token_stream());
 
 		for type_info in types {
 			let name = type_info.name().to_module_name();

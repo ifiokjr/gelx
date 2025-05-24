@@ -1,22 +1,20 @@
 #![doc(html_logo_url = "https://raw.githubusercontent.com/ifiokjr/gelx/main/setup/assets/logo.png")]
 
-use std::collections::HashSet;
+use std::path::Path;
 use std::path::PathBuf;
 
 use clap::Parser;
-use futures::stream::StreamExt;
 use gelx_core::GelxCoreResult;
 use gelx_core::GelxMetadata;
 use gelx_core::ModuleOutputs;
 use gelx_core::generate_module_outputs;
 use gelx_core::generate_query_token_stream;
 use gelx_core::get_descriptor;
+use heck::ToSnakeCase;
 use proc_macro2::TokenStream;
 use similar::ChangeTag;
 use similar::TextDiff;
-use vfs::async_vfs::AsyncMemoryFS;
-use vfs::async_vfs::AsyncPhysicalFS;
-use vfs::async_vfs::AsyncVfsPath;
+use tokio::fs;
 
 /// A CLI for generating typed Rust code from Gel queries
 #[derive(Parser, Debug)]
@@ -71,8 +69,6 @@ async fn main() -> GelxCoreResult<()> {
 	let current_dir = std::env::current_dir()?;
 	let metadata = GelxMetadata::try_new(&current_dir)?;
 	let root_path = metadata.root_path.clone().unwrap_or(current_dir);
-	let fs = AsyncPhysicalFS::new(&root_path);
-	let root_path = AsyncVfsPath::from(fs);
 
 	match cli.command {
 		Commands::Generate { json } => handle_generate(&metadata, &root_path, json).await,
@@ -82,19 +78,22 @@ async fn main() -> GelxCoreResult<()> {
 
 async fn handle_generate(
 	metadata: &GelxMetadata,
-	root_path: &AsyncVfsPath,
+	root_path: impl AsRef<Path>,
 	json: bool,
 ) -> GelxCoreResult<()> {
 	eprintln!("Generating code...");
+	let root_path = root_path.as_ref();
 	let outputs = generate_outputs(metadata, root_path).await?;
-	let output_path = root_path.join(metadata.output_path.display().to_string())?;
+	let output_path = root_path.join(&metadata.output_path);
 
 	if json {
-		let json = outputs.to_json_value()?;
+		let json = outputs.to_map()?;
 		println!("{}", serde_json::to_string_pretty(&json)?);
 	} else {
-		output_path.create_dir_all().await?;
-		outputs.write_to_vfs(&output_path).await?;
+		let _ = fs::remove_dir_all(&output_path).await; // clean up the output directory
+		fs::create_dir_all(&output_path).await?;
+		eprintln!("Writing generated code to {}", output_path.display());
+		outputs.write_to_fs(&output_path).await?;
 
 		eprintln!(
 			"Successfully wrote generated code to {}",
@@ -107,26 +106,19 @@ async fn handle_generate(
 
 enum Comparison {
 	/// The file was added.
-	Add(String),
+	Add(PathBuf),
 	/// The file was removed.
-	Remove(String),
+	Remove(PathBuf),
 	/// There are changes to the file.
-	Change(String, Vec<String>),
+	Change(PathBuf, Vec<String>),
 }
 
-async fn handle_check(metadata: &GelxMetadata, root_path: &AsyncVfsPath) -> GelxCoreResult<()> {
+async fn handle_check(metadata: &GelxMetadata, root_path: impl AsRef<Path>) -> GelxCoreResult<()> {
 	eprintln!("Checking code...");
-	let generated_code = generate_outputs(metadata, root_path).await?;
-	let memfs = AsyncMemoryFS::new();
-	let existing_output_path = root_path.join(metadata.output_path.display().to_string())?;
-	let generated_output_path = AsyncVfsPath::from(memfs);
-	generated_code.write_to_vfs(&generated_output_path).await?;
+	let root_path = root_path.as_ref();
+	let output_path = root_path.join(&metadata.output_path);
 
-	// compare two vfs paths.
-
-	// if !root_path.join("")
-
-	if !existing_output_path.exists().await? {
+	if !output_path.exists() {
 		eprintln!(
 			"Error: Output file {} does not exist. Run `gelx generate` first.",
 			metadata.output_path.display()
@@ -134,30 +126,22 @@ async fn handle_check(metadata: &GelxMetadata, root_path: &AsyncVfsPath) -> Gelx
 		std::process::exit(1);
 	}
 
-	let mut shared = HashSet::new();
+	let generated_map = generate_outputs(metadata, root_path).await?.to_map()?;
+	println!("generated_map keys: {:?}", generated_map.keys());
+	let existing_map = ModuleOutputs::try_new(&output_path, &output_path)
+		.await?
+		.to_map()?;
+	println!("existing_map keys: {:?}", existing_map.keys());
 	let mut comparison = Vec::new();
 
-	while let Some(entry) = generated_output_path.walk_dir().await?.next().await {
-		let entry = entry?;
-
-		let Some(relative_path) = entry.as_str().strip_prefix(generated_output_path.as_str())
-		else {
+	for (path, content) in &generated_map {
+		let Some(existing_content) = existing_map.get(path) else {
+			comparison.push(Comparison::Add(path.clone()));
 			continue;
 		};
 
-		let existing_output_path = existing_output_path.join(relative_path)?;
-
-		if !existing_output_path.exists().await? {
-			comparison.push(Comparison::Add(relative_path.to_string()));
-			continue;
-		}
-
-		let generated_content = entry.read_to_string().await?;
-		let existing_content = existing_output_path.read_to_string().await?;
-		shared.insert(relative_path.to_string());
-
-		if generated_content != existing_content {
-			let diff = TextDiff::from_lines(&existing_content, &generated_content);
+		if existing_content != content {
+			let diff = TextDiff::from_lines(existing_content, content);
 			let mut changes = Vec::new();
 
 			for change in diff.iter_all_changes() {
@@ -169,19 +153,13 @@ async fn handle_check(metadata: &GelxMetadata, root_path: &AsyncVfsPath) -> Gelx
 				changes.push(format!("{sign}{change}"));
 			}
 
-			comparison.push(Comparison::Change(relative_path.to_string(), changes));
+			comparison.push(Comparison::Change(path.clone(), changes));
 		}
 	}
 
-	while let Some(entry) = existing_output_path.walk_dir().await?.next().await {
-		let entry = entry?;
-
-		let Some(relative_path) = entry.as_str().strip_prefix(existing_output_path.as_str()) else {
-			continue;
-		};
-
-		if !shared.contains(relative_path) {
-			comparison.push(Comparison::Remove(relative_path.to_string()));
+	for path in existing_map.keys() {
+		if !generated_map.contains_key(path) {
+			comparison.push(Comparison::Remove(path.clone()));
 		}
 	}
 
@@ -193,13 +171,13 @@ async fn handle_check(metadata: &GelxMetadata, root_path: &AsyncVfsPath) -> Gelx
 	for change in comparison {
 		match change {
 			Comparison::Add(path) => {
-				eprintln!("Added: {}", existing_output_path.join(&path)?.as_str());
+				eprintln!("Added: {}", root_path.join(&path).display());
 			}
 			Comparison::Remove(path) => {
-				eprintln!("Removed: {}", existing_output_path.join(&path)?.as_str());
+				eprintln!("Removed: {}", root_path.join(&path).display());
 			}
 			Comparison::Change(path, diffs) => {
-				eprintln!("Changed: {}", existing_output_path.join(&path)?.as_str());
+				eprintln!("Changed: {}", root_path.join(&path).display());
 
 				for diff in diffs {
 					eprintln!("{diff}");
@@ -208,30 +186,35 @@ async fn handle_check(metadata: &GelxMetadata, root_path: &AsyncVfsPath) -> Gelx
 		}
 	}
 
-	std::process::exit(1);
+	// std::process::exit(1);
+	Ok(())
 }
 
 async fn generate_outputs(
 	metadata: &GelxMetadata,
-	root_path: &AsyncVfsPath,
+	root_path: impl AsRef<Path>,
 ) -> GelxCoreResult<ModuleOutputs> {
+	let root_path = root_path.as_ref();
 	let mut query_tokens = TokenStream::new();
-	let queries_path = root_path.join(metadata.queries_path.display().to_string())?;
+	let queries_path = root_path.join(&metadata.queries_path);
 
-	if queries_path.is_dir().await? {
-		let mut paths = queries_path.read_dir().await?.collect::<Vec<_>>().await;
-		paths.sort_by_key(|path| path.as_str().to_string());
+	if queries_path.is_dir() {
+		// not async to make sorting easier
+		let mut entries = queries_path.read_dir()?.collect::<Result<Vec<_>, _>>()?;
+		entries.sort_by_key(std::fs::DirEntry::path);
 
-		for path in paths {
-			if !path.is_file().await? || path.extension().is_none_or(|ext| ext != "edgeql") {
+		for entry in entries {
+			let path = entry.path();
+
+			if !path.is_file() || path.extension().is_none_or(|ext| ext != "edgeql") {
 				continue;
 			}
 
-			let query_content = path.read_to_string().await?;
-			let filename = path.filename();
-			let module_name = filename.to_string();
+			let query_content = fs::read_to_string(&path).await?;
+			let file_stem = path.file_stem().unwrap_or_default().to_string_lossy();
+			let module_name = file_stem.to_snake_case();
 
-			eprintln!("Processing query: {}", path.as_str());
+			eprintln!("Processing query: {}", path.display());
 			let descriptor = get_descriptor(&query_content, metadata).await?;
 			let token_stream = generate_query_token_stream(
 				&descriptor,
