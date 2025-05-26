@@ -26,7 +26,6 @@ use crate::GelxCoreError;
 use crate::GelxCoreResult;
 use crate::GelxMetadata;
 use crate::constants::TYPES_QUERY;
-use crate::create_gel_config;
 use crate::prettify;
 
 /// Execute the types query to get the types of the current database.
@@ -449,11 +448,7 @@ impl<'a> ModuleNode<'a> {
 
 /// Generate the custom types.
 pub async fn generate_module_outputs(metadata: &GelxMetadata) -> GelxCoreResult<ModuleOutputs> {
-	let config = create_gel_config(
-		metadata.gel_config_path.as_deref(),
-		metadata.gel_instance.as_deref(),
-		metadata.gel_branch.as_deref(),
-	)?;
+	let config = metadata.gel_config()?;
 	let client = Client::new(&config);
 	let fetched_types = types_query(&client).await?;
 	let types = map_fetched_types(&fetched_types);

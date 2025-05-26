@@ -1,0 +1,9 @@
+---
+source: crates/gelx_core/src/utils.rs
+expression: formatted
+---
+struct Foo {
+    content: String,
+    allowed: bool,
+    times: u64,
+}

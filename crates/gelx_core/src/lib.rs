@@ -83,11 +83,7 @@ pub async fn get_descriptor(
 	query: &str,
 	metadata: &GelxMetadata,
 ) -> GelxCoreResult<CommandDataDescription1> {
-	let config = create_gel_config(
-		metadata.gel_config_path.as_deref(),
-		metadata.gel_instance.as_deref(),
-		metadata.gel_branch.as_deref(),
-	)?;
+	let config = metadata.gel_config()?;
 	let state = Arc::new(PoolState::default());
 	let pool = Pool::new(&config);
 	let mut pool_connection = Box::pin(pool.acquire()).await?;

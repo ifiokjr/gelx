@@ -5,6 +5,9 @@ use std::path::PathBuf;
 use std::str::FromStr;
 
 use base64::prelude::*;
+use gel_tokio::Builder;
+use gel_tokio::Config;
+use gel_tokio::InstanceName;
 use indexmap::IndexMap;
 use proc_macro2::TokenStream;
 use quote::format_ident;
@@ -28,7 +31,7 @@ use crate::gelx_error;
 /// ```bash
 /// gelx generate
 /// ```
-#[derive(Clone, Debug, Serialize, Deserialize, TypedBuilder)]
+#[derive(Clone, Debug, Serialize, Deserialize, TypedBuilder, PartialEq)]
 #[builder(field_defaults(
 	default,
 	setter(into, strip_option(ignore_invalid, fallback_suffix = "_opt"))
@@ -106,27 +109,11 @@ impl TryFrom<&str> for GelxMetadata {
 	}
 }
 
-impl TryFrom<String> for GelxMetadata {
-	type Error = GelxCoreError;
-
-	fn try_from(value: String) -> Result<Self, Self::Error> {
-		Self::try_from(value.as_str())
-	}
-}
-
 impl TryFrom<&String> for GelxMetadata {
 	type Error = GelxCoreError;
 
 	fn try_from(value: &String) -> Result<Self, Self::Error> {
 		Self::try_from(value.as_str())
-	}
-}
-
-impl FromStr for GelxMetadata {
-	type Err = GelxCoreError;
-
-	fn from_str(s: &str) -> Result<Self, Self::Err> {
-		Self::try_from(s)
 	}
 }
 
@@ -159,6 +146,32 @@ impl GelxMetadata {
 		let metadata = Self::try_from(&toml_str)?;
 
 		Ok(metadata)
+	}
+
+	/// Create a `Config` instance from the `GelxMetadata`.
+	pub fn gel_config(&self) -> GelxCoreResult<Config> {
+		let mut builder = Builder::new();
+
+		if let Some(ref instance) = self.gel_instance {
+			builder = builder.instance(InstanceName::from_str(instance)?);
+		}
+
+		if let Some(ref branch) = self.gel_branch {
+			builder = builder.branch(branch);
+		}
+
+		let config = if let Some(ref config_path) = self.gel_config_path {
+			builder
+				.without_system()
+				.with_env()
+				.with_fs()
+				.with_auto_project(config_path)
+				.build()?
+		} else {
+			builder.build()?
+		};
+
+		Ok(config)
 	}
 
 	pub fn input_struct_ident(&self) -> Ident {
@@ -257,7 +270,7 @@ fn default_enum_derive_macros() -> Vec<String> {
 	vec!["Debug".into(), "Clone".into(), "Copy".into()]
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, derive_more::From)]
+#[derive(Clone, Debug, Serialize, Deserialize, derive_more::From, PartialEq)]
 #[serde(untagged)]
 pub enum GelxFeatureOptions {
 	/// Enable the feature with the given alias.
@@ -357,7 +370,7 @@ impl FeatureName {
 	}
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, Default, TypedBuilder)]
+#[derive(Clone, Debug, Serialize, Deserialize, Default, TypedBuilder, PartialEq)]
 #[builder(field_defaults(default, setter(into)))]
 pub struct GelxFeatures {
 	#[serde(default)]
@@ -546,4 +559,29 @@ fn toml_has_path(doc: &Item, keys: Vec<&str>) -> bool {
 	}
 
 	true
+}
+
+#[cfg(test)]
+mod tests {
+	use super::*;
+
+	#[test]
+	fn test_gel_config() {
+		let metadata = GelxMetadata::builder()
+			.gel_config_path(PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("fixtures/gel.toml"))
+			.gel_instance("gelx".to_string())
+			.gel_branch("main".to_string())
+			.build();
+
+		metadata.gel_config().unwrap();
+	}
+
+	#[test]
+	fn test_try_from_base64() {
+		let expected = GelxMetadata::default();
+		let base64 = expected.try_to_base64().unwrap();
+		let metadata = GelxMetadata::try_from_base64(&base64).unwrap();
+
+		assert_eq!(expected, metadata);
+	}
 }

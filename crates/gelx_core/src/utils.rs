@@ -1,45 +1,8 @@
 use std::env;
 use std::path::Path;
 use std::path::PathBuf;
-use std::str::FromStr;
 
-use gel_tokio::Builder;
-use gel_tokio::Config;
-use gel_tokio::InstanceName;
 use proc_macro2::Span;
-use tokio::io::AsyncWriteExt;
-use tokio::process::Command;
-
-use crate::GelxCoreResult;
-
-pub(crate) fn create_gel_config<P: AsRef<Path>>(
-	config_path: Option<P>,
-	gel_instance: Option<&str>,
-	gel_branch: Option<&str>,
-) -> GelxCoreResult<Config> {
-	let mut builder = Builder::new();
-
-	if let Some(instance) = gel_instance {
-		builder = builder.instance(InstanceName::from_str(instance)?);
-	}
-
-	if let Some(branch) = gel_branch {
-		builder = builder.branch(branch);
-	}
-
-	let config = if let Some(config_path) = config_path {
-		builder
-			.without_system()
-			.with_env()
-			.with_fs()
-			.with_auto_project(config_path)
-			.build()?
-	} else {
-		builder.build()?
-	};
-
-	Ok(config)
-}
 
 /// Taken from <https://github.com/launchbadge/sqlx/blob/f69f370f25f099fd5732a5383ceffc76f724c482/sqlx-macros-core/src/common.rs#L1C1-L37C2>
 pub fn resolve_path(path: impl AsRef<Path>, error_span: Span) -> syn::Result<PathBuf> {
@@ -76,28 +39,6 @@ pub fn resolve_path(path: impl AsRef<Path>, error_span: Span) -> syn::Result<Pat
 	Ok(base_dir_path.join(path))
 }
 
-/// Will format the given source code using `rustfmt`.
-pub async fn rustfmt(source: &str) -> GelxCoreResult<String> {
-	let source = prettify(source)?;
-
-	let mut process = Command::new("rustfmt")
-		.args(["--emit", "stdout"])
-		.stdin(std::process::Stdio::piped())
-		.stdout(std::process::Stdio::piped())
-		.spawn()?;
-
-	let mut stdin = process.stdin.take().unwrap();
-	stdin.write_all(source.as_bytes()).await?;
-	stdin.flush().await?;
-	drop(stdin);
-
-	let result = String::from_utf8(process.wait_with_output().await?.stdout).map_err(|_| {
-		std::io::Error::new(std::io::ErrorKind::InvalidData, "Rustfmt output not UTF-8")
-	})?;
-
-	Ok(result)
-}
-
 /// Will format the given source code using `prettyplease`.
 pub fn prettify(source: &str) -> syn::Result<String> {
 	Ok(prettyplease::unparse(&syn::parse_str(source)?))
@@ -108,23 +49,22 @@ mod tests {
 	use assert2::check;
 
 	use super::*;
+	use crate::GelxCoreResult;
 
-	#[tokio::test]
-	async fn can_format_file() -> GelxCoreResult<()> {
+	#[test]
+	fn can_format_file() -> GelxCoreResult<()> {
 		let content = "struct Foo { content: String, allowed: bool, times: u64 }";
-		let formatted = rustfmt(content).await?;
+		let formatted = prettify(content)?;
 
-		// formatting changes based on the version of rust used, so can't check for
-		// exact output
-		check!(formatted != content);
+		insta::assert_snapshot!(formatted);
 
 		Ok(())
 	}
 
-	#[tokio::test]
-	async fn error_when_formatting_invalid_rust() {
+	#[test]
+	fn error_when_formatting_invalid_rust() {
 		let content = "struct Foo { content: String, allowed: bool, times: u64,,,,, INVALID}";
-		let result = rustfmt(content).await;
+		let result = prettify(content);
 
 		check!(result.is_err(), "result should be an error");
 	}

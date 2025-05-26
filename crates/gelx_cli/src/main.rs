@@ -7,7 +7,9 @@ use gelx_core::GelxCoreResult;
 #[tokio::main]
 async fn main() -> GelxCoreResult<()> {
 	let cli = Cli::parse();
-	cli.run().await?;
 
-	Ok(())
+	match cli.run().await {
+		Ok(()) => std::process::exit(0),
+		Err(_) => std::process::exit(1),
+	}
 }

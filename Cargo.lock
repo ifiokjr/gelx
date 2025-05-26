@@ -1012,6 +1012,7 @@ dependencies = [
  "gel-tokio",
  "heck",
  "indexmap 2.9.0",
+ "insta",
  "log",
  "prettyplease",
  "proc-macro2",

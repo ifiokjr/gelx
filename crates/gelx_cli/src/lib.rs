@@ -4,6 +4,7 @@ use std::path::Path;
 use std::path::PathBuf;
 
 use clap::Parser;
+use gelx_core::GelxCoreError;
 use gelx_core::GelxCoreResult;
 use gelx_core::GelxMetadata;
 use gelx_core::ModuleOutputs;
@@ -43,12 +44,13 @@ impl Cli {
 			let absolute_path = current_dir.join(path);
 
 			if !absolute_path.is_dir() {
-				eprintln!(
+				let message = format!(
 					"Error: Invalid --cwd path: {} is not a directory or does not exist.",
 					path.display()
 				);
+				eprintln!("{message}");
 
-				std::process::exit(1);
+				return Err(GelxCoreError::Custom(message));
 			}
 
 			std::env::set_current_dir(absolute_path)?;
@@ -148,11 +150,13 @@ impl Cli {
 		let output_path = root_path.join(&metadata.output_path);
 
 		if !output_path.exists() {
-			eprintln!(
+			let message = format!(
 				"Error: Output file {} does not exist. Run `gelx generate` first.",
 				metadata.output_path.display()
 			);
-			std::process::exit(1);
+			eprintln!("{message}");
+
+			return Err(GelxCoreError::Custom(message));
 		}
 
 		let generated_map = Self::outputs(metadata, root_path).await?.to_map()?;
@@ -192,7 +196,7 @@ impl Cli {
 
 		if comparison.is_empty() {
 			eprintln!("Generated code is up-to-date.");
-			std::process::exit(0);
+			return Ok(());
 		}
 
 		for change in comparison {
@@ -213,7 +217,6 @@ impl Cli {
 			}
 		}
 
-		// std::process::exit(1);
 		Ok(())
 	}
 }

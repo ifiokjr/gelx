@@ -43,6 +43,7 @@ uuid = { workspace = true, features = ["serde"] }
 
 [dev-dependencies]
 assert2 = { workspace = true }
+insta = { workspace = true }
 tokio = { workspace = true, features = ["time", "test-util"] }
 
 [features]

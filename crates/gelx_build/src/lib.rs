@@ -61,7 +61,7 @@ pub async fn gelx_build() -> GelxCoreResult<GelxMetadata> {
 	let cargo_toml_contents = fs::read_to_string(&cargo_toml_path).await?;
 	// TODO: support output to OUT_DIR with shared enums rather than generating the
 	// enum every time.
-	let metadata = GelxMetadata::try_from(cargo_toml_contents).unwrap_or_default();
+	let metadata = GelxMetadata::try_from(&cargo_toml_contents).unwrap_or_default();
 	set_metadata_env(&metadata)?;
 
 	Ok(metadata)
