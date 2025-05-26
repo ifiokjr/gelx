@@ -1,5 +1,5 @@
 ---
-source: crates/gelx_cli/src/main.rs
+source: crates/gelx_cli/src/lib.rs
 info:
   program: gelx
   args:
