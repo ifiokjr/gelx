@@ -64,3 +64,14 @@ fn check() {
 			.stderr(Stdio::null())
 	);
 }
+
+#[test]
+fn invalid_cwd_check() {
+	insta_cmd::assert_cmd_snapshot!(
+		cli()
+			.arg("check")
+			.arg("--cwd")
+			.arg("../../examples/gelx_example/does/not/exist")
+			.stderr(Stdio::null())
+	);
+}

@@ -89,6 +89,9 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           nix-cache: /tmp/nixcache
 
+      - name: clean coverage
+        run: cargo llvm-cov clean
+
       - name: test coverage
         run: coverage:all
 

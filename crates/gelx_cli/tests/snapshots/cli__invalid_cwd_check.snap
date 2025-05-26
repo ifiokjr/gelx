@@ -1,0 +1,14 @@
+---
+source: crates/gelx_cli/tests/cli.rs
+info:
+  program: gelx
+  args:
+    - check
+    - "--cwd"
+    - "../../examples/gelx_example/does/not/exist"
+---
+success: false
+exit_code: 1
+----- stdout -----
+
+----- stderr -----
