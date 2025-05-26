@@ -1,5 +1,3 @@
-use std::ops::Deref;
-
 use bytes::Bytes;
 use gel_protocol::codec::POSTGIS_GEOGRAPHY;
 use gel_protocol::codec::POSTGIS_GEOMETRY;
@@ -48,24 +46,6 @@ impl Queryable for Geometry {
 	) -> Result<Self::Args, DescriptorMismatch> {
 		check_scalar(ctx, type_pos, POSTGIS_GEOMETRY, "ext::postgis::geometry")?;
 		Ok(())
-	}
-}
-
-impl From<Bytes> for Geometry {
-	fn from(value: Bytes) -> Self {
-		(&value).into()
-	}
-}
-
-impl From<&Bytes> for Geometry {
-	fn from(value: &Bytes) -> Self {
-		value.deref().into()
-	}
-}
-
-impl From<&[u8]> for Geometry {
-	fn from(value: &[u8]) -> Self {
-		Self(read_wkb(value).unwrap().to_geometry())
 	}
 }
 
@@ -118,24 +98,6 @@ impl Queryable for Geography {
 	}
 }
 
-impl From<Bytes> for Geography {
-	fn from(value: Bytes) -> Self {
-		(&value).into()
-	}
-}
-
-impl From<&Bytes> for Geography {
-	fn from(value: &Bytes) -> Self {
-		value.deref().into()
-	}
-}
-
-impl From<&[u8]> for Geography {
-	fn from(value: &[u8]) -> Self {
-		Self(read_wkb(value).unwrap().to_geometry())
-	}
-}
-
 impl From<Geography> for Value {
 	fn from(value: Geography) -> Self {
 		let mut buf = vec![];
@@ -165,9 +127,11 @@ fn check_scalar(
 		Descriptor::Scalar(scalar) if scalar.base_type_pos.is_some() => {
 			return check_scalar(ctx, scalar.base_type_pos.unwrap(), type_id, name);
 		}
+
 		Descriptor::Scalar(scalar) if *scalar.id == type_id => {
 			return Ok(());
 		}
+
 		Descriptor::BaseScalar(base) if *base.id == type_id => {
 			return Ok(());
 		}
