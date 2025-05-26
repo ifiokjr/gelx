@@ -398,6 +398,8 @@ At this point you must setup the gel instance.
 db:setup # setup the gel instance
 ```
 
+The above command will setup the local database and install the postgis extension.
+
 Now you can make your changes and run tests.
 
 ```bash
@@ -413,6 +415,7 @@ You can view all the available scripts, packages, tasks and environment variable
 - `coverage:all`: Test all files and generate a coverage report for upload to codecov.
 - `db:destroy`: Destroy the local database.
 - `db:setup`: Setup the local database.
+- `db:reset`: Reset the local database.
 - `db:up`: Watch changes to the local database.
 - `fix:all`: Fix all fixable lint issues.
 - `fix:clippy`: Fix fixable lint issues raised by rust clippy.

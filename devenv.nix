@@ -57,11 +57,19 @@
 
       gel instance create --non-interactive $GEL_INSTANCE $GEL_BRANCH || true
       gel instance start --instance $GEL_INSTANCE
-      gel extension install postgis --instance $GEL_INSTANCE
+      gel extension install postgis --instance $GEL_INSTANCE > /dev/null 2>&1 || true
       gel instance restart --instance $GEL_INSTANCE
       gel migrate
     '';
     description = "Setup the local database.";
+  };
+  scripts."db:reset" = {
+    exec = ''
+      set -e
+      db:destroy
+      db:setup
+    '';
+    description = "Reset the local database.";
   };
   scripts."db:up" = {
     exec = ''
