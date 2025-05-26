@@ -6,6 +6,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.7.0](https://github.com/ifiokjr/gelx/compare/v0.6.0...v0.7.0) - 2025-05-26
+
+### <!-- 0 -->🎉 Added
+
+- *(gelx_core)* generated enums can now be used as `Input` fields
+- feat!(gelx_core): remove `create_gel_config` and add `GelxMetadata::gel_config(&self)`
+- feat!(gelx_cli): make `gelx_cli` useable as a library
+- add support for postgis via `geo`
+
+### <!-- 6 -->🧪 Testing
+
+- *(coverage)* clean coverage outputs before run
+- *(gelx_cli)* improve test coverage
+
+### <!-- 7 -->⚙️ Miscellaneous Tasks
+
+- add `gelx_cli` crate to workspace and enable publishing
+
 ## [0.6.0](https://github.com/ifiokjr/gelx/compare/v0.5.1...v0.6.0) - 2025-05-24
 
 ### <!-- 0 -->🎉 Added

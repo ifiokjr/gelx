@@ -6,6 +6,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.7.0](https://github.com/ifiokjr/gelx/compare/v0.6.0...v0.7.0) - 2025-05-26
+
+### <!-- 0 -->🎉 Added
+
+- *(gelx_core)* generated enums can now be used as `Input` fields
+- feat!(gelx_core): remove `create_gel_config` and add `GelxMetadata::gel_config(&self)`
+- feat!(gelx_core): remove unused exports `IdentConst` and `Char`
+- feat!(gelx_build): add `gelx_build` crate for reading configuration in macros
+- add support for postgis via `geo`
+
+### <!-- 1 -->🐛 Bug Fixes
+
+- *(gelx_core)* remove unused `gelx_core` `with_*` features
+
 ## [0.6.0](https://github.com/ifiokjr/gelx/compare/v0.5.1...v0.6.0) - 2025-05-24
 
 ### <!-- 0 -->🎉 Added

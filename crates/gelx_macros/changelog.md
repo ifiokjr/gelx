@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.7.0](https://github.com/ifiokjr/gelx/compare/v0.6.0...v0.7.0) - 2025-05-26
+
+### <!-- 0 -->🎉 Added
+
+- feat!(gelx_build): add `gelx_build` crate for reading configuration in macros
+- add support for postgis via `geo`
+
+### <!-- 1 -->🐛 Bug Fixes
+
+- *(gelx_core)* remove unused `gelx_core` `with_*` features
+
 ## [0.5.0](https://github.com/ifiokjr/gelx/compare/v0.4.0...v0.5.0) - 2025-05-20
 
 ### <!-- 0 -->🎉 Added
