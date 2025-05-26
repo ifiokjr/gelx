@@ -568,7 +568,7 @@ mod tests {
 	#[test]
 	fn test_gel_config() {
 		let metadata = GelxMetadata::builder()
-			.gel_config_path(PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("fixtures/gel.toml"))
+			.gel_config_path(PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../gel.toml"))
 			.gel_instance("gelx".to_string())
 			.gel_branch("main".to_string())
 			.build();
