@@ -1,10 +1,3 @@
-use proc_macro2::Punct;
-use proc_macro2::Spacing;
-use proc_macro2::TokenStream;
-use quote::ToTokens;
-use quote::TokenStreamExt;
-use quote::format_ident;
-
 /// Query to get all types in the database.
 pub const TYPES_QUERY: &str = r#"WITH
   MODULE schema,
@@ -111,34 +104,6 @@ pub const TYPES_QUERY: &str = r#"WITH
 	}
 ORDER BY .name;
 "#;
-
-pub struct Char(char);
-impl ToTokens for Char {
-	fn to_tokens(&self, tokens: &mut TokenStream) {
-		tokens.append(Punct::new(self.0, Spacing::Alone));
-	}
-}
-
-pub struct IdentConst(&'static str);
-
-impl ToTokens for IdentConst {
-	fn to_tokens(&self, tokens: &mut TokenStream) {
-		let ident = format_ident!("{}", self.0);
-		tokens.append(ident);
-	}
-}
-
-impl std::fmt::Display for IdentConst {
-	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-		write!(f, "{}", self.0)
-	}
-}
-
-impl AsRef<str> for IdentConst {
-	fn as_ref(&self) -> &str {
-		self.0
-	}
-}
 
 /// Name of the query function.
 pub const QUERY_PROP_NAME: &str = "client";
