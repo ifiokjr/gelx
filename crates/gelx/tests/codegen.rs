@@ -76,15 +76,17 @@ pub fn testname() -> String {
 )]
 #[case::enums("select Account { provider }")]
 #[case::types_query(TYPES_QUERY)]
-// #[case::range("select range(0, 10)")] // TODO: `Range` doesn't implement `Queryable` yet.
-// #[case::bytes("select b'bina\\x01ry'")] // TODO: bytes don't implement `DecodeScalar` yet.
+// #[case::range("select range(0, 10)")]  // TODO: `Range` doesn't implement `Queryable` yet.
+#[case::bytes("select b'bina\\x01ry'")]
+#[case::geometry("select ext::postgis::makepoint(1.0, 1.0)")]
+#[case::geography("select <ext::postgis::geography>ext::postgis::makepoint(1.0, 1.0)")]
 #[tokio::test]
 #[rustversion::attr(not(nightly), ignore = "requires nightly")]
 async fn codegen_literals(testname: String, #[case] query: &str) -> GelxCoreResult<()> {
 	set_snapshot_suffix!("{}", testname);
 
 	let metadata = GelxMetadata::default();
-	let relative_path = format!("tests/compile/codegen/{testname}{}.rs", get_features());
+	let relative_path = format!("tests/compile/codegen/{testname}.rs");
 	let descriptor = get_descriptor(query, &metadata).await?;
 	let code = generate_query_token_stream(&descriptor, "example", query, &metadata, true)?;
 	let content = prettify(&code.to_string())?;
@@ -107,7 +109,7 @@ async fn codegen_files(#[case] path: &str) -> GelxCoreResult<()> {
 
 	let metadata = GelxMetadata::default();
 	let query_path = resolve_path(format!("queries/{path}.edgeql"), Span::call_site())?;
-	let relative_path = format!("tests/compile/codegen/{path}{}.rs", get_features());
+	let relative_path = format!("tests/compile/codegen/{path}.rs");
 	let query = tokio::fs::read_to_string(&query_path).await?;
 	let descriptor = get_descriptor(&query, &metadata).await?;
 	let code = generate_query_token_stream(&descriptor, "example", &query, &metadata, true)?;

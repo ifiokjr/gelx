@@ -21,12 +21,16 @@ bigdecimal = { workspace = true, optional = true }
 bytes = { workspace = true }
 cfg-if = { workspace = true }
 chrono = { workspace = true, optional = true }
+derive_more = { workspace = true, features = ["from", "into", "deref", "deref_mut"] }
 document-features = { workspace = true }
 gel-derive = { workspace = true, optional = true }
 gel-errors = { workspace = true }
-gel-protocol = { workspace = true, features = ["all-types"] }
+gel-protocol = { workspace = true }
 gel-tokio = { workspace = true, features = ["unstable", "derive"], optional = true }
 gelx_macros = { workspace = true }
+geo = { workspace = true, optional = true }
+geo-traits = { workspace = true, optional = true }
+geo-types = { workspace = true, optional = true }
 num-bigint = { workspace = true, optional = true }
 num-traits = { workspace = true, optional = true }
 serde = { workspace = true, features = ["derive"], optional = true }
@@ -34,6 +38,7 @@ serde_bytes = { workspace = true, optional = true }
 strum = { workspace = true, features = ["derive"], optional = true }
 typed-builder = { workspace = true, optional = true }
 uuid = { workspace = true }
+wkb = { workspace = true, optional = true }
 
 [dev-dependencies]
 assert2 = { workspace = true }
@@ -56,23 +61,36 @@ default = ["with_all"]
 
 ## Include the `num-bigint` dependency.
 with_bigint = [
-	"gelx_macros/with_bigint",
 	"dep:num-bigint",
 	"dep:num-traits",
 	"gel-protocol/with-num-bigint",
+	"gelx_macros/with_bigint",
 ]
 
 ## Use the `bigdecimal` crate.
 with_bigdecimal = [
-	"gelx_macros/with_bigdecimal",
 	"dep:bigdecimal",
 	"dep:num-bigint",
 	"dep:num-traits",
 	"gel-protocol/with-bigdecimal",
+	"gelx_macros/with_bigdecimal",
 ]
 
 ## Use the `chrono` crate for all dates.
-with_chrono = ["gelx_macros/with_chrono", "dep:chrono", "gel-protocol/with-chrono"]
+with_chrono = [
+	"dep:chrono",
+	"gel-protocol/with-chrono",
+	"gelx_macros/with_chrono",
+]
+
+## Use the `geo-types` crate for all geo types.
+with_geo = [
+	"dep:geo-traits",
+	"dep:geo-types",
+	"dep:geo",
+	"dep:wkb",
+	"gelx_macros/with_geo",
+]
 
 ## Include all additional types. This is included by default. Use `default-features = false` to disable.
 with_all = [
@@ -80,6 +98,7 @@ with_all = [
 	"with_bigint",
 	"with_bigdecimal",
 	"with_chrono",
+	"with_geo",
 	"gel-protocol/all-types",
 ]
 
@@ -99,12 +118,14 @@ query = ["gelx_macros/query", "dep:gel-tokio", "dep:gel-derive"]
 
 ## Enable serde for the generated code.
 serde = [
-	"gelx_macros/serde",
-	"gel-protocol/with-serde",
-	"dep:serde",
-	"dep:serde_bytes",
-	"uuid/serde",
 	"chrono/serde",
+	"dep:serde_bytes",
+	"dep:serde",
+	"gel-protocol/with-serde",
+	"gelx_macros/serde",
+	"geo-types?/serde",
+	"geo?/use-serde",
+	"uuid/serde",
 ]
 
 ## Enable strum for the generated code.

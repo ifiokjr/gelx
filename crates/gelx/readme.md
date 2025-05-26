@@ -50,9 +50,9 @@ gel init
 
 ## `gelx!`
 
-Working with the default `gel` requires writing queries and creating the expected types for both the input and output into these queries. The correctness of your code is only checked at runtime increasing the risk of bugs and errors.
+Working with the default `gel` crate requires manually writing untyped queries and creating the rust structs and enums for both the input and output into these queries with. The correctness of your code can only be checked at runtime increasing the risk of bugs and errors.
 
-`gelx!` transforms your queries into types and functions, providing safety and peace of mind during the development of your project.
+`gelx!` transforms your queries into rust structs, types and functions, providing safety during development of your project.
 
 ### Inline Queries
 
@@ -61,7 +61,7 @@ use gel_errors::Error;
 use gel_tokio::create_client;
 use gelx::gelx;
 
-// Creates a module called `simple` with a function called `query` and structs
+// Creates a module called `example` with a function called `query` and structs
 // for the `Input` and `Output`.
 gelx!(
 	example,
@@ -265,6 +265,61 @@ enum_derive_macros = ["Debug", "Clone", "Copy"]
 # gel_branch = "$GEL_BRANCH"
 ```
 
+## `Geometry` and `Geography`
+
+The `gelx` crate provides wrapper types for the `Geometry` and `Geography` types from the `geo` crate.
+
+```edgeql
+# queries/insert_location.edgeql
+
+with NewLocation := (insert Location {
+	point := <ext::postgis::geometry>$point,
+	area := <ext::postgis::geography>$area,
+})
+select NewLocation {
+	point,
+	area,
+};
+```
+
+```rust
+use gel_errors::Error;
+use gelx::Geography;
+use gelx::Geometry;
+use gelx::create_client;
+use gelx::gelx;
+use gelx::geo::point;
+use gelx::geo::polygon;
+
+// Creates a module called `insert_location` with public functions `transaction`
+// and `query` as well as structs for the `Input` and `Output`.
+gelx!(insert_location);
+
+#[tokio::main]
+async fn main() -> Result<(), Error> {
+	let client = create_client().await?;
+	let point = point!(x: 1.0, y: 1.0);
+	let polygon = polygon![
+		(x: -111., y: 45.),
+		(x: -111., y: 41.),
+		(x: -104., y: 41.),
+		(x: -104., y: 45.),
+	];
+	let output = insert_location::query(
+		&client,
+		&insert_location::Input {
+			point: Geometry(point.into()),
+			area: Geography(polygon.into()),
+		},
+	)
+	.await?;
+
+	println!("{:?}", output);
+
+	Ok(())
+}
+```
+
 ## Future Work ⚠️
 
 This crate is still in early development and there are several features that are not yet implemented.
@@ -273,18 +328,11 @@ This crate is still in early development and there are several features that are
 
 Currently the following types are not supported:
 
-- `MultiRange` - The macro will panic if a multirange is used.
-- `POSTGIS` - No elegant way to support this yet with integration with the `geo` crate.
+- `MultiRange` - The cli / macro will panic if a multirange is used.
 
 #### `MultiRange`
 
 These are not currently exported by the `gel-protocol` so should be added in a PR to the `gel-protocol` crate, if they are still supported in the new protocol.
-
-#### `POSTGIS`
-
-No elegant way to support this yet with integration with the `geo` crate.
-
-Export wrapper types from the `gelx` crate which support the `POSTGIS` types.
 
 ### LSP parsing
 

@@ -11,6 +11,55 @@ pub use default::*;
 pub mod additional;
 #[path = "default.rs"]
 pub mod default;
+pub mod insert_location {
+    use ::gelx::exports as __g;
+    /// Execute the desired query.
+    #[cfg(feature = "ssr")]
+    pub async fn query(
+        client: &__g::gel_tokio::Client,
+        props: &Input,
+    ) -> ::core::result::Result<Output, __g::gel_errors::Error> {
+        client.query_required_single(QUERY, props).await
+    }
+    /// Compose the query as part of a larger transaction.
+    #[cfg(feature = "ssr")]
+    pub async fn transaction(
+        conn: &mut __g::gel_tokio::Transaction,
+        props: &Input,
+    ) -> ::core::result::Result<Output, __g::gel_errors::Error> {
+        conn.query_required_single(QUERY, props).await
+    }
+    #[derive(Debug, Clone, __g::serde::Serialize, __g::serde::Deserialize)]
+    #[cfg_attr(
+        feature = "ssr",
+        derive(__g::typed_builder::TypedBuilder, __g::gel_derive::Queryable)
+    )]
+    pub struct Input {
+        #[cfg_attr(feature = "ssr", builder(setter(into)))]
+        pub point: __g::Geometry,
+        #[cfg_attr(feature = "ssr", builder(setter(into)))]
+        pub area: __g::Geography,
+    }
+    impl __g::gel_protocol::query_arg::QueryArgs for Input {
+        fn encode(
+            &self,
+            encoder: &mut __g::gel_protocol::query_arg::Encoder,
+        ) -> core::result::Result<(), __g::gel_errors::Error> {
+            let map = __g::gel_protocol::named_args! {
+                "point" => self.point.clone(), "area" => self.area.clone(),
+            };
+            map.encode(encoder)
+        }
+    }
+    #[derive(Debug, Clone, __g::serde::Serialize, __g::serde::Deserialize)]
+    #[cfg_attr(feature = "ssr", derive(__g::gel_derive::Queryable))]
+    pub struct Output {
+        pub point: __g::Geometry,
+        pub area: __g::Geography,
+    }
+    /// The original query string provided to the macro. Can be reused in your codebase.
+    pub const QUERY: &str = "with NewLocation := (insert Location {\n\tpoint := <ext::postgis::geometry>$point,\n\tarea := <ext::postgis::geography>$area,\n})\nselect NewLocation {\n\tpoint,\n\tarea,\n};";
+}
 pub mod insert_user {
     use ::gelx::exports as __g;
     /// Execute the desired query.

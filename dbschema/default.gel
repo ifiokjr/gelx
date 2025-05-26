@@ -1,5 +1,12 @@
+using extension postgis;
+
 module default {
   global current_user_id: uuid;
+
+	type Location extending CreatedAt, UpdatedAt {
+		required point: ext::postgis::geometry;
+		required area: ext::postgis::geography;
+	}
 
   type Account extending CreatedAt, UpdatedAt {
     required provider: AccountProvider;

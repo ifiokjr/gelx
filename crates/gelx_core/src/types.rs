@@ -36,7 +36,7 @@ async fn types_query(client: &Client) -> GelxCoreResult<Vec<TypesOutput>> {
 	Ok(result)
 }
 
-const SYSTEM_NAMESPACES: &[&str] = &["std", "sys", "cfg", "schema", "multirange"];
+const SYSTEM_NAMESPACES: &[&str] = &["std", "sys", "cfg", "schema", "multirange", "ext"];
 fn is_system_namespace(name: impl AsRef<str>) -> bool {
 	let name = name.as_ref();
 	SYSTEM_NAMESPACES.contains(&name)

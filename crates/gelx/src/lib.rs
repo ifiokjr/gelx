@@ -5,8 +5,21 @@
 //! ## Features
 #![doc = document_features::document_features!()]
 
+use cfg_if::cfg_if;
 #[cfg(feature = "query")]
 pub use gel_tokio::create_client;
+
+cfg_if! {
+	if #[cfg(feature = "with_geo")] {
+		mod geometry;
+
+		pub use geometry::*;
+		pub use geo;
+		pub use geo_types;
+		pub use geo_traits;
+		pub use wkb;
+	}
+}
 
 /// Generates a query module from a query string.
 ///
@@ -141,6 +154,14 @@ pub mod exports {
 			pub type BigIntAlias = num_bigint::BigInt;
 		} else {
 			pub type BigIntAlias = gel_protocol::model::BigInt;
+		}
+	}
+
+	cfg_if! {
+		if #[cfg(feature = "with_geo")] {
+			#[cfg_attr(docsrs, doc(cfg(feature = "with_geo")))]
+			pub use super::Geometry;
+			pub use super::Geography;
 		}
 	}
 }

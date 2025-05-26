@@ -1,9 +1,15 @@
 #![cfg(all(feature = "query", feature = "serde"))]
 
 use gel_tokio::create_client;
+use gelx::Geography;
+use gelx::Geometry;
 use gelx::gelx;
+use gelx::geo::point;
+use gelx::geo::polygon;
 use gelx_core::GelxCoreResult;
 
+gelx!(select_simple_location);
+gelx!(insert_location);
 gelx!(insert_user);
 gelx!(custom_name_for_module, file: "queries/insert_user.edgeql");
 gelx!(remove_user);
@@ -12,6 +18,76 @@ gelx!(
 	simple,
 	r#"select {hello := "world", custom := <str>$custom }"#
 );
+
+#[tokio::test]
+pub async fn select_simple_location_query() -> GelxCoreResult<()> {
+	let client = (create_client()).await?;
+	let output = (select_simple_location::query(&client)).await?;
+	insta::assert_ron_snapshot!(output, @r"
+	Geometry(Point(Point(Coord(
+	  x: 1.0,
+	  y: 1.0,
+	))))
+	");
+
+	Ok(())
+}
+
+#[tokio::test]
+pub async fn insert_location_query() -> GelxCoreResult<()> {
+	let client = (create_client()).await?;
+	let point = point!(x: 1.0, y: 1.0);
+	let polygon = polygon![
+		(x: -111., y: 45.),
+		(x: -111., y: 41.),
+		(x: -104., y: 41.),
+		(x: -104., y: 45.),
+	];
+	let output = (insert_location::query(
+		&client,
+		&insert_location::Input {
+			point: Geometry(point.into()),
+			area: Geography(polygon.into()),
+		},
+	))
+	.await?;
+
+	insta::assert_ron_snapshot!(output, @r"
+	Output(
+	  point: Geometry(Point(Point(Coord(
+	    x: 1.0,
+	    y: 1.0,
+	  )))),
+	  area: Geography(Polygon(Polygon(
+	    exterior: LineString([
+	      Coord(
+	        x: -111.0,
+	        y: 45.0,
+	      ),
+	      Coord(
+	        x: -111.0,
+	        y: 41.0,
+	      ),
+	      Coord(
+	        x: -104.0,
+	        y: 41.0,
+	      ),
+	      Coord(
+	        x: -104.0,
+	        y: 45.0,
+	      ),
+	      Coord(
+	        x: -111.0,
+	        y: 45.0,
+	      ),
+	    ]),
+	    interiors: [],
+	  ))),
+	)
+	");
+
+	Ok(())
+}
 
 #[tokio::test]
 pub async fn simple_query_with_input() -> GelxCoreResult<()> {
