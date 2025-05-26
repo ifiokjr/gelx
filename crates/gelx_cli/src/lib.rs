@@ -156,11 +156,9 @@ impl Cli {
 		}
 
 		let generated_map = Self::outputs(metadata, root_path).await?.to_map()?;
-		println!("generated_map keys: {:?}", generated_map.keys());
 		let existing_map = ModuleOutputs::try_new(&output_path, &output_path)
 			.await?
 			.to_map()?;
-		println!("existing_map keys: {:?}", existing_map.keys());
 		let mut comparison = Vec::new();
 
 		for (path, content) in &generated_map {
@@ -240,32 +238,4 @@ pub enum Comparison {
 	Remove(PathBuf),
 	/// There are changes to the file.
 	Change(PathBuf, Vec<String>),
-}
-
-#[cfg(test)]
-mod tests {
-	use std::process::Command;
-	use std::process::Stdio;
-
-	use super::*;
-
-	const CRATE_DIR: &str = env!("CARGO_MANIFEST_DIR");
-
-	fn cli() -> Command {
-		// TODO: fix this breaks on CI as it needs the build to be run first I think
-		// Command::new(insta_cmd::get_cargo_bin("gelx"))
-		Command::new("gelx")
-	}
-
-	#[test]
-	fn generate_stdout() {
-		let path = PathBuf::from(CRATE_DIR).join("../../examples/gelx_example");
-		insta_cmd::assert_cmd_snapshot!(
-			cli()
-				.arg("generate")
-				.arg("--json")
-				.current_dir(path)
-				.stderr(Stdio::null())
-		);
-	}
 }

@@ -1,0 +1,12 @@
+---
+source: crates/gelx_cli/tests/cli.rs
+info:
+  program: gelx
+  args:
+    - check
+---
+success: true
+exit_code: 0
+----- stdout -----
+
+----- stderr -----

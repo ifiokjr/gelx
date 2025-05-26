@@ -1,0 +1,14 @@
+---
+source: crates/gelx_cli/tests/cli.rs
+info:
+  program: gelx
+  args:
+    - generate
+    - "--cwd"
+    - "../../examples/gelx_example"
+---
+success: true
+exit_code: 0
+----- stdout -----
+
+----- stderr -----
