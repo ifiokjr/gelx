@@ -62,6 +62,7 @@ wkb = "0.9"
 
 # crates
 gelx = { path = "./crates/gelx", version = "0.6.0" }
+gelx_cli = { path = "./crates/gelx_cli", version = "0.6.0" }
 gelx_core = { path = "./crates/gelx_core", version = "0.6.0" }
 gelx_macros = { path = "./crates/gelx_macros", version = "0.6.0" }
 
