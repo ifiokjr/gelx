@@ -1,0 +1,20 @@
+---
+source: crates/gelx_build/tests/build.rs
+expression: gelx_build().await?
+---
+queries_path = "./queries"
+output_path = "src/db"
+input_struct_name = "Input"
+output_struct_name = "Output"
+query_function_name = "query"
+transaction_function_name = "transaction"
+query_constant_name = "QUERY"
+exports_alias = "__g"
+struct_derive_macros = ["Debug", "Clone"]
+enum_derive_macros = ["Debug", "Clone", "Copy"]
+
+[features]
+query = "ssr"
+strum = "ssr"
+builder = "ssr"
+serde = true

@@ -179,6 +179,16 @@
     '';
     description = "Test all files and generate a coverage report for upload to codecov.";
   };
+  scripts."coverage:html" = {
+    exec = ''
+      set -e
+      cargo coverage_no_features
+      cargo coverage_all_features
+      cargo coverage_docs
+      cargo coverage_html
+    '';
+    description = "Generate a coverage report in HTML format useful for local debugging.";
+  };
   scripts."setup:vscode" = {
     exec = ''
       set -e

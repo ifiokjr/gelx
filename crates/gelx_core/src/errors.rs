@@ -3,6 +3,11 @@ use gel_tokio::dsn::error::ParseError;
 use proc_macro2::Span;
 use thiserror::Error as ThisError;
 
+/// The error type for the `gelx_core` crate.
+///
+/// Note: This error type is not exhaustive since it will be extended in the
+/// future with several automated from implementations.
+#[non_exhaustive]
 #[derive(Debug, ThisError)]
 pub enum GelxCoreError {
 	#[error("{0}")]
@@ -18,11 +23,17 @@ pub enum GelxCoreError {
 	#[error("{0}")]
 	Toml(#[from] toml::de::Error),
 	#[error("{0}")]
+	TomlDisplay(#[from] toml::ser::Error),
+	#[error("{0}")]
 	TomlEdit(#[from] toml_edit::TomlError),
 	#[error("{0}")]
 	SerdeJson(#[from] serde_json::Error),
 	#[error("{0}")]
 	ProcMacro2(#[from] proc_macro2::LexError),
+	#[error("{0}")]
+	Base64(#[from] base64::DecodeError),
+	#[error("{0}")]
+	Utf8(#[from] std::string::FromUtf8Error),
 	#[error("{0}")]
 	Custom(String),
 }

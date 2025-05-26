@@ -70,17 +70,14 @@ impl Parse for GelQueryInput {
 
 impl ToTokens for GelQueryInput {
 	fn to_tokens(&self, tokens: &mut proc_macro2::TokenStream) {
-		let metadata = GelxMetadata::default();
+		let metadata: GelxMetadata = std::env::var("GELX_METADATA_BASE64")
+			.ok()
+			.and_then(|value| GelxMetadata::try_from_base64(value).ok())
+			.unwrap_or_default();
 		let module_name = self.module.to_string();
 		let token_stream = get_descriptor_sync(&self.query, &metadata)
 			.and_then(|descriptor| {
-				generate_query_token_stream(
-					&descriptor,
-					&module_name,
-					&self.query,
-					&GelxMetadata::default(),
-					true,
-				)
+				generate_query_token_stream(&descriptor, &module_name, &self.query, &metadata, true)
 			})
 			.unwrap_or_else(|error| syn::Error::from(error).to_compile_error());
 

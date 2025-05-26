@@ -13,6 +13,7 @@ rust-version = { workspace = true }
 description = "Utilities for codegen in the `gelx` crate."
 
 [dependencies]
+base64 = { workspace = true }
 bitflags = { workspace = true }
 check_keyword = { workspace = true }
 derive_more = { workspace = true, features = ["from", "into", "into_iterator", "deref", "deref_mut"] }

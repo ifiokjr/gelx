@@ -183,6 +183,12 @@ async fn main() -> Result<(), Error> {
 }
 ```
 
+### `gelx_build`
+
+By default macros can't read from the `Cargo.toml` file with the consuming crate. The `gelx_build` crate provides a way to read the configuration from the `Cargo.toml` file using the `build.rs` script.
+
+You can read the [gelx_build readme](https://github.com/ifiokjr/gelx/blob/main/crates/gelx_build/readme.md) for more information.
+
 ## CLI
 
 The `gelx_cli` crate exposes a binary called `gelx` which can be used to generate the typed code into rust files rather than inline queries.

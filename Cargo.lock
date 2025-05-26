@@ -969,6 +969,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "gelx_build"
+version = "0.6.0"
+dependencies = [
+ "base64 0.22.1",
+ "gelx_core",
+ "insta",
+ "insta-cmd",
+ "tokio",
+]
+
+[[package]]
 name = "gelx_cli"
 version = "0.6.0"
 dependencies = [
@@ -990,6 +1001,7 @@ name = "gelx_core"
 version = "0.6.0"
 dependencies = [
  "assert2",
+ "base64 0.22.1",
  "bitflags 2.9.1",
  "check_keyword",
  "derive_more",

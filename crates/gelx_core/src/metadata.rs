@@ -1,7 +1,10 @@
+use std::fmt::Display;
 use std::fs;
 use std::path::Path;
 use std::path::PathBuf;
+use std::str::FromStr;
 
+use base64::prelude::*;
 use indexmap::IndexMap;
 use proc_macro2::TokenStream;
 use quote::format_ident;
@@ -78,6 +81,12 @@ pub struct GelxMetadata {
 	#[builder(default)]
 	#[serde(skip, default)]
 	pub root_path: Option<PathBuf>,
+	/// Whether this metadata was created from a `build.rs` build script.
+	/// Currently this does nothing but in the future this might be used to
+	/// further customize the generated code.
+	#[builder(default)]
+	#[serde(skip, default)]
+	pub from_build_script: bool,
 }
 
 impl TryFrom<&str> for GelxMetadata {
@@ -97,7 +106,42 @@ impl TryFrom<&str> for GelxMetadata {
 	}
 }
 
+impl TryFrom<String> for GelxMetadata {
+	type Error = GelxCoreError;
+
+	fn try_from(value: String) -> Result<Self, Self::Error> {
+		Self::try_from(value.as_str())
+	}
+}
+
+impl TryFrom<&String> for GelxMetadata {
+	type Error = GelxCoreError;
+
+	fn try_from(value: &String) -> Result<Self, Self::Error> {
+		Self::try_from(value.as_str())
+	}
+}
+
+impl FromStr for GelxMetadata {
+	type Err = GelxCoreError;
+
+	fn from_str(s: &str) -> Result<Self, Self::Err> {
+		Self::try_from(s)
+	}
+}
+
+impl Display for GelxMetadata {
+	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+		write!(f, "{}", self.try_to_string().map_err(|_| std::fmt::Error)?)
+	}
+}
+
 impl GelxMetadata {
+	/// Attempts to create a new `GelxMetadata` instance from the `Cargo.toml`
+	/// file in the given path.
+	///
+	/// This will also set the `root_path` field to the path of the root of the
+	/// rust crate.
 	pub fn try_new<P: AsRef<Path>>(path: P) -> GelxCoreResult<Self> {
 		let root = get_package_root(path)?;
 
@@ -105,6 +149,14 @@ impl GelxMetadata {
 		let mut metadata = Self::try_from(toml_str.as_str())?;
 
 		metadata.root_path = Some(root);
+
+		Ok(metadata)
+	}
+
+	pub fn try_from_base64(value: impl AsRef<str>) -> GelxCoreResult<Self> {
+		let toml_bytes = BASE64_STANDARD.decode(value.as_ref())?;
+		let toml_str = String::from_utf8(toml_bytes)?;
+		let metadata = Self::try_from(&toml_str)?;
 
 		Ok(metadata)
 	}
@@ -145,6 +197,17 @@ impl GelxMetadata {
 			.iter()
 			.filter_map(|s| syn::parse_str::<syn::Path>(s).ok())
 			.collect()
+	}
+
+	pub fn try_to_string(&self) -> GelxCoreResult<String> {
+		toml::to_string(self).map_err(Into::into)
+	}
+
+	pub fn try_to_base64(&self) -> GelxCoreResult<String> {
+		let toml_str = self.try_to_string()?;
+		let base64_str = BASE64_STANDARD.encode(&toml_str);
+
+		Ok(base64_str)
 	}
 }
 
