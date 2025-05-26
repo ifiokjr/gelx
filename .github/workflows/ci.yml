@@ -177,3 +177,4 @@ jobs:
                   echo "No PRs found for package $package_name"
               fi
           done
+        shell: bash # default devenv bash shell is not available in this job
