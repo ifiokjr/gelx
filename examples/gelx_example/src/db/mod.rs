@@ -160,6 +160,73 @@ pub mod remove_user {
     /// The original query string provided to the macro. Can be reused in your codebase.
     pub const QUERY: &str = "delete User filter .id = <uuid>$id;\n";
 }
+pub mod select_accounts {
+    use ::gelx::exports as __g;
+    /// Execute the desired query.
+    #[cfg(feature = "ssr")]
+    pub async fn query(
+        client: &__g::gel_tokio::Client,
+        props: &Input,
+    ) -> ::core::result::Result<Vec<Output>, __g::gel_errors::Error> {
+        client.query(QUERY, props).await
+    }
+    /// Compose the query as part of a larger transaction.
+    #[cfg(feature = "ssr")]
+    pub async fn transaction(
+        conn: &mut __g::gel_tokio::Transaction,
+        props: &Input,
+    ) -> ::core::result::Result<Vec<Output>, __g::gel_errors::Error> {
+        conn.query(QUERY, props).await
+    }
+    #[derive(Debug, Clone, __g::serde::Serialize, __g::serde::Deserialize)]
+    #[cfg_attr(
+        feature = "ssr",
+        derive(__g::typed_builder::TypedBuilder, __g::gel_derive::Queryable)
+    )]
+    pub struct Input {
+        #[cfg_attr(feature = "ssr", builder(setter(into)))]
+        pub provider: super::default::AccountProvider,
+    }
+    impl __g::gel_protocol::query_arg::QueryArgs for Input {
+        fn encode(
+            &self,
+            encoder: &mut __g::gel_protocol::query_arg::Encoder,
+        ) -> core::result::Result<(), __g::gel_errors::Error> {
+            let map = __g::gel_protocol::named_args! {
+                "provider" => self.provider.clone(),
+            };
+            map.encode(encoder)
+        }
+    }
+    #[derive(Debug, Clone, __g::serde::Serialize, __g::serde::Deserialize)]
+    #[cfg_attr(feature = "ssr", derive(__g::gel_derive::Queryable))]
+    pub struct OutputUser {
+        pub slug: String,
+        pub id: __g::uuid::Uuid,
+        pub created_at: __g::DateTimeAlias,
+        pub updated_at: __g::DateTimeAlias,
+        pub bio: Option<String>,
+        pub name: Option<String>,
+    }
+    #[derive(Debug, Clone, __g::serde::Serialize, __g::serde::Deserialize)]
+    #[cfg_attr(feature = "ssr", derive(__g::gel_derive::Queryable))]
+    pub struct Output {
+        pub created_at: __g::DateTimeAlias,
+        pub id: __g::uuid::Uuid,
+        pub updated_at: __g::DateTimeAlias,
+        pub access_token: Option<String>,
+        pub access_token_expires_at: Option<__g::DateTimeAlias>,
+        pub provider: super::default::AccountProvider,
+        pub provider_account_id: String,
+        pub refresh_token: Option<String>,
+        pub refresh_token_expires_at: Option<__g::DateTimeAlias>,
+        pub scope: Option<String>,
+        pub username: Option<String>,
+        pub user: OutputUser,
+    }
+    /// The original query string provided to the macro. Can be reused in your codebase.
+    pub const QUERY: &str = "select Account {**} filter .provider = <AccountProvider>$provider;";
+}
 pub mod select_user {
     use ::gelx::exports as __g;
     /// Execute the desired query.

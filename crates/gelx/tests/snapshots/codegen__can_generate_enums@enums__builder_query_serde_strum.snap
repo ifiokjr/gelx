@@ -46,6 +46,11 @@ pub enum Awesomeness {
     Somewhat,
     NotReally,
 }
+impl From<Awesomeness> for __g::gel_protocol::value::Value {
+    fn from(value: Awesomeness) -> Self {
+        __g::gel_protocol::value::Value::Enum(value.as_ref().into())
+    }
+}
 #[derive(
     Debug,
     Clone,
@@ -70,6 +75,11 @@ pub enum Smartness {
     #[serde(rename = "genius")]
     #[strum(serialize = "genius")]
     Genius,
+}
+impl From<Smartness> for __g::gel_protocol::value::Value {
+    fn from(value: Smartness) -> Self {
+        __g::gel_protocol::value::Value::Enum(value.as_ref().into())
+    }
 }
 
 
@@ -99,6 +109,11 @@ use super::*;
 pub enum AccountProvider {
     Github,
 }
+impl From<AccountProvider> for __g::gel_protocol::value::Value {
+    fn from(value: AccountProvider) -> Self {
+        __g::gel_protocol::value::Value::Enum(value.as_ref().into())
+    }
+}
 #[derive(
     Debug,
     Clone,
@@ -117,6 +132,11 @@ pub enum RelationshipType {
     Follow,
     Block,
     Mute,
+}
+impl From<RelationshipType> for __g::gel_protocol::value::Value {
+    fn from(value: RelationshipType) -> Self {
+        __g::gel_protocol::value::Value::Enum(value.as_ref().into())
+    }
 }
 #[derive(
     Debug,
@@ -138,4 +158,9 @@ pub enum Role {
     Moderator,
     Admin,
     Owner,
+}
+impl From<Role> for __g::gel_protocol::value::Value {
+    fn from(value: Role) -> Self {
+        __g::gel_protocol::value::Value::Enum(value.as_ref().into())
+    }
 }

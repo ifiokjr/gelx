@@ -422,15 +422,11 @@ fn explore_descriptor(
 					return Ok(Some(quote!(String)));
 				};
 
-				if let Some((module_name, enum_name)) = name.split_once("::") {
-					let module_ident = format_ident!("{}", module_name.to_snake_case().into_safe());
-					let enum_ident = format_ident!("{}", enum_name.to_pascal_case().into_safe());
+				let module_name: ModuleName = name.into();
+				let module_ident = module_name.modules_path()?;
+				let enum_ident = module_name.name_ident(false);
 
-					quote!(#module_ident::#enum_ident)
-				} else {
-					let enum_ident = format_ident!("{}", name.to_pascal_case().into_safe());
-					quote!(#enum_ident)
-				}
+				quote!(super::#module_ident::#enum_ident)
 			};
 
 			if is_root {

@@ -36,6 +36,11 @@ pub mod example {
         Block,
         Mute,
     }
+    impl From<DefaultRelationshipType> for __g::gel_protocol::value::Value {
+        fn from(value: DefaultRelationshipType) -> Self {
+            __g::gel_protocol::value::Value::Enum(value.as_ref().into())
+        }
+    }
     #[derive(
         Debug,
         Clone,

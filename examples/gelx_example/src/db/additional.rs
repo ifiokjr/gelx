@@ -24,6 +24,12 @@ pub enum Awesomeness {
     Somewhat,
     NotReally,
 }
+#[cfg(feature = "ssr")]
+impl From<Awesomeness> for __g::gel_protocol::value::Value {
+    fn from(value: Awesomeness) -> Self {
+        __g::gel_protocol::value::Value::Enum(value.as_ref().into())
+    }
+}
 #[derive(Debug, Clone, Copy, __g::serde::Serialize, __g::serde::Deserialize)]
 #[cfg_attr(
     feature = "ssr",
@@ -47,4 +53,10 @@ pub enum Smartness {
     #[serde(rename = "genius")]
     #[cfg_attr(feature = "ssr", strum(serialize = "genius"))]
     Genius,
+}
+#[cfg(feature = "ssr")]
+impl From<Smartness> for __g::gel_protocol::value::Value {
+    fn from(value: Smartness) -> Self {
+        __g::gel_protocol::value::Value::Enum(value.as_ref().into())
+    }
 }

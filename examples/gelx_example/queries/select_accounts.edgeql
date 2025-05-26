@@ -1,0 +1,1 @@
+select Account {**} filter .provider = <AccountProvider>$provider;

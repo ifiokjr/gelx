@@ -519,7 +519,7 @@ impl GelxFeatures {
 		quote!(#[cfg_attr(feature = #key, #tokens)])
 	}
 
-	/// Wrap the provided `TokenStream` annotation.
+	/// Use the correct annotation for the given feature.
 	pub(crate) fn annotate(&self, feature: FeatureName, is_macro: bool) -> TokenStream {
 		let empty_tokens = TokenStream::new();
 

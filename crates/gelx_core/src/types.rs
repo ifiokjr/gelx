@@ -18,6 +18,7 @@ use serde::Deserialize;
 use serde::Serialize;
 use serde_with::DisplayFromStr;
 use serde_with::serde_as;
+use syn::Ident;
 use tokio::fs;
 use uuid::Uuid;
 
@@ -114,6 +115,26 @@ impl ModuleName {
 
 	pub fn is_user_defined(&self) -> bool {
 		!self.is_system_namespace()
+	}
+
+	pub fn modules_path(&self) -> GelxCoreResult<syn::Path> {
+		let path: syn::Path = syn::parse_str(
+			&self
+				.modules
+				.iter()
+				.map(|m| m.to_snake_case().into_safe())
+				.collect::<Vec<_>>()
+				.join("::"),
+		)?;
+		Ok(path)
+	}
+
+	pub fn name_ident(&self, snake_case: bool) -> Ident {
+		if snake_case {
+			format_ident!("{}", self.name.to_snake_case().into_safe())
+		} else {
+			format_ident!("{}", self.name.to_pascal_case().into_safe())
+		}
 	}
 }
 
@@ -500,10 +521,18 @@ pub(crate) fn generate_enum(
 		metadata
 			.features
 			.get_enum_derive_features(&exports_ident, &derive_macro_paths, is_macro);
+	let strum_annotation = metadata.features.annotate(FeatureName::Strum, false);
 	let enum_tokens = quote! {
 		#enum_derive
 		pub enum #pascal_local_name {
 			#(#enum_values_tokens),*
+		}
+
+		#strum_annotation
+		impl From<#pascal_local_name> for #exports_ident::gel_protocol::value::Value {
+			fn from(value: #pascal_local_name) -> Self {
+				#exports_ident::gel_protocol::value::Value::Enum(value.as_ref().into())
+			}
 		}
 	};
 
@@ -1200,5 +1229,19 @@ mod tests {
 		generate_module_outputs(&metadata).await?;
 
 		Ok(())
+	}
+
+	#[test]
+	fn test_module_name() {
+		let original = "test::test2::Amazing";
+		let module_name = ModuleName::from(original);
+
+		assert_eq!(module_name.original_name(), original);
+		assert_eq!(
+			module_name.modules_path().unwrap(),
+			syn::parse_str("test::test2").unwrap()
+		);
+		assert_eq!(module_name.name_ident(true), format_ident!("amazing"));
+		assert_eq!(module_name.name_ident(false), format_ident!("Amazing"));
 	}
 }

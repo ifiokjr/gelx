@@ -30,6 +30,11 @@ pub mod example {
     pub enum DefaultAccountProvider {
         Github,
     }
+    impl From<DefaultAccountProvider> for __g::gel_protocol::value::Value {
+        fn from(value: DefaultAccountProvider) -> Self {
+            __g::gel_protocol::value::Value::Enum(value.as_ref().into())
+        }
+    }
     #[derive(
         Debug,
         Clone,

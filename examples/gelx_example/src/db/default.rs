@@ -22,6 +22,12 @@ use super::*;
 pub enum AccountProvider {
     Github,
 }
+#[cfg(feature = "ssr")]
+impl From<AccountProvider> for __g::gel_protocol::value::Value {
+    fn from(value: AccountProvider) -> Self {
+        __g::gel_protocol::value::Value::Enum(value.as_ref().into())
+    }
+}
 #[derive(Debug, Clone, Copy, __g::serde::Serialize, __g::serde::Deserialize)]
 #[cfg_attr(
     feature = "ssr",
@@ -39,6 +45,12 @@ pub enum RelationshipType {
     Follow,
     Block,
     Mute,
+}
+#[cfg(feature = "ssr")]
+impl From<RelationshipType> for __g::gel_protocol::value::Value {
+    fn from(value: RelationshipType) -> Self {
+        __g::gel_protocol::value::Value::Enum(value.as_ref().into())
+    }
 }
 #[derive(Debug, Clone, Copy, __g::serde::Serialize, __g::serde::Deserialize)]
 #[cfg_attr(
@@ -59,4 +71,10 @@ pub enum Role {
     Moderator,
     Admin,
     Owner,
+}
+#[cfg(feature = "ssr")]
+impl From<Role> for __g::gel_protocol::value::Value {
+    fn from(value: Role) -> Self {
+        __g::gel_protocol::value::Value::Enum(value.as_ref().into())
+    }
 }
