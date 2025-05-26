@@ -55,9 +55,10 @@
         export $(cat .env | xargs)
       fi
 
-      gel extension install postgis
       gel instance create --non-interactive $GEL_INSTANCE $GEL_BRANCH || true
       gel instance start --instance $GEL_INSTANCE
+      gel extension install postgis --instance $GEL_INSTANCE
+      gel instance restart --instance $GEL_INSTANCE
       gel migrate
     '';
     description = "Setup the local database.";
