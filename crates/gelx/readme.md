@@ -425,9 +425,6 @@ You can view all the available scripts, packages, tasks and environment variable
 - `lint:clippy`: Check rust clippy lints.
 - `lint:format`: Check all formatting is correct.
 - `lint:gelx`: Check gelx is formatted correctly.
-- `setup:ci`: Setup the github ci environment.
-- `setup:helix`: Setup the helix editor for development.
-- `setup:vscode`: Setup the vscode editor for development.
 - `test:all`: Test all project files.
 - `update:deps`: Update all project dependencies.
 

@@ -45,10 +45,6 @@ runs:
       run: devenv test
       shell: bash
 
-    - name: update path with devenv
-      run: devenv shell setup:ci
-      shell: bash
-
     - name: export nix store cache
       if: steps.nix-cache.outputs.cache-hit != 'true'
       run: nix-store --export $(find /nix/store -maxdepth 1 -name '*-*')> ${{ inputs.nix-cache }}
@@ -67,15 +63,10 @@ runs:
         restore-keys: |
           ${{ runner.os }}-cargo-bin-
 
-    - name: get pnpm store directory
-      id: pnpm-cache
-      run: echo "store=$(pnpm store path)" >> $GITHUB_OUTPUT
-      shell: bash
-
     - name: install dependencies
       run: install:all
-      shell: bash
+      shell: devenv shell bash -- -e {0}
 
     - name: setup database
       run: db:setup
-      shell: bash
+      shell: devenv shell bash -- -e {0}
