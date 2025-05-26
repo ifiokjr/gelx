@@ -6,6 +6,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.7.0](https://github.com/ifiokjr/gelx/compare/v0.6.0...v0.7.0) - 2025-05-26
+
+### <!-- 0 -->🎉 Added
+
+- *(gelx_core)* generated enums can now be used as `Input` fields
+- feat!(gelx_build): add `gelx_build` crate for reading configuration in macros
+- add support for postgis via `geo`
+
+### <!-- 1 -->🐛 Bug Fixes
+
+- *(gelx_core)* remove unused `gelx_core` `with_*` features
+
+### <!-- 2 -->🚜 Refactor
+
+- remove redundant `From` implementations for `Geometry` and `Geography`
+
+### <!-- 7 -->⚙️ Miscellaneous Tasks
+
+- add `db:reset` script to reset local database and update postgis installation command
+- install postgis extension
+
 ## [0.6.0](https://github.com/ifiokjr/gelx/compare/v0.5.1...v0.6.0) - 2025-05-24
 
 ### <!-- 0 -->🎉 Added
