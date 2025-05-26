@@ -22,11 +22,6 @@ quote = { workspace = true }
 syn = { workspace = true }
 
 [features]
-with_bigint = ["gelx_core/with_bigint"]
-with_bigdecimal = ["gelx_core/with_bigdecimal"]
-with_chrono = ["gelx_core/with_chrono"]
-with_geo = ["gelx_core/with_geo"]
-with_all = ["gelx_core/with_all"]
 query = ["gelx_core/query"]
 serde = ["gelx_core/serde"]
 builder = ["gelx_core/builder"]

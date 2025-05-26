@@ -45,11 +45,6 @@ assert2 = { workspace = true }
 tokio = { workspace = true, features = ["time", "test-util"] }
 
 [features]
-with_bigint = []
-with_bigdecimal = []
-with_chrono = []
-with_geo = []
-with_all = ["with_bigint", "with_bigdecimal", "with_chrono", "with_geo"]
 query = []
 serde = []
 builder = []

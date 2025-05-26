@@ -42,7 +42,7 @@ wkb = { workspace = true, optional = true }
 
 [dev-dependencies]
 assert2 = { workspace = true }
-gelx_core = { workspace = true, features = ["with_all"] }
+gelx_core = { workspace = true }
 insta = { workspace = true, features = ["ron", "json", "redactions"] }
 proc-macro2 = { workspace = true }
 rstest = { workspace = true }
@@ -55,7 +55,9 @@ trybuild = { workspace = true }
 # ! #### Default
 
 ## The default feature is `with_all`.
-default = ["with_all"]
+default = [
+	"with_all",
+]
 
 # ! #### Types
 
@@ -64,7 +66,6 @@ with_bigint = [
 	"dep:num-bigint",
 	"dep:num-traits",
 	"gel-protocol/with-num-bigint",
-	"gelx_macros/with_bigint",
 ]
 
 ## Use the `bigdecimal` crate.
@@ -73,14 +74,12 @@ with_bigdecimal = [
 	"dep:num-bigint",
 	"dep:num-traits",
 	"gel-protocol/with-bigdecimal",
-	"gelx_macros/with_bigdecimal",
 ]
 
 ## Use the `chrono` crate for all dates.
 with_chrono = [
 	"dep:chrono",
 	"gel-protocol/with-chrono",
-	"gelx_macros/with_chrono",
 ]
 
 ## Use the `geo-types` crate for all geo types.
@@ -89,12 +88,10 @@ with_geo = [
 	"dep:geo-types",
 	"dep:geo",
 	"dep:wkb",
-	"gelx_macros/with_geo",
 ]
 
 ## Include all additional types. This is included by default. Use `default-features = false` to disable.
 with_all = [
-	"gelx_macros/with_all",
 	"with_bigint",
 	"with_bigdecimal",
 	"with_chrono",
@@ -105,7 +102,10 @@ with_all = [
 # ! #### Behavior
 
 ## Use the `typed-builder` crate to generate the builders for the generated `Input` structs.
-builder = ["dep:typed-builder", "gelx_macros/builder"]
+builder = [
+	"dep:typed-builder",
+	"gelx_macros/builder",
+]
 
 ## Turn on the `query` and `transaction` methods and anything that relies on `gel-tokio`.
 ## The reason to separate this feature is to enable usage of this macro in browser environments
@@ -114,7 +114,11 @@ builder = ["dep:typed-builder", "gelx_macros/builder"]
 ## Adding this feature requires adding the `gel-protocol` dependency to your project.
 ## This is because the `Queryable` derive macro requires the `gel-protocol` crate to be present
 ## in the consuming crate.
-query = ["gelx_macros/query", "dep:gel-tokio", "dep:gel-derive"]
+query = [
+	"gelx_macros/query",
+	"dep:gel-tokio",
+	"dep:gel-derive",
+]
 
 ## Enable serde for the generated code.
 serde = [
