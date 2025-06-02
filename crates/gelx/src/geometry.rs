@@ -17,6 +17,21 @@ use wkb::reader::read_wkb;
 use wkb::writer::WriteOptions;
 use wkb::writer::write_geometry;
 
+/// A wrapper for the[`geo::Geometry`] enum with support for WKB encoding and
+/// interop with the `ext::postgis::geometry` type.
+///
+/// This type can be used as a queryable type in the `ext::postgis::geometry`
+/// type.
+///
+/// TODO SRID support or an alternative would be creating a way to automatically
+/// infer the SRID from the geometry: <https://raw.githubusercontent.com/rustprooflabs/srid-bbox/refs/heads/main/srid_bbox.sql>
+///
+/// ```
+/// use gelx::Geometry;
+/// use gelx::geo::point;
+///
+/// let geometry = Geometry(point!(x: 1.0, y: 1.0).into());
+/// ```
 #[derive(
 	Debug, Clone, derive_more::Deref, derive_more::DerefMut, derive_more::From, derive_more::Into,
 )]
@@ -66,6 +81,18 @@ impl From<Geometry> for Value {
 	}
 }
 
+/// Another wrapper struct for the [`geo::Geometry`] enum with support for WKB
+/// encoding and interop with the `ext::postgis::geography` type.
+///
+/// This type can be used as a queryable type in the `ext::postgis::geography`
+/// type.
+///
+/// ```
+/// use gelx::Geography;
+/// use gelx::geo::point;
+///
+/// let geography = Geography(point!(x: 1.0, y: 1.0).into());
+/// ```
 #[derive(
 	Debug, Clone, derive_more::Deref, derive_more::DerefMut, derive_more::From, derive_more::Into,
 )]

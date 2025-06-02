@@ -229,7 +229,7 @@ queries_path = "./queries"
 ## - `serde` - Enable serde for the generated code.
 ## - `strum` - When enabled you must include `strum` as a dependency.
 ## - `builder` - Use the `typed-builder` crate to generate the builders for the generated `Input` structs.
-features = { query = true, strum = true, builder = true,  }
+features = { query = true, strum = true, serde = true, builder = true }
 
 ## The location of the generated code when using the `gelx` cli.
 output_path = "./src/db"
@@ -372,11 +372,39 @@ gelx!(
 - **`with_bigint`** — Include the `num-bigint` dependency.
 - **`with_bigdecimal`** — Use the `bigdecimal` crate.
 - **`with_chrono`** — Use the `chrono` crate for all dates.
+- **`with_geo`** — Use the `geo` crate for all geometry and geography types.
 - **`with_all`** _(enabled by default)_ — Include all additional types. This is included by default. Use `default-features = false` to disable.
 - **`builder`** — Use the `typed-builder` crate to generate the builders for the generated `Input` structs.
 - **`query`** — Turn on the `query` and `transaction` methods and anything that relies on `gel-tokio`. The reason to separate this feature is to enable usage of this macro in browser environments where `gel-tokio` is not feasible.
 - **`serde`** — Enable serde for the generated code.
 - **`strum`** - Use the `strum` crate for deriving strings from the created enums.
+
+## Recommended Setup
+
+Create a `gel.toml` in the root of your project with the folloiwng configuration. The following configuration will work for a single crate project.
+
+```toml
+[instance]
+server-version = "6.7"
+
+[project]
+schema-dir = "dbschema"
+
+[hooks]
+project.init.after = "gelx generate"
+branch.switch.after = "gelx generate"
+schema.update.after = "gelx generate"
+
+[[watch]]
+files = ["dbschema/*.gel"]
+script = "gelx generate"
+
+[[watch]]
+files = ["queries/*.edgeql"]
+script = "gelx generate"
+```
+
+By default this will generate the code into the `src/db` directory. You can change this by setting the `output_path` in the configuration.
 
 ## Contributing
 
