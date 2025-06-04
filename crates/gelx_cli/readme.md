@@ -22,6 +22,34 @@ Alternatively, you can install it directly from the github repo:
 cargo install --git https://github.com/ifiokjr/gelx.git gelx_cli
 ```
 
+The above two commands are the typical ways to install `gelx_cli`. However, if you use `gel` in multiple projects with multiple versions of the `gelx` crate, you should install it locally per project using [`cargo-run-bin`](https://crates.io/crates/cargo-run-bin).
+
+First install `cargo-run-bin`:
+
+```bash
+cargo install cargo-run-bin
+```
+
+Inside a single crate project add the following to the `Cargo.toml` file:
+
+```toml
+[package.metadata.bin]
+gelx_cli = { version = "0.7.0", bins = ["gelx"] }
+```
+
+Inside a workspace add the following to the `Cargo.toml` file:
+
+```toml
+[workspace.metadata.bin]
+gelx_cli = { version = "0.7.0", bins = ["gelx"] }
+```
+
+Then run the following command to access gelx:
+
+```bash
+cargo bin gelx
+```
+
 Ensure your Gel instance is running and accessible, as the CLI needs to connect to it to introspect the schema and query types.
 
 Run `gelx help` to see the available commands and options.
