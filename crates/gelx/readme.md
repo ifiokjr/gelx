@@ -19,8 +19,8 @@ To install the `gelx` crate you can use the following commands.
 ```bash
 cargo add gelx
 
-# Optional dependencies
-cargo add gel-protocol strum
+# Optional dependency when using the `query` feature
+cargo add gel-protocol
 ```
 
 Or directly add the following to your `Cargo.toml` file.
@@ -30,8 +30,7 @@ Or directly add the following to your `Cargo.toml` file.
 gelx = "0.4"
 
 # Optional dependencies
-gel-protocol = "0.8" # needed for query feature
-strum = "0.27" # needed for strum feature
+gel-protocol = "0.8" # needed when using the `query` feature
 ```
 
 Make sure you've [installed](https://docs.geldata.com/reference/using/cli#ref-cli-gel-install) the `gel` CLI for your platform.
@@ -228,8 +227,7 @@ queries_path = "./queries"
 ## - `query` - When enabled you must include `gel-protocol` as a dependency.
 ## - `serde` - Enable serde for the generated code.
 ## - `strum` - When enabled you must include `strum` as a dependency.
-## - `builder` - Use the `typed-builder` crate to generate the builders for the generated `Input` structs.
-features = { query = true, strum = true, serde = true, builder = true }
+features = { query = true, strum = true, serde = true }
 
 ## The location of the generated code when using the `gelx` cli.
 output_path = "./src/db"

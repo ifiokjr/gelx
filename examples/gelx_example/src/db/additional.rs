@@ -19,6 +19,7 @@ use super::*;
         __g::strum::IntoStaticStr
     )
 )]
+#[cfg_attr(feature = "ssr", strum(crate = "__g::strum"))]
 pub enum Awesomeness {
     Very,
     Somewhat,
@@ -43,6 +44,7 @@ impl From<Awesomeness> for __g::gel_protocol::value::Value {
         __g::strum::IntoStaticStr
     )
 )]
+#[cfg_attr(feature = "ssr", strum(crate = "__g::strum"))]
 pub enum Smartness {
     #[serde(rename = "low")]
     #[cfg_attr(feature = "ssr", strum(serialize = "low"))]

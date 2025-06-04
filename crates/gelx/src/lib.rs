@@ -6,8 +6,12 @@
 #![doc = document_features::document_features!()]
 
 use cfg_if::cfg_if;
-#[cfg(feature = "query")]
-pub use gel_tokio::create_client;
+
+cfg_if! {
+	if #[cfg(feature = "query")] {
+		pub use gel_tokio::create_client;
+	}
+}
 
 cfg_if! {
 	if #[cfg(feature = "with_geo")] {

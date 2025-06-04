@@ -19,6 +19,7 @@ use super::*;
         __g::strum::IntoStaticStr
     )
 )]
+#[cfg_attr(feature = "ssr", strum(crate = "__g::strum"))]
 pub enum AccountProvider {
     Github,
 }
@@ -41,6 +42,7 @@ impl From<AccountProvider> for __g::gel_protocol::value::Value {
         __g::strum::IntoStaticStr
     )
 )]
+#[cfg_attr(feature = "ssr", strum(crate = "__g::strum"))]
 pub enum RelationshipType {
     Follow,
     Block,
@@ -65,6 +67,7 @@ impl From<RelationshipType> for __g::gel_protocol::value::Value {
         __g::strum::IntoStaticStr
     )
 )]
+#[cfg_attr(feature = "ssr", strum(crate = "__g::strum"))]
 pub enum Role {
     None,
     Editor,

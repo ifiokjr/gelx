@@ -41,6 +41,7 @@ use super::*;
     __g::strum::FromRepr,
     __g::strum::IntoStaticStr
 )]
+#[strum(crate = "__g::strum")]
 pub enum Awesomeness {
     Very,
     Somewhat,
@@ -65,6 +66,7 @@ impl From<Awesomeness> for __g::gel_protocol::value::Value {
     __g::strum::FromRepr,
     __g::strum::IntoStaticStr
 )]
+#[strum(crate = "__g::strum")]
 pub enum Smartness {
     #[serde(rename = "low")]
     #[strum(serialize = "low")]
@@ -106,6 +108,7 @@ use super::*;
     __g::strum::FromRepr,
     __g::strum::IntoStaticStr
 )]
+#[strum(crate = "__g::strum")]
 pub enum AccountProvider {
     Github,
 }
@@ -128,6 +131,7 @@ impl From<AccountProvider> for __g::gel_protocol::value::Value {
     __g::strum::FromRepr,
     __g::strum::IntoStaticStr
 )]
+#[strum(crate = "__g::strum")]
 pub enum RelationshipType {
     Follow,
     Block,
@@ -152,6 +156,7 @@ impl From<RelationshipType> for __g::gel_protocol::value::Value {
     __g::strum::FromRepr,
     __g::strum::IntoStaticStr
 )]
+#[strum(crate = "__g::strum")]
 pub enum Role {
     None,
     Editor,

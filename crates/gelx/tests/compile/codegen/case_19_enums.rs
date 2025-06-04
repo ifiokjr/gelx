@@ -27,6 +27,7 @@ pub mod example {
         __g::strum::FromRepr,
         __g::strum::IntoStaticStr
     )]
+    #[strum(crate = "__g::strum")]
     pub enum DefaultAccountProvider {
         Github,
     }

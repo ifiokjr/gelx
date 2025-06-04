@@ -394,7 +394,7 @@ impl GelxFeatures {
 	) -> TokenStream {
 		let mut features_map = IndexMap::<Option<String>, Vec<TokenStream>>::new();
 		let mut tokens = TokenStream::new();
-
+		let mut extra_tokens = TokenStream::new();
 		features_map.insert(None, vec![quote!(#(#derive_macro_paths),*)]);
 
 		for feature in features {
@@ -426,6 +426,13 @@ impl GelxFeatures {
 					entry.push(quote!(#exports_ident::strum::EnumIs));
 					entry.push(quote!(#exports_ident::strum::FromRepr));
 					entry.push(quote!(#exports_ident::strum::IntoStaticStr));
+
+					let strum_crate = format!("{exports_ident}::strum");
+					extra_tokens.extend(self.wrap_annotation(
+						FeatureName::Strum,
+						&quote!(strum(crate = #strum_crate)),
+						is_macro,
+					));
 				}
 			}
 		}
@@ -441,6 +448,8 @@ impl GelxFeatures {
 				});
 			}
 		}
+
+		tokens.extend(extra_tokens);
 
 		tokens
 	}
@@ -498,8 +507,8 @@ impl GelxFeatures {
 		}
 	}
 
-	/// Wrap the provided `TokenStream` annotation if the
-	/// `serde` feature is enabled.
+	/// Wrap the provided `TokenStream` annotation if the specified feature is
+	/// enabled.
 	pub(crate) fn wrap_annotation(
 		&self,
 		feature: FeatureName,
