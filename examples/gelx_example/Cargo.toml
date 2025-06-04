@@ -9,19 +9,19 @@ repository = { workspace = true }
 rust-version = { workspace = true }
 
 [dependencies]
-anyhow = "1"
-gel-protocol = { workspace = true }
-gelx = { workspace = true, features = ["with_all", "serde", "strum", "query", "builder"] }
-serde = { workspace = true, features = ["derive"] }
-strum = { workspace = true, features = ["derive"] }
-tokio = { workspace = true, features = ["full"] }
+anyhow = { workspace = true, default-features = true }
+gel-protocol = { workspace = true, default-features = true }
+gelx = { workspace = true, default-features = true, features = ["with_all", "serde", "strum", "query", "builder"] }
+serde = { workspace = true, default-features = true, features = ["derive"] }
+strum = { workspace = true, default-features = true, features = ["derive"] }
+tokio = { workspace = true, default-features = true, features = ["full"] }
 
 [lints]
 workspace = true
 
 [features]
 default = ["ssr"]
-ssr = ["gelx/query", "gelx/serde", "gelx/strum", "gelx/builder"]
+ssr = ["gelx/query", "gelx/serde", "gelx/strum"]
 
 [package.metadata.gelx]
 queries_path = "./queries"

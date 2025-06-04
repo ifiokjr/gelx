@@ -13,38 +13,38 @@ rust-version = { workspace = true }
 description = "Utilities for codegen in the `gelx` crate."
 
 [dependencies]
-base64 = { workspace = true }
-bitflags = { workspace = true }
-check_keyword = { workspace = true }
-derive_more = { workspace = true, features = ["from", "into", "into_iterator", "deref", "deref_mut"] }
-futures = { workspace = true }
-gel-derive = { workspace = true }
-gel-errors = { workspace = true }
-gel-protocol = { workspace = true, features = ["all-types", "with-serde"] }
-gel-tokio = { workspace = true, features = ["unstable", "derive"] }
-heck = { workspace = true }
-indexmap = { workspace = true, features = ["serde"] }
-log = { workspace = true }
-prettyplease = { workspace = true }
-proc-macro2 = { workspace = true }
-quote = { workspace = true }
-regex = { workspace = true }
-serde = { workspace = true, features = ["derive"] }
-serde_json = { workspace = true }
-serde_with = { workspace = true }
-strum = { workspace = true, features = ["derive"] }
-syn = { workspace = true, features = ["extra-traits"] }
-thiserror = { workspace = true }
-tokio = { workspace = true, features = ["macros", "rt-multi-thread", "process"] }
-toml = { workspace = true }
-toml_edit = { workspace = true }
-typed-builder = { workspace = true }
-uuid = { workspace = true, features = ["serde"] }
+base64 = { workspace = true, default-features = true }
+bitflags = { workspace = true, default-features = true }
+check_keyword = { workspace = true, default-features = true }
+derive_more = { workspace = true, default-features = true, features = ["from", "into", "into_iterator", "deref", "deref_mut"] }
+futures = { workspace = true, default-features = true }
+gel-derive = { workspace = true, default-features = true }
+gel-errors = { workspace = true, default-features = true }
+gel-protocol = { workspace = true, default-features = true, features = ["all-types", "with-serde"] }
+gel-tokio = { workspace = true, default-features = true, features = ["unstable", "derive"] }
+heck = { workspace = true, default-features = true }
+indexmap = { workspace = true, default-features = true, features = ["serde"] }
+log = { workspace = true, default-features = true }
+prettyplease = { workspace = true, default-features = true }
+proc-macro2 = { workspace = true, default-features = true }
+quote = { workspace = true, default-features = true }
+regex = { workspace = true, default-features = true }
+serde = { workspace = true, default-features = true, features = ["derive"] }
+serde_json = { workspace = true, default-features = true }
+serde_with = { workspace = true, default-features = true }
+strum = { workspace = true, default-features = true, features = ["derive"] }
+syn = { workspace = true, default-features = true, features = ["extra-traits"] }
+thiserror = { workspace = true, default-features = true }
+tokio = { workspace = true, default-features = true, features = ["macros", "rt-multi-thread", "process"] }
+toml = { workspace = true, default-features = true }
+toml_edit = { workspace = true, default-features = true }
+typed-builder = { workspace = true, default-features = true }
+uuid = { workspace = true, default-features = true, features = ["serde"] }
 
 [dev-dependencies]
-assert2 = { workspace = true }
-insta = { workspace = true }
-tokio = { workspace = true, features = ["time", "test-util"] }
+assert2 = { workspace = true, default-features = true }
+insta = { workspace = true, default-features = true }
+tokio = { workspace = true, default-features = true, features = ["time", "test-util"] }
 
 [features]
 query = []

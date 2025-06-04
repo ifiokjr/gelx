@@ -12,54 +12,56 @@ repository = "https://github.com/ifiokjr/gelx"
 rust-version = "1.85.0"
 
 [workspace.dependencies]
-assert2 = "0.3"
-base64 = "0.22"
-bigdecimal = "0.4"
-bitflags = "2"
-bytes = "1"
-cfg-if = "1"
-check_keyword = "0.4"
-chrono = "0.4"
-clap = "4.5.38"
-derive_more = "2"
-document-features = "0.2"
-futures = "0.3"
-gel-derive = "0.7"
-gel-errors = "0.5"
-gel-protocol = "0.8"
-gel-tokio = "0.10"
-geo = "0.30"
-geo-traits = "0.3"
-geo-types = "0.7"
-heck = "0.5"
-indexmap = "2"
-insta = "1"
-insta-cmd = "0.6"
-log = "0.4"
-num-bigint = "0.4"
-num-traits = "0.2"
-prettyplease = "0.2"
-proc-macro2 = "1"
-quote = "1"
-regex = "1"
-rstest = "0.25"
-rustversion = "1"
-serde = "1"
-serde_bytes = "0.11"
-serde_json = "1"
-serde_with = "3"
-similar = "2"
-strum = "0.27"
-syn = "2"
-test-log = "0.2"
-thiserror = "2"
-tokio = "1"
-toml = "0.8"
-toml_edit = "0.22"
-trybuild = "1"
-typed-builder = "0.21"
-uuid = "1"
-wkb = "0.9"
+anyhow = { version = "1", default-features = false }
+assert2 = { version = "0.3", default-features = false }
+async-trait = { version = "0.1", default-features = false }
+base64 = { version = "0.22", default-features = false }
+bigdecimal = { version = "0.4", default-features = false }
+bitflags = { version = "2", default-features = false }
+bytes = { version = "1", default-features = false }
+cfg-if = { version = "1", default-features = false }
+check_keyword = { version = "0.4", default-features = false }
+chrono = { version = "0.4", default-features = false }
+clap = { version = "4.5.38", default-features = false }
+derive_more = { version = "2", default-features = false }
+document-features = { version = "0.2", default-features = false }
+futures = { version = "0.3", default-features = false }
+gel-derive = { version = "0.7", default-features = false }
+gel-errors = { version = "0.5", default-features = false }
+gel-protocol = { version = "0.8", default-features = false }
+gel-tokio = { version = "0.10", default-features = false }
+geo = { version = "0.30", default-features = false }
+geo-traits = { version = "0.3", default-features = false }
+geo-types = { version = "0.7", default-features = false }
+heck = { version = "0.5", default-features = false }
+indexmap = { version = "2", default-features = false }
+insta = { version = "1", default-features = false }
+insta-cmd = { version = "0.6", default-features = false }
+log = { version = "0.4", default-features = false }
+num-bigint = { version = "0.4", default-features = false }
+num-traits = { version = "0.2", default-features = false }
+prettyplease = { version = "0.2", default-features = false }
+proc-macro2 = { version = "1", default-features = false }
+quote = { version = "1", default-features = false }
+regex = { version = "1", default-features = false }
+rstest = { version = "0.25", default-features = false }
+rustversion = { version = "1", default-features = false }
+serde = { version = "1", default-features = false }
+serde_bytes = { version = "0.11", default-features = false }
+serde_json = { version = "1", default-features = false }
+serde_with = { version = "3", default-features = false }
+similar = { version = "2", default-features = false }
+strum = { version = "0.27", default-features = false }
+syn = { version = "2", default-features = false }
+test-log = { version = "0.2", default-features = false }
+thiserror = { version = "2", default-features = false }
+tokio = { version = "1", default-features = false }
+toml = { version = "0.8", default-features = false }
+toml_edit = { version = "0.22", default-features = false }
+trybuild = { version = "1", default-features = false }
+typed-builder = { version = "0.21", default-features = false }
+uuid = { version = "1", default-features = false }
+wkb = { version = "0.9", default-features = false }
 
 # crates
 gelx = { path = "./crates/gelx", version = "0.7.0" }

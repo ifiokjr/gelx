@@ -18,19 +18,19 @@ name = "gelx"
 path = "src/main.rs"
 
 [dependencies]
-clap = { workspace = true, features = ["derive"] }
-futures = { workspace = true }
-gelx_core = { workspace = true }
-heck = { workspace = true }
-proc-macro2 = { workspace = true }
-serde_json = { workspace = true }
-similar = { workspace = true }
-tokio = { workspace = true, features = ["full"] }
-toml = { workspace = true }
+clap = { workspace = true, default-features = true, features = ["derive"] }
+futures = { workspace = true, default-features = true }
+gelx_core = { workspace = true, default-features = true }
+heck = { workspace = true, default-features = true }
+proc-macro2 = { workspace = true, default-features = true }
+serde_json = { workspace = true, default-features = true }
+similar = { workspace = true, default-features = true }
+tokio = { workspace = true, default-features = true, features = ["full"] }
+toml = { workspace = true, default-features = true }
 
 [dev-dependencies]
-insta = { workspace = true }
-insta-cmd = { workspace = true }
+insta = { workspace = true, default-features = true }
+insta-cmd = { workspace = true, default-features = true }
 
 [lints]
 workspace = true

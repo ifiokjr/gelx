@@ -17,39 +17,40 @@ all-features = true
 rustdoc-args = ["--cfg", "docsrs"]
 
 [dependencies]
-bigdecimal = { workspace = true, optional = true }
-bytes = { workspace = true }
-cfg-if = { workspace = true }
-chrono = { workspace = true, optional = true }
-derive_more = { workspace = true, features = ["from", "into", "deref", "deref_mut"] }
-document-features = { workspace = true }
-gel-derive = { workspace = true, optional = true }
-gel-errors = { workspace = true }
-gel-protocol = { workspace = true }
-gel-tokio = { workspace = true, features = ["unstable", "derive"], optional = true }
-gelx_macros = { workspace = true }
-geo = { workspace = true, optional = true }
-geo-traits = { workspace = true, optional = true }
-geo-types = { workspace = true, optional = true }
-num-bigint = { workspace = true, optional = true }
-num-traits = { workspace = true, optional = true }
-serde = { workspace = true, features = ["derive"], optional = true }
-serde_bytes = { workspace = true, optional = true }
-strum = { workspace = true, features = ["derive"], optional = true }
-typed-builder = { workspace = true, optional = true }
-uuid = { workspace = true }
-wkb = { workspace = true, optional = true }
+async-trait = { workspace = true, default-features = true, optional = true }
+bigdecimal = { workspace = true, default-features = true, optional = true }
+bytes = { workspace = true, default-features = true }
+cfg-if = { workspace = true, default-features = true }
+chrono = { workspace = true, default-features = true, optional = true }
+derive_more = { workspace = true, default-features = true, features = ["from", "into", "deref", "deref_mut"] }
+document-features = { workspace = true, default-features = true }
+gel-derive = { workspace = true, default-features = true, optional = true }
+gel-errors = { workspace = true, default-features = true }
+gel-protocol = { workspace = true, default-features = true }
+gel-tokio = { workspace = true, default-features = true, features = ["unstable", "derive"], optional = true }
+gelx_macros = { workspace = true, default-features = true }
+geo = { workspace = true, default-features = true, optional = true }
+geo-traits = { workspace = true, default-features = true, optional = true }
+geo-types = { workspace = true, default-features = true, optional = true }
+num-bigint = { workspace = true, default-features = true, optional = true }
+num-traits = { workspace = true, default-features = true, optional = true }
+serde = { workspace = true, default-features = true, features = ["derive"], optional = true }
+serde_bytes = { workspace = true, default-features = true, optional = true }
+strum = { workspace = true, default-features = true, features = ["derive"], optional = true }
+typed-builder = { workspace = true, default-features = true, optional = true }
+uuid = { workspace = true, default-features = true }
+wkb = { workspace = true, default-features = true, optional = true }
 
 [dev-dependencies]
-assert2 = { workspace = true }
-gelx_core = { workspace = true }
-insta = { workspace = true, features = ["ron", "json", "redactions"] }
-proc-macro2 = { workspace = true }
-rstest = { workspace = true }
-rustversion = { workspace = true }
-test-log = { workspace = true, features = ["log", "trace"] }
-tokio = { workspace = true, features = ["time", "test-util", "fs"] }
-trybuild = { workspace = true }
+assert2 = { workspace = true, default-features = true }
+gelx_core = { workspace = true, default-features = true }
+insta = { workspace = true, default-features = true, features = ["ron", "json", "redactions"] }
+proc-macro2 = { workspace = true, default-features = true }
+rstest = { workspace = true, default-features = true }
+rustversion = { workspace = true, default-features = true }
+test-log = { workspace = true, default-features = true, features = ["log", "trace"] }
+tokio = { workspace = true, default-features = true, features = ["time", "test-util", "fs"] }
+trybuild = { workspace = true, default-features = true }
 
 [features]
 # ! #### Default
@@ -116,12 +117,14 @@ builder = [
 ## in the consuming crate.
 query = [
 	"gelx_macros/query",
+	"dep:async-trait",
 	"dep:gel-tokio",
 	"dep:gel-derive",
 ]
 
 ## Enable serde for the generated code.
 serde = [
+	"bigdecimal?/serde-json",
 	"chrono/serde",
 	"dep:serde_bytes",
 	"dep:serde",
@@ -129,6 +132,7 @@ serde = [
 	"gelx_macros/serde",
 	"geo-types?/serde",
 	"geo?/use-serde",
+	"num-bigint?/serde",
 	"uuid/serde",
 ]
 

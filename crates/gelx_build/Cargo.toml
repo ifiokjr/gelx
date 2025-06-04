@@ -12,14 +12,14 @@ rust-version = { workspace = true }
 description = "Enable reading from the configuration in the `Cargo.toml` file while using the `gelx` macros"
 
 [dependencies]
-base64 = { workspace = true }
-gelx_core = { workspace = true }
-tokio = { workspace = true, features = ["macros", "rt-multi-thread", "process"] }
+base64 = { workspace = true, default-features = true }
+gelx_core = { workspace = true, default-features = true }
+tokio = { workspace = true, default-features = true, features = ["macros", "rt-multi-thread", "process"] }
 
 [dev-dependencies]
-insta = { workspace = true }
-insta-cmd = { workspace = true }
-tokio = { workspace = true, features = ["time", "test-util", "fs"] }
+insta = { workspace = true, default-features = true }
+insta-cmd = { workspace = true, default-features = true }
+tokio = { workspace = true, default-features = true, features = ["time", "test-util", "fs"] }
 
 [lints]
 workspace = true
