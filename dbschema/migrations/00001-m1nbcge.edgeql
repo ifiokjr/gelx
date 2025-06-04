@@ -1,6 +1,10 @@
-CREATE MIGRATION m1k7o3tcbkvar3vkfeigwnorqbwahoxfrxrcfmqbte2tg7dhkd3zea
+CREATE MIGRATION m1nbcgemhy2rd4n7a2cfiwlfcuzm7jxbxj4w5x2juc7q52jhi5meva
     ONTO initial
 {
+  CREATE EXTENSION postgis VERSION '3.5';
+  CREATE MODULE additional IF NOT EXISTS;
+  CREATE SCALAR TYPE additional::Awesomeness EXTENDING enum<Very, Somewhat, NotReally>;
+  CREATE SCALAR TYPE additional::smartness EXTENDING enum<low, mid, genius>;
   CREATE SCALAR TYPE default::AccountProvider EXTENDING enum<Github>;
   CREATE SCALAR TYPE default::RelationshipType EXTENDING enum<Follow, Block, Mute>;
   CREATE SCALAR TYPE default::Role EXTENDING enum<None, Editor, Moderator, Admin, Owner>;
@@ -13,11 +17,12 @@ CREATE MIGRATION m1k7o3tcbkvar3vkfeigwnorqbwahoxfrxrcfmqbte2tg7dhkd3zea
   };
   CREATE ABSTRACT TYPE default::UpdatedAt {
       CREATE REQUIRED PROPERTY updated_at: std::datetime {
+          SET default := (std::datetime_of_statement());
           CREATE REWRITE
-              INSERT
+              INSERT 
               USING (std::datetime_of_statement());
           CREATE REWRITE
-              UPDATE
+              UPDATE 
               USING (std::datetime_of_statement());
       };
   };
@@ -116,9 +121,13 @@ CREATE MIGRATION m1k7o3tcbkvar3vkfeigwnorqbwahoxfrxrcfmqbte2tg7dhkd3zea
           SET readonly := true;
           CREATE CONSTRAINT std::exclusive;
           CREATE REWRITE
-              INSERT
+              INSERT 
               USING (std::str_trim(std::str_lower(.email)));
       };
+  };
+  CREATE TYPE default::Location EXTENDING default::CreatedAt, default::UpdatedAt {
+      CREATE REQUIRED PROPERTY area: ext::postgis::geography;
+      CREATE REQUIRED PROPERTY point: ext::postgis::geometry;
   };
   ALTER TYPE default::User {
       CREATE LINK emails := (.<user[IS default::Email]);

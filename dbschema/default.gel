@@ -117,6 +117,7 @@ module default {
 
   abstract type UpdatedAt {
     required updated_at: datetime {
+			default := datetime_of_statement();
       rewrite insert, update using (datetime_of_statement())
     };
   }
