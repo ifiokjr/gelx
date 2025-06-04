@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.1](https://github.com/ifiokjr/gelx/compare/gelx_build-v0.7.0...gelx_build-v0.7.1) - 2025-06-04
+
+### <!-- 1 -->🐛 Bug Fixes
+
+- *(gelx)* apply `serde` to all dependencies
+
 ## [0.7.0](https://github.com/ifiokjr/gelx/compare/v0.6.0...v0.7.0) - 2025-05-26
 
 ### <!-- 0 -->🎉 Added

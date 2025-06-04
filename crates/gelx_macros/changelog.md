@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.7.1](https://github.com/ifiokjr/gelx/compare/gelx_macros-v0.7.0...gelx_macros-v0.7.1) - 2025-06-04
+
+### <!-- 1 -->🐛 Bug Fixes
+
+- *(gelx)* apply `serde` to all dependencies
+
 ## [0.7.0](https://github.com/ifiokjr/gelx/compare/v0.6.0...v0.7.0) - 2025-05-26
 
 ### <!-- 0 -->🎉 Added
