@@ -58,6 +58,7 @@ trybuild = { workspace = true, default-features = true }
 ## The default feature is `with_all`.
 default = [
 	"with_all",
+	"builder",
 ]
 
 # ! #### Types

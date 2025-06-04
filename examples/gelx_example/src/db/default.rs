@@ -6,68 +6,69 @@
 #![allow(unused_qualifications)]
 #![allow(clippy::all)]
 use super::*;
-#[derive(Debug, Clone, Copy, __g::serde::Serialize, __g::serde::Deserialize)]
-#[cfg_attr(
-    feature = "ssr",
-    derive(
-        __g::gel_derive::Queryable,
-        __g::strum::AsRefStr,
-        __g::strum::Display,
-        __g::strum::EnumString,
-        __g::strum::EnumIs,
-        __g::strum::FromRepr,
-        __g::strum::IntoStaticStr
-    )
+#[derive(
+    Debug,
+    Clone,
+    Copy,
+    __g::serde::Serialize,
+    __g::serde::Deserialize,
+    __g::strum::AsRefStr,
+    __g::strum::Display,
+    __g::strum::EnumString,
+    __g::strum::EnumIs,
+    __g::strum::FromRepr,
+    __g::strum::IntoStaticStr
 )]
-#[cfg_attr(feature = "ssr", strum(crate = "__g::strum"))]
+#[cfg_attr(feature = "ssr", derive(__g::gel_derive::Queryable))]
+#[strum(crate = "__g::strum")]
 pub enum AccountProvider {
     Github,
 }
-#[cfg(feature = "ssr")]
 impl From<AccountProvider> for __g::gel_protocol::value::Value {
     fn from(value: AccountProvider) -> Self {
         __g::gel_protocol::value::Value::Enum(value.as_ref().into())
     }
 }
-#[derive(Debug, Clone, Copy, __g::serde::Serialize, __g::serde::Deserialize)]
-#[cfg_attr(
-    feature = "ssr",
-    derive(
-        __g::gel_derive::Queryable,
-        __g::strum::AsRefStr,
-        __g::strum::Display,
-        __g::strum::EnumString,
-        __g::strum::EnumIs,
-        __g::strum::FromRepr,
-        __g::strum::IntoStaticStr
-    )
+#[derive(
+    Debug,
+    Clone,
+    Copy,
+    __g::serde::Serialize,
+    __g::serde::Deserialize,
+    __g::strum::AsRefStr,
+    __g::strum::Display,
+    __g::strum::EnumString,
+    __g::strum::EnumIs,
+    __g::strum::FromRepr,
+    __g::strum::IntoStaticStr
 )]
-#[cfg_attr(feature = "ssr", strum(crate = "__g::strum"))]
+#[cfg_attr(feature = "ssr", derive(__g::gel_derive::Queryable))]
+#[strum(crate = "__g::strum")]
 pub enum RelationshipType {
     Follow,
     Block,
     Mute,
 }
-#[cfg(feature = "ssr")]
 impl From<RelationshipType> for __g::gel_protocol::value::Value {
     fn from(value: RelationshipType) -> Self {
         __g::gel_protocol::value::Value::Enum(value.as_ref().into())
     }
 }
-#[derive(Debug, Clone, Copy, __g::serde::Serialize, __g::serde::Deserialize)]
-#[cfg_attr(
-    feature = "ssr",
-    derive(
-        __g::gel_derive::Queryable,
-        __g::strum::AsRefStr,
-        __g::strum::Display,
-        __g::strum::EnumString,
-        __g::strum::EnumIs,
-        __g::strum::FromRepr,
-        __g::strum::IntoStaticStr
-    )
+#[derive(
+    Debug,
+    Clone,
+    Copy,
+    __g::serde::Serialize,
+    __g::serde::Deserialize,
+    __g::strum::AsRefStr,
+    __g::strum::Display,
+    __g::strum::EnumString,
+    __g::strum::EnumIs,
+    __g::strum::FromRepr,
+    __g::strum::IntoStaticStr
 )]
-#[cfg_attr(feature = "ssr", strum(crate = "__g::strum"))]
+#[cfg_attr(feature = "ssr", derive(__g::gel_derive::Queryable))]
+#[strum(crate = "__g::strum")]
 pub enum Role {
     None,
     Editor,
@@ -75,7 +76,6 @@ pub enum Role {
     Admin,
     Owner,
 }
-#[cfg(feature = "ssr")]
 impl From<Role> for __g::gel_protocol::value::Value {
     fn from(value: Role) -> Self {
         __g::gel_protocol::value::Value::Enum(value.as_ref().into())

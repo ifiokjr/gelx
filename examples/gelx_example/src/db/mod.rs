@@ -29,15 +29,18 @@ pub mod insert_location {
     ) -> ::core::result::Result<Output, __g::gel_errors::Error> {
         conn.query_required_single(QUERY, props).await
     }
-    #[derive(Debug, Clone, __g::serde::Serialize, __g::serde::Deserialize)]
-    #[cfg_attr(
-        feature = "ssr",
-        derive(__g::typed_builder::TypedBuilder, __g::gel_derive::Queryable)
+    #[derive(
+        Debug,
+        Clone,
+        __g::serde::Serialize,
+        __g::serde::Deserialize,
+        __g::typed_builder::TypedBuilder
     )]
+    #[cfg_attr(feature = "ssr", derive(__g::gel_derive::Queryable))]
     pub struct Input {
-        #[cfg_attr(feature = "ssr", builder(setter(into)))]
+        #[builder(setter(into))]
         pub point: __g::Geometry,
-        #[cfg_attr(feature = "ssr", builder(setter(into)))]
+        #[builder(setter(into))]
         pub area: __g::Geography,
     }
     impl __g::gel_protocol::query_arg::QueryArgs for Input {
@@ -78,17 +81,20 @@ pub mod insert_user {
     ) -> ::core::result::Result<Output, __g::gel_errors::Error> {
         conn.query_required_single(QUERY, props).await
     }
-    #[derive(Debug, Clone, __g::serde::Serialize, __g::serde::Deserialize)]
-    #[cfg_attr(
-        feature = "ssr",
-        derive(__g::typed_builder::TypedBuilder, __g::gel_derive::Queryable)
+    #[derive(
+        Debug,
+        Clone,
+        __g::serde::Serialize,
+        __g::serde::Deserialize,
+        __g::typed_builder::TypedBuilder
     )]
+    #[cfg_attr(feature = "ssr", derive(__g::gel_derive::Queryable))]
     pub struct Input {
-        #[cfg_attr(feature = "ssr", builder(setter(into)))]
+        #[builder(setter(into))]
         pub name: String,
-        #[cfg_attr(feature = "ssr", builder(setter(into)))]
+        #[builder(setter(into))]
         pub bio: String,
-        #[cfg_attr(feature = "ssr", builder(setter(into)))]
+        #[builder(setter(into))]
         pub slug: String,
     }
     impl __g::gel_protocol::query_arg::QueryArgs for Input {
@@ -132,13 +138,16 @@ pub mod remove_user {
     ) -> ::core::result::Result<Option<Output>, __g::gel_errors::Error> {
         conn.query_single(QUERY, props).await
     }
-    #[derive(Debug, Clone, __g::serde::Serialize, __g::serde::Deserialize)]
-    #[cfg_attr(
-        feature = "ssr",
-        derive(__g::typed_builder::TypedBuilder, __g::gel_derive::Queryable)
+    #[derive(
+        Debug,
+        Clone,
+        __g::serde::Serialize,
+        __g::serde::Deserialize,
+        __g::typed_builder::TypedBuilder
     )]
+    #[cfg_attr(feature = "ssr", derive(__g::gel_derive::Queryable))]
     pub struct Input {
-        #[cfg_attr(feature = "ssr", builder(setter(into)))]
+        #[builder(setter(into))]
         pub id: __g::uuid::Uuid,
     }
     impl __g::gel_protocol::query_arg::QueryArgs for Input {
@@ -178,13 +187,16 @@ pub mod select_accounts {
     ) -> ::core::result::Result<Vec<Output>, __g::gel_errors::Error> {
         conn.query(QUERY, props).await
     }
-    #[derive(Debug, Clone, __g::serde::Serialize, __g::serde::Deserialize)]
-    #[cfg_attr(
-        feature = "ssr",
-        derive(__g::typed_builder::TypedBuilder, __g::gel_derive::Queryable)
+    #[derive(
+        Debug,
+        Clone,
+        __g::serde::Serialize,
+        __g::serde::Deserialize,
+        __g::typed_builder::TypedBuilder
     )]
+    #[cfg_attr(feature = "ssr", derive(__g::gel_derive::Queryable))]
     pub struct Input {
-        #[cfg_attr(feature = "ssr", builder(setter(into)))]
+        #[builder(setter(into))]
         pub provider: super::default::AccountProvider,
     }
     impl __g::gel_protocol::query_arg::QueryArgs for Input {
@@ -245,13 +257,16 @@ pub mod select_user {
     ) -> ::core::result::Result<Option<Output>, __g::gel_errors::Error> {
         conn.query_single(QUERY, props).await
     }
-    #[derive(Debug, Clone, __g::serde::Serialize, __g::serde::Deserialize)]
-    #[cfg_attr(
-        feature = "ssr",
-        derive(__g::typed_builder::TypedBuilder, __g::gel_derive::Queryable)
+    #[derive(
+        Debug,
+        Clone,
+        __g::serde::Serialize,
+        __g::serde::Deserialize,
+        __g::typed_builder::TypedBuilder
     )]
+    #[cfg_attr(feature = "ssr", derive(__g::gel_derive::Queryable))]
     pub struct Input {
-        #[cfg_attr(feature = "ssr", builder(setter(into)))]
+        #[builder(setter(into))]
         pub slug: String,
     }
     impl __g::gel_protocol::query_arg::QueryArgs for Input {

@@ -3,6 +3,7 @@ use std::hash::Hash;
 use std::path::Path;
 use std::path::PathBuf;
 
+use bitflags::bitflags;
 use check_keyword::CheckKeyword;
 use gel_derive::Queryable;
 use gel_protocol::common::Cardinality;
@@ -423,39 +424,57 @@ impl<'a> ModuleNode<'a> {
 			|| !self.user_defined_types().is_empty()
 	}
 
-	pub fn user_defined_types(&self) -> Vec<&Type> {
+	pub fn user_defined_types(&self) -> IndexMap<&Uuid, &Type> {
 		self.types
 			.iter()
-			.filter_map(|(_, type_info)| {
+			.filter_map(|(id, type_info)| {
 				type_info
 					.name()
 					.to_module_name()
 					.is_user_defined()
-					.then_some(*type_info)
+					.then_some((id, *type_info))
 			})
-			.collect::<Vec<_>>()
+			.collect()
 	}
 
 	pub fn to_token_stream(&self) -> TokenStream {
 		let mut tokens = TokenStream::new();
-		let types = self.user_defined_types();
+		let user_defined_types = self.user_defined_types();
 
 		tokens.extend(self.imports_token_stream());
 
-		if types.is_empty() {
+		if user_defined_types.is_empty() {
 			return tokens;
 		}
 
-		for type_info in types {
-			let name = type_info.name().to_module_name();
+		for (_id, type_info) in user_defined_types {
+			let module_name = type_info.name().to_module_name();
 			match type_info {
 				Type::Object(_object_type) => {
-					// TODO: generate object type
+					// dbg!(object_type);
+
+					// if object_type.is_abstract {
+					// 	// skip for now, we will handle this later
+					// 	continue;
+					// }
+
+					// let struct_mod_name = module_name.name_ident(true);
+					// let struct_tokens = quote! {
+					// 	mod #struct_mod_name {
+					// 		use super::*;
+
+					// 	}
+					// };
+					// tokens.extend(struct_tokens);
 				}
 
 				Type::Enum(enum_type) => {
-					let enum_tokens =
-						generate_enum(self.metadata, &enum_type.enum_values, &name.name, false);
+					let enum_tokens = generate_enum(
+						self.metadata,
+						&enum_type.enum_values,
+						&module_name.name,
+						false,
+					);
 					tokens.extend(enum_tokens);
 				}
 
@@ -709,9 +728,7 @@ impl TypesOutput {
 	}
 
 	pub fn backlinks(&self) -> Vec<Backlink> {
-		use regex::Regex;
-
-		let re = Regex::new(r"\[is (.+)\]").unwrap();
+		let re = regex::Regex::new(r"\[is (.+)\]").unwrap();
 		let mut backlinks = Vec::new();
 
 		for backlink in &self.backlinks {
@@ -719,11 +736,7 @@ impl TypesOutput {
 				continue;
 			};
 
-			let Some(captures) = re.captures(&backlink.name) else {
-				continue;
-			};
-
-			let Some(matched_name) = captures.get(1) else {
+			let Some(matched_name) = re.captures(&backlink.name).and_then(|c| c.get(1)) else {
 				continue;
 			};
 
@@ -823,8 +836,6 @@ pub enum PointerKind {
 	Link,
 	Property,
 }
-
-use bitflags::bitflags;
 
 bitflags! {
 	#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]

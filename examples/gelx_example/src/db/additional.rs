@@ -6,57 +6,57 @@
 #![allow(unused_qualifications)]
 #![allow(clippy::all)]
 use super::*;
-#[derive(Debug, Clone, Copy, __g::serde::Serialize, __g::serde::Deserialize)]
-#[cfg_attr(
-    feature = "ssr",
-    derive(
-        __g::gel_derive::Queryable,
-        __g::strum::AsRefStr,
-        __g::strum::Display,
-        __g::strum::EnumString,
-        __g::strum::EnumIs,
-        __g::strum::FromRepr,
-        __g::strum::IntoStaticStr
-    )
+#[derive(
+    Debug,
+    Clone,
+    Copy,
+    __g::serde::Serialize,
+    __g::serde::Deserialize,
+    __g::strum::AsRefStr,
+    __g::strum::Display,
+    __g::strum::EnumString,
+    __g::strum::EnumIs,
+    __g::strum::FromRepr,
+    __g::strum::IntoStaticStr
 )]
-#[cfg_attr(feature = "ssr", strum(crate = "__g::strum"))]
+#[cfg_attr(feature = "ssr", derive(__g::gel_derive::Queryable))]
+#[strum(crate = "__g::strum")]
 pub enum Awesomeness {
     Very,
     Somewhat,
     NotReally,
 }
-#[cfg(feature = "ssr")]
 impl From<Awesomeness> for __g::gel_protocol::value::Value {
     fn from(value: Awesomeness) -> Self {
         __g::gel_protocol::value::Value::Enum(value.as_ref().into())
     }
 }
-#[derive(Debug, Clone, Copy, __g::serde::Serialize, __g::serde::Deserialize)]
-#[cfg_attr(
-    feature = "ssr",
-    derive(
-        __g::gel_derive::Queryable,
-        __g::strum::AsRefStr,
-        __g::strum::Display,
-        __g::strum::EnumString,
-        __g::strum::EnumIs,
-        __g::strum::FromRepr,
-        __g::strum::IntoStaticStr
-    )
+#[derive(
+    Debug,
+    Clone,
+    Copy,
+    __g::serde::Serialize,
+    __g::serde::Deserialize,
+    __g::strum::AsRefStr,
+    __g::strum::Display,
+    __g::strum::EnumString,
+    __g::strum::EnumIs,
+    __g::strum::FromRepr,
+    __g::strum::IntoStaticStr
 )]
-#[cfg_attr(feature = "ssr", strum(crate = "__g::strum"))]
+#[cfg_attr(feature = "ssr", derive(__g::gel_derive::Queryable))]
+#[strum(crate = "__g::strum")]
 pub enum Smartness {
     #[serde(rename = "low")]
-    #[cfg_attr(feature = "ssr", strum(serialize = "low"))]
+    #[strum(serialize = "low")]
     Low,
     #[serde(rename = "mid")]
-    #[cfg_attr(feature = "ssr", strum(serialize = "mid"))]
+    #[strum(serialize = "mid")]
     Mid,
     #[serde(rename = "genius")]
-    #[cfg_attr(feature = "ssr", strum(serialize = "genius"))]
+    #[strum(serialize = "genius")]
     Genius,
 }
-#[cfg(feature = "ssr")]
 impl From<Smartness> for __g::gel_protocol::value::Value {
     fn from(value: Smartness) -> Self {
         __g::gel_protocol::value::Value::Enum(value.as_ref().into())
