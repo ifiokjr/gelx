@@ -66,8 +66,11 @@
   scripts."db:reset" = {
     exec = ''
       set -e
-      db:destroy
-      db:setup
+      db:destroy || true
+      rm -rf $DEVENV_ROOT/dbschema/migrations
+      db:setup || true
+      gel migration create --non-interactive --instance $GEL_INSTANCE
+      gel migrate --instance $GEL_INSTANCE
     '';
     description = "Reset the local database.";
   };
