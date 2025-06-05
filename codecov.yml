@@ -1,0 +1,27 @@
+coverage:
+  status:
+    project:
+      default:
+        target: auto # automatically sets a target based on current coverage
+        threshold: 1% # allows for a 1% drop in coverage without failing
+    patch:
+      default:
+        target: auto
+        threshold: 1%
+
+ignore:
+  - "target/*"
+  - "**/tests/*"
+  - "**/examples/*"
+  - "**/benches/*"
+# Add other paths to ignore here, for example:
+# - "vendor/*"
+# - "**/build/*"
+# - "**/*.min.js"
+
+comment:
+  layout: "reach,diff,flags,files,footer"
+  behavior: default
+  require_changes: false # if true: only post the comment if coverage changes
+  require_base: no # [yes :: must have a base report to post]
+  require_head: yes # [yes :: must have a head report to post]
