@@ -308,13 +308,36 @@ fn explore_descriptor(
 		}
 
 		Descriptor::Scalar(scalar) => {
-			let result = uuid_to_token_name(&scalar.id, &exports_ident);
+			let Some(module_name) = &scalar.name.as_ref().map(ModuleName::from) else {
+				return Ok(None); // should not happen
+			};
 
-			if is_root {
-				tokens.extend(quote!(pub type #root_ident = #result;));
-				Ok(Some(quote!(#root_ident)))
+			if module_name.is_system_namespace() {
+				let result = uuid_to_token_name(&scalar.id, &exports_ident);
+
+				if is_root {
+					tokens.extend(quote!(pub type #root_ident = #result;));
+					Ok(Some(quote!(#root_ident)))
+				} else {
+					Ok(Some(result))
+				}
+			} else if is_macro {
+				let Some(base_type_pos) = scalar.base_type_pos else {
+					return Ok(None); // should not happen
+				};
+
+				let props = props
+					.into_props()
+					.descriptor(typedesc.get(base_type_pos).ok())
+					.root_name(root_name)
+					.build();
+
+				explore_descriptor(props, tokens)
 			} else {
-				Ok(Some(result))
+				let module_ident = module_name.modules_path()?;
+				let enum_ident = module_name.name_ident(false);
+
+				Ok(Some(quote!(super::#module_ident::#enum_ident)))
 			}
 		}
 

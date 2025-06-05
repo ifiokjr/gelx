@@ -66,7 +66,7 @@ pub(crate) fn uuid_to_token_name(uuid: &Uuid, exports_ident: &Ident) -> TokenStr
 		POSTGIS_GEOGRAPHY => quote!(#exports_ident::Geography),
 		POSTGIS_BOX_2D => todo!("POSTGIS_BOX_2D not yet implemented"),
 		POSTGIS_BOX_3D => todo!("POSTGIS_BOX_3D not yet implemented"),
-		_ => quote!(()),
+		_ => quote!(#exports_ident::gel_protocol::value::Value),
 	}
 }
 

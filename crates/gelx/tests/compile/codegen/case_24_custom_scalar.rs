@@ -1,7 +1,3 @@
----
-source: crates/gelx/tests/codegen.rs
-expression: "&content"
----
 pub mod example {
     use ::gelx::exports as __g;
     /// Execute the desired query.
@@ -28,11 +24,7 @@ pub mod example {
     )]
     pub struct Input {
         #[builder(setter(into))]
-        pub name: String,
-        #[builder(setter(into))]
-        pub bio: String,
-        #[builder(setter(into))]
-        pub slug: String,
+        pub position: i32,
     }
     impl __g::gel_protocol::query_arg::QueryArgs for Input {
         fn encode(
@@ -40,8 +32,7 @@ pub mod example {
             encoder: &mut __g::gel_protocol::query_arg::Encoder,
         ) -> core::result::Result<(), __g::gel_errors::Error> {
             let map = __g::gel_protocol::named_args! {
-                "name" => self.name.clone(), "bio" => self.bio.clone(), "slug" => self
-                .slug.clone(),
+                "position" => self.position.clone(),
             };
             map.encode(encoder)
         }
@@ -55,10 +46,9 @@ pub mod example {
     )]
     pub struct Output {
         pub id: __g::uuid::Uuid,
-        pub name: Option<String>,
-        pub bio: Option<String>,
-        pub slug: String,
+        pub position: i32,
     }
     /// The original query string provided to the macro. Can be reused in your codebase.
-    pub const QUERY: &str = "select (insert User {\n  name := <str>$name,\n  bio := <str>$bio,\n  slug := <str>$slug,\n}) {\n  id,\n  name,\n  bio,\n  slug,\n};\n";
+    pub const QUERY: &str = "select (insert Simple { position := <default::Position>$position }) {**};";
 }
+fn main() {}

@@ -11,6 +11,10 @@ module default {
 		constraint max_value(1_000_000);
 	}
 
+	type Simple {
+		required position: Position;
+	}
+
 	type Location extending CreatedAt, UpdatedAt {
 		required point: ext::postgis::geometry;
 		required area: ext::postgis::geography;

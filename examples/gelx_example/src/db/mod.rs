@@ -68,6 +68,61 @@ pub mod insert_location {
     /// The original query string provided to the macro. Can be reused in your codebase.
     pub const QUERY: &str = "with NewLocation := (insert Location {\n\tpoint := <ext::postgis::geometry>$point,\n\tarea := <ext::postgis::geography>$area,\n})\nselect NewLocation {\n\tpoint,\n\tarea,\n};";
 }
+pub mod insert_position {
+    use ::gelx::exports as __g;
+    /// Execute the desired query.
+    #[cfg(feature = "ssr")]
+    pub async fn query(
+        client: &__g::gel_tokio::Client,
+        props: &Input,
+    ) -> ::core::result::Result<Output, __g::gel_errors::Error> {
+        client.query_required_single(QUERY, props).await
+    }
+    /// Compose the query as part of a larger transaction.
+    #[cfg(feature = "ssr")]
+    pub async fn transaction(
+        conn: &mut __g::gel_tokio::Transaction,
+        props: &Input,
+    ) -> ::core::result::Result<Output, __g::gel_errors::Error> {
+        conn.query_required_single(QUERY, props).await
+    }
+    #[derive(
+        ::std::fmt::Debug,
+        ::core::clone::Clone,
+        __g::serde::Serialize,
+        __g::serde::Deserialize,
+        __g::typed_builder::TypedBuilder
+    )]
+    #[cfg_attr(feature = "ssr", derive(__g::gel_derive::Queryable))]
+    pub struct Input {
+        #[builder(setter(into))]
+        pub position: super::default::Position,
+    }
+    impl __g::gel_protocol::query_arg::QueryArgs for Input {
+        fn encode(
+            &self,
+            encoder: &mut __g::gel_protocol::query_arg::Encoder,
+        ) -> core::result::Result<(), __g::gel_errors::Error> {
+            let map = __g::gel_protocol::named_args! {
+                "position" => self.position.clone(),
+            };
+            map.encode(encoder)
+        }
+    }
+    #[derive(
+        ::std::fmt::Debug,
+        ::core::clone::Clone,
+        __g::serde::Serialize,
+        __g::serde::Deserialize
+    )]
+    #[cfg_attr(feature = "ssr", derive(__g::gel_derive::Queryable))]
+    pub struct Output {
+        pub id: __g::uuid::Uuid,
+        pub position: super::default::Position,
+    }
+    /// The original query string provided to the macro. Can be reused in your codebase.
+    pub const QUERY: &str = "select (insert Simple {\n  position := <default::Position>$position,\n}) {**};\n";
+}
 pub mod insert_user {
     use ::gelx::exports as __g;
     /// Execute the desired query.
@@ -128,7 +183,7 @@ pub mod insert_user {
         pub slug: String,
     }
     /// The original query string provided to the macro. Can be reused in your codebase.
-    pub const QUERY: &str = "with NewUser := (insert User {\n  name := <str>$name,\n  bio := <str>$bio,\n  slug := <str>$slug,\n})\nselect NewUser {\n  id,\n  name,\n  bio,\n  slug,\n};\n";
+    pub const QUERY: &str = "select (insert User {\n  name := <str>$name,\n  bio := <str>$bio,\n  slug := <str>$slug,\n}) {\n  id,\n  name,\n  bio,\n  slug,\n};\n";
 }
 pub mod remove_user {
     use ::gelx::exports as __g;

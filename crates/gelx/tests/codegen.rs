@@ -80,6 +80,7 @@ pub fn testname() -> String {
 #[case::bytes("select b'bina\\x01ry'")]
 #[case::geometry("select ext::postgis::makepoint(1.0, 1.0)")]
 #[case::geography("select <ext::postgis::geography>ext::postgis::makepoint(1.0, 1.0)")]
+#[case::custom_scalar("select (insert Simple { position := <default::Position>$position }) {**};")]
 #[tokio::test]
 #[rustversion::attr(not(nightly), ignore = "requires nightly")]
 async fn codegen_literals(testname: String, #[case] query: &str) -> GelxCoreResult<()> {

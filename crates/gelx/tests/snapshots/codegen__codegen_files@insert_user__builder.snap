@@ -44,5 +44,5 @@ pub mod example {
         pub slug: String,
     }
     /// The original query string provided to the macro. Can be reused in your codebase.
-    pub const QUERY: &str = "with NewUser := (insert User {\n  name := <str>$name,\n  bio := <str>$bio,\n  slug := <str>$slug,\n})\nselect NewUser {\n  id,\n  name,\n  bio,\n  slug,\n};\n";
+    pub const QUERY: &str = "select (insert User {\n  name := <str>$name,\n  bio := <str>$bio,\n  slug := <str>$slug,\n}) {\n  id,\n  name,\n  bio,\n  slug,\n};\n";
 }

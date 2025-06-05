@@ -63,8 +63,8 @@ impl __g::gel_protocol::queryable::Queryable for Position {
             ctx,
             type_pos,
             __g::uuid::Uuid::from_bytes([
-                63u8, 239u8, 178u8, 200u8, 65u8, 204u8, 17u8, 240u8, 182u8, 170u8, 229u8,
-                237u8, 228u8, 91u8, 205u8, 119u8,
+                20u8, 41u8, 255u8, 176u8, 65u8, 247u8, 17u8, 240u8, 182u8, 41u8, 237u8,
+                62u8, 152u8, 170u8, 52u8, 22u8,
             ]),
             "default::Position",
         )?;
@@ -154,6 +154,9 @@ impl ::core::convert::From<Role> for __g::gel_protocol::value::Value {
     fn from(value: Role) -> Self {
         __g::gel_protocol::value::Value::Enum(value.as_ref().into())
     }
+}
+mod simple {
+    use super::*;
 }
 mod team {
     use super::*;

@@ -16,5 +16,9 @@ async fn main() -> anyhow::Result<()> {
 	let query = select_accounts::query(&client, &props).await?;
 	println!("{query:?}");
 
+	let props = insert_position::Input::builder().position(1).build();
+	let query = insert_position::query(&client, &props).await?;
+	println!("{:?}", query.position);
+
 	Ok(())
 }

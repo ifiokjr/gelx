@@ -1,4 +1,4 @@
-CREATE MIGRATION m1vgynqjdvxqzwsssyzq4wb543slss2drtsah4rib33ta7l5l2rr5a
+CREATE MIGRATION m1gd2vrayu62apz6e4sv7yxgpubfuh2kbrxq75rf56blckov5atcsa
     ONTO initial
 {
   CREATE EXTENSION postgis VERSION '3.5';
@@ -146,5 +146,8 @@ CREATE MIGRATION m1vgynqjdvxqzwsssyzq4wb543slss2drtsah4rib33ta7l5l2rr5a
               (.primary = true)
           ))
       );
+  };
+  CREATE TYPE default::Simple {
+      CREATE REQUIRED PROPERTY position: default::Position;
   };
 };
