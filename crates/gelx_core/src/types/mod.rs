@@ -12,6 +12,7 @@ use heck::ToPascalCase;
 use heck::ToSnakeCase;
 use indexmap::IndexMap;
 use indexmap::indexmap;
+use proc_macro2::Span;
 use proc_macro2::TokenStream;
 use quote::format_ident;
 use quote::quote;
@@ -20,6 +21,7 @@ use serde::Serialize;
 use serde_with::DisplayFromStr;
 use serde_with::serde_as;
 use syn::Ident;
+use syn::LitByte;
 use tokio::fs;
 use uuid::Uuid;
 
@@ -28,10 +30,11 @@ use crate::GelxCoreError;
 use crate::GelxCoreResult;
 use crate::GelxMetadata;
 use crate::constants::TYPES_QUERY;
+use crate::maybe_uuid_to_token_name;
 use crate::prettify;
 
 /// Execute the types query to get the types of the current database.
-async fn types_query(client: &Client) -> GelxCoreResult<Vec<TypesOutput>> {
+pub(crate) async fn types_query(client: &Client) -> GelxCoreResult<Vec<TypesOutput>> {
 	let result = client.query(TYPES_QUERY, &()).await?;
 
 	Ok(result)
@@ -450,22 +453,34 @@ impl<'a> ModuleNode<'a> {
 		for (_id, type_info) in user_defined_types {
 			let module_name = type_info.name().to_module_name();
 			match type_info {
-				Type::Object(_object_type) => {
+				Type::Scalar(scalar_type) => {
+					dbg!(scalar_type);
+					let scalar_tokens = generate_scalar(
+						self.metadata,
+						scalar_type,
+						&module_name,
+						self.types_ref,
+						false,
+					);
+					tokens.extend(scalar_tokens);
+				}
+
+				Type::Object(object_type) => {
 					// dbg!(object_type);
 
-					// if object_type.is_abstract {
-					// 	// skip for now, we will handle this later
-					// 	continue;
-					// }
+					if object_type.is_abstract {
+						// skip for now, we will handle this later
+						continue;
+					}
 
-					// let struct_mod_name = module_name.name_ident(true);
-					// let struct_tokens = quote! {
-					// 	mod #struct_mod_name {
-					// 		use super::*;
+					let struct_mod_name = module_name.name_ident(true);
+					let struct_tokens = quote! {
+						mod #struct_mod_name {
+							use super::*;
 
-					// 	}
-					// };
-					// tokens.extend(struct_tokens);
+						}
+					};
+					tokens.extend(struct_tokens);
 				}
 
 				Type::Enum(enum_type) => {
@@ -548,7 +563,7 @@ pub(crate) fn generate_enum(
 		}
 
 		#strum_annotation
-		impl From<#pascal_local_name> for #exports_ident::gel_protocol::value::Value {
+		impl ::core::convert::From<#pascal_local_name> for #exports_ident::gel_protocol::value::Value {
 			fn from(value: #pascal_local_name) -> Self {
 				#exports_ident::gel_protocol::value::Value::Enum(value.as_ref().into())
 			}
@@ -556,6 +571,101 @@ pub(crate) fn generate_enum(
 	};
 
 	enum_tokens
+}
+
+pub(crate) fn generate_scalar(
+	metadata: &GelxMetadata,
+	scalar_type: &ScalarType,
+	module_name: &ModuleName,
+	types: &IndexMap<Uuid, Type>,
+	is_macro: bool,
+) -> TokenStream {
+	let exports_ident = metadata.exports_alias_ident();
+	let Some(Type::Scalar(parent_scalar)) = scalar_type.material_id.and_then(|id| types.get(&id))
+	else {
+		return TokenStream::new();
+	};
+
+	let Some(wrapped_struct_type) = maybe_uuid_to_token_name(&parent_scalar.id, &exports_ident)
+	else {
+		return TokenStream::new();
+	};
+
+	let struct_name = module_name.name_ident(false);
+	let derive_macro_paths = metadata.struct_derive_macro_paths();
+	let struct_derive_tokens = metadata.features.get_derive_features(
+		&[FeatureName::Serde, FeatureName::Builder],
+		&exports_ident,
+		&derive_macro_paths,
+		false,
+		is_macro,
+	);
+	let uuid_bytes = scalar_type.id.as_bytes();
+	// 1. Convert each byte to a proc_macro2::Literal
+	let byte_literals: Vec<LitByte> = uuid_bytes
+		.iter()
+		.map(|&byte| LitByte::new(byte, Span::call_site()))
+		.collect();
+	let type_name = &scalar_type.name;
+	let queryable_annotation = metadata.features.annotate(FeatureName::Query, false);
+
+	quote! {
+		#struct_derive_tokens
+		pub struct #struct_name(pub #wrapped_struct_type);
+
+		#queryable_annotation
+		impl #exports_ident::gel_protocol::queryable::Queryable for #struct_name {
+			type Args = <#wrapped_struct_type as #exports_ident::gel_protocol::queryable::Queryable>::Args;
+
+			fn decode(
+				decoder: &#exports_ident::gel_protocol::queryable::Decoder,
+				args: &Self::Args,
+				buf: &[u8],
+			) -> Result<Self, #exports_ident::gel_protocol::errors::DecodeError> {
+				Ok(Self(#wrapped_struct_type::decode(decoder, args, buf)?))
+			}
+
+			fn check_descriptor(
+				ctx: &#exports_ident::gel_protocol::queryable::DescriptorContext,
+				type_pos: #exports_ident::gel_protocol::descriptors::TypePos,
+			) -> Result<Self::Args, #exports_ident::gel_protocol::queryable::DescriptorMismatch> {
+				#exports_ident::check_scalar(
+					ctx,
+					type_pos,
+					#exports_ident::uuid::Uuid::from_bytes([ #( #byte_literals ),* ]),
+					#type_name,
+				)?;
+				Ok(())
+			}
+		}
+
+		impl ::core::convert::From<#struct_name> for #exports_ident::gel_protocol::value::Value {
+			fn from(value: #struct_name) -> Self {
+				value.0.into()
+			}
+		}
+		impl ::core::convert::From<#struct_name> for #wrapped_struct_type {
+			fn from(value: #struct_name) -> Self {
+				value.0
+			}
+		}
+		impl ::core::convert::From<#wrapped_struct_type> for #struct_name {
+			fn from(value: #wrapped_struct_type) -> Self {
+				#struct_name(value)
+			}
+		}
+		impl ::std::ops::Deref for #struct_name {
+			type Target = i32;
+			fn deref(&self) -> &Self::Target {
+				&self.0
+			}
+		}
+		impl ::std::ops::DerefMut for #struct_name {
+			fn deref_mut(&mut self) -> &mut Self::Target {
+				&mut self.0
+			}
+		}
+	}
 }
 
 #[derive(Clone, Debug, Queryable)]

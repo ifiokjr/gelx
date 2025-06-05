@@ -263,11 +263,15 @@ fn default_exports_alias() -> String {
 }
 
 fn default_struct_derive_macros() -> Vec<String> {
-	vec!["Debug".into(), "Clone".into()]
+	vec!["::std::fmt::Debug".into(), "::core::clone::Clone".into()]
 }
 
 fn default_enum_derive_macros() -> Vec<String> {
-	vec!["Debug".into(), "Clone".into(), "Copy".into()]
+	vec![
+		"::std::fmt::Debug".into(),
+		"::core::clone::Clone".into(),
+		"::core::marker::Copy".into(),
+	]
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, derive_more::From, PartialEq)]
@@ -384,7 +388,7 @@ pub struct GelxFeatures {
 }
 
 impl GelxFeatures {
-	fn get_derive_features(
+	pub(crate) fn get_derive_features(
 		&self,
 		features: &[FeatureName],
 		exports_ident: &Ident,
@@ -528,7 +532,8 @@ impl GelxFeatures {
 		quote!(#[cfg_attr(feature = #key, #tokens)])
 	}
 
-	/// Use the correct annotation for the given feature.
+	/// Create an annotation for the given feature if it has an alias defined.
+	/// `#[cfg(feature = "ssr")]`
 	pub(crate) fn annotate(&self, feature: FeatureName, is_macro: bool) -> TokenStream {
 		let empty_tokens = TokenStream::new();
 

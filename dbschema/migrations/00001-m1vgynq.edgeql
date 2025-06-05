@@ -1,4 +1,4 @@
-CREATE MIGRATION m1nbcgemhy2rd4n7a2cfiwlfcuzm7jxbxj4w5x2juc7q52jhi5meva
+CREATE MIGRATION m1vgynqjdvxqzwsssyzq4wb543slss2drtsah4rib33ta7l5l2rr5a
     ONTO initial
 {
   CREATE EXTENSION postgis VERSION '3.5';
@@ -6,8 +6,13 @@ CREATE MIGRATION m1nbcgemhy2rd4n7a2cfiwlfcuzm7jxbxj4w5x2juc7q52jhi5meva
   CREATE SCALAR TYPE additional::Awesomeness EXTENDING enum<Very, Somewhat, NotReally>;
   CREATE SCALAR TYPE additional::smartness EXTENDING enum<low, mid, genius>;
   CREATE SCALAR TYPE default::AccountProvider EXTENDING enum<Github>;
+  CREATE SCALAR TYPE default::Position EXTENDING std::int32 {
+      CREATE CONSTRAINT std::max_value(1_000_000);
+      CREATE CONSTRAINT std::min_value(0);
+  };
   CREATE SCALAR TYPE default::RelationshipType EXTENDING enum<Follow, Block, Mute>;
   CREATE SCALAR TYPE default::Role EXTENDING enum<None, Editor, Moderator, Admin, Owner>;
+  CREATE GLOBAL additional::alternative -> std::str;
   CREATE GLOBAL default::current_user_id -> std::uuid;
   CREATE ABSTRACT TYPE default::CreatedAt {
       CREATE REQUIRED PROPERTY created_at: std::datetime {
@@ -26,16 +31,6 @@ CREATE MIGRATION m1nbcgemhy2rd4n7a2cfiwlfcuzm7jxbxj4w5x2juc7q52jhi5meva
               USING (std::datetime_of_statement());
       };
   };
-  CREATE TYPE default::Account EXTENDING default::CreatedAt, default::UpdatedAt {
-      CREATE PROPERTY access_token: std::str;
-      CREATE PROPERTY access_token_expires_at: std::datetime;
-      CREATE REQUIRED PROPERTY provider: default::AccountProvider;
-      CREATE REQUIRED PROPERTY provider_account_id: std::str;
-      CREATE PROPERTY refresh_token: std::str;
-      CREATE PROPERTY refresh_token_expires_at: std::datetime;
-      CREATE PROPERTY scope: std::str;
-      CREATE PROPERTY username: std::str;
-  };
   CREATE ABSTRACT TYPE default::RelationshipTarget {
       CREATE ANNOTATION std::description := 'A potential target that can be followed, blocked and muted';
   };
@@ -49,13 +44,18 @@ CREATE MIGRATION m1nbcgemhy2rd4n7a2cfiwlfcuzm7jxbxj4w5x2juc7q52jhi5meva
       CREATE PROPERTY bio: std::str;
       CREATE PROPERTY name: std::str;
   };
-  ALTER TYPE default::Account {
+  CREATE TYPE default::Account EXTENDING default::CreatedAt, default::UpdatedAt {
       CREATE REQUIRED LINK user: default::User {
           ON TARGET DELETE DELETE SOURCE;
       };
-  };
-  ALTER TYPE default::User {
-      CREATE LINK accounts := (.<user[IS default::Account]);
+      CREATE PROPERTY access_token: std::str;
+      CREATE PROPERTY access_token_expires_at: std::datetime;
+      CREATE REQUIRED PROPERTY provider: default::AccountProvider;
+      CREATE REQUIRED PROPERTY provider_account_id: std::str;
+      CREATE PROPERTY refresh_token: std::str;
+      CREATE PROPERTY refresh_token_expires_at: std::datetime;
+      CREATE PROPERTY scope: std::str;
+      CREATE PROPERTY username: std::str;
   };
   CREATE TYPE default::Wallet EXTENDING default::CreatedAt, default::UpdatedAt {
       CREATE REQUIRED LINK actor: default::Actor {
@@ -74,6 +74,14 @@ CREATE MIGRATION m1nbcgemhy2rd4n7a2cfiwlfcuzm7jxbxj4w5x2juc7q52jhi5meva
   ALTER TYPE default::Actor {
       CREATE MULTI LINK wallets := (.<actor[IS default::Wallet]);
   };
+  ALTER TYPE default::User {
+      CREATE LINK accounts := (.<user[IS default::Account]);
+  };
+  CREATE GLOBAL default::current_user := (SELECT
+      default::User
+  FILTER
+      (.id = GLOBAL default::current_user_id)
+  );
   CREATE TYPE default::Team EXTENDING default::Actor, default::CreatedAt, default::RelationshipTarget, default::UpdatedAt {
       CREATE ANNOTATION std::description := 'Teams are a collection of users that can create projects in easier ways for groups and organisations.';
       CREATE PROPERTY description: std::str {

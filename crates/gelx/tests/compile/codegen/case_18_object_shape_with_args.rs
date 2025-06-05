@@ -15,8 +15,8 @@ pub mod example {
         conn.query(QUERY, props).await
     }
     #[derive(
-        Debug,
-        Clone,
+        ::std::fmt::Debug,
+        ::core::clone::Clone,
         __g::serde::Serialize,
         __g::serde::Deserialize,
         __g::typed_builder::TypedBuilder,
@@ -41,8 +41,8 @@ pub mod example {
         }
     }
     #[derive(
-        Debug,
-        Clone,
+        ::std::fmt::Debug,
+        ::core::clone::Clone,
         __g::serde::Serialize,
         __g::serde::Deserialize,
         __g::gel_derive::Queryable
@@ -57,8 +57,8 @@ pub mod example {
         pub pubkey: String,
     }
     #[derive(
-        Debug,
-        Clone,
+        ::std::fmt::Debug,
+        ::core::clone::Clone,
         __g::serde::Serialize,
         __g::serde::Deserialize,
         __g::gel_derive::Queryable

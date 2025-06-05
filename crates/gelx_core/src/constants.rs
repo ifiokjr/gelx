@@ -102,6 +102,7 @@ pub const TYPES_QUERY: &str = r#"WITH
 	  } ORDER BY @index ASC),
 		 multirange_element_id := [IS MultiRange].element_type.id,
 	}
+FILTER NOT .from_alias
 ORDER BY .name;
 "#;
 

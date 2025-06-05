@@ -6,10 +6,13 @@
 #![allow(unused_qualifications)]
 #![allow(clippy::all)]
 use super::*;
+mod account {
+    use super::*;
+}
 #[derive(
-    Debug,
-    Clone,
-    Copy,
+    ::std::fmt::Debug,
+    ::core::clone::Clone,
+    ::core::marker::Copy,
     __g::serde::Serialize,
     __g::serde::Deserialize,
     __g::strum::AsRefStr,
@@ -24,15 +27,86 @@ use super::*;
 pub enum AccountProvider {
     Github,
 }
-impl From<AccountProvider> for __g::gel_protocol::value::Value {
+impl ::core::convert::From<AccountProvider> for __g::gel_protocol::value::Value {
     fn from(value: AccountProvider) -> Self {
         __g::gel_protocol::value::Value::Enum(value.as_ref().into())
     }
 }
+mod email {
+    use super::*;
+}
+mod location {
+    use super::*;
+}
 #[derive(
-    Debug,
-    Clone,
-    Copy,
+    ::std::fmt::Debug,
+    ::core::clone::Clone,
+    __g::serde::Serialize,
+    __g::serde::Deserialize
+)]
+pub struct Position(pub i32);
+#[cfg(feature = "ssr")]
+impl __g::gel_protocol::queryable::Queryable for Position {
+    type Args = <i32 as __g::gel_protocol::queryable::Queryable>::Args;
+    fn decode(
+        decoder: &__g::gel_protocol::queryable::Decoder,
+        args: &Self::Args,
+        buf: &[u8],
+    ) -> Result<Self, __g::gel_protocol::errors::DecodeError> {
+        Ok(Self(i32::decode(decoder, args, buf)?))
+    }
+    fn check_descriptor(
+        ctx: &__g::gel_protocol::queryable::DescriptorContext,
+        type_pos: __g::gel_protocol::descriptors::TypePos,
+    ) -> Result<Self::Args, __g::gel_protocol::queryable::DescriptorMismatch> {
+        __g::check_scalar(
+            ctx,
+            type_pos,
+            __g::uuid::Uuid::from_bytes([
+                63u8, 239u8, 178u8, 200u8, 65u8, 204u8, 17u8, 240u8, 182u8, 170u8, 229u8,
+                237u8, 228u8, 91u8, 205u8, 119u8,
+            ]),
+            "default::Position",
+        )?;
+        Ok(())
+    }
+}
+impl ::core::convert::From<Position> for __g::gel_protocol::value::Value {
+    fn from(value: Position) -> Self {
+        value.0.into()
+    }
+}
+impl ::core::convert::From<Position> for i32 {
+    fn from(value: Position) -> Self {
+        value.0
+    }
+}
+impl ::core::convert::From<i32> for Position {
+    fn from(value: i32) -> Self {
+        Position(value)
+    }
+}
+impl ::std::ops::Deref for Position {
+    type Target = i32;
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+impl ::std::ops::DerefMut for Position {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
+    }
+}
+mod project {
+    use super::*;
+}
+mod relationship {
+    use super::*;
+}
+#[derive(
+    ::std::fmt::Debug,
+    ::core::clone::Clone,
+    ::core::marker::Copy,
     __g::serde::Serialize,
     __g::serde::Deserialize,
     __g::strum::AsRefStr,
@@ -49,15 +123,15 @@ pub enum RelationshipType {
     Block,
     Mute,
 }
-impl From<RelationshipType> for __g::gel_protocol::value::Value {
+impl ::core::convert::From<RelationshipType> for __g::gel_protocol::value::Value {
     fn from(value: RelationshipType) -> Self {
         __g::gel_protocol::value::Value::Enum(value.as_ref().into())
     }
 }
 #[derive(
-    Debug,
-    Clone,
-    Copy,
+    ::std::fmt::Debug,
+    ::core::clone::Clone,
+    ::core::marker::Copy,
     __g::serde::Serialize,
     __g::serde::Deserialize,
     __g::strum::AsRefStr,
@@ -76,8 +150,17 @@ pub enum Role {
     Admin,
     Owner,
 }
-impl From<Role> for __g::gel_protocol::value::Value {
+impl ::core::convert::From<Role> for __g::gel_protocol::value::Value {
     fn from(value: Role) -> Self {
         __g::gel_protocol::value::Value::Enum(value.as_ref().into())
     }
+}
+mod team {
+    use super::*;
+}
+mod user {
+    use super::*;
+}
+mod wallet {
+    use super::*;
 }

@@ -30,8 +30,8 @@ pub mod insert_location {
         conn.query_required_single(QUERY, props).await
     }
     #[derive(
-        Debug,
-        Clone,
+        ::std::fmt::Debug,
+        ::core::clone::Clone,
         __g::serde::Serialize,
         __g::serde::Deserialize,
         __g::typed_builder::TypedBuilder
@@ -54,7 +54,12 @@ pub mod insert_location {
             map.encode(encoder)
         }
     }
-    #[derive(Debug, Clone, __g::serde::Serialize, __g::serde::Deserialize)]
+    #[derive(
+        ::std::fmt::Debug,
+        ::core::clone::Clone,
+        __g::serde::Serialize,
+        __g::serde::Deserialize
+    )]
     #[cfg_attr(feature = "ssr", derive(__g::gel_derive::Queryable))]
     pub struct Output {
         pub point: __g::Geometry,
@@ -82,8 +87,8 @@ pub mod insert_user {
         conn.query_required_single(QUERY, props).await
     }
     #[derive(
-        Debug,
-        Clone,
+        ::std::fmt::Debug,
+        ::core::clone::Clone,
         __g::serde::Serialize,
         __g::serde::Deserialize,
         __g::typed_builder::TypedBuilder
@@ -109,7 +114,12 @@ pub mod insert_user {
             map.encode(encoder)
         }
     }
-    #[derive(Debug, Clone, __g::serde::Serialize, __g::serde::Deserialize)]
+    #[derive(
+        ::std::fmt::Debug,
+        ::core::clone::Clone,
+        __g::serde::Serialize,
+        __g::serde::Deserialize
+    )]
     #[cfg_attr(feature = "ssr", derive(__g::gel_derive::Queryable))]
     pub struct Output {
         pub id: __g::uuid::Uuid,
@@ -139,8 +149,8 @@ pub mod remove_user {
         conn.query_single(QUERY, props).await
     }
     #[derive(
-        Debug,
-        Clone,
+        ::std::fmt::Debug,
+        ::core::clone::Clone,
         __g::serde::Serialize,
         __g::serde::Deserialize,
         __g::typed_builder::TypedBuilder
@@ -161,7 +171,12 @@ pub mod remove_user {
             map.encode(encoder)
         }
     }
-    #[derive(Debug, Clone, __g::serde::Serialize, __g::serde::Deserialize)]
+    #[derive(
+        ::std::fmt::Debug,
+        ::core::clone::Clone,
+        __g::serde::Serialize,
+        __g::serde::Deserialize
+    )]
     #[cfg_attr(feature = "ssr", derive(__g::gel_derive::Queryable))]
     pub struct Output {
         pub id: __g::uuid::Uuid,
@@ -188,8 +203,8 @@ pub mod select_accounts {
         conn.query(QUERY, props).await
     }
     #[derive(
-        Debug,
-        Clone,
+        ::std::fmt::Debug,
+        ::core::clone::Clone,
         __g::serde::Serialize,
         __g::serde::Deserialize,
         __g::typed_builder::TypedBuilder
@@ -210,7 +225,12 @@ pub mod select_accounts {
             map.encode(encoder)
         }
     }
-    #[derive(Debug, Clone, __g::serde::Serialize, __g::serde::Deserialize)]
+    #[derive(
+        ::std::fmt::Debug,
+        ::core::clone::Clone,
+        __g::serde::Serialize,
+        __g::serde::Deserialize
+    )]
     #[cfg_attr(feature = "ssr", derive(__g::gel_derive::Queryable))]
     pub struct OutputUser {
         pub slug: String,
@@ -220,7 +240,12 @@ pub mod select_accounts {
         pub bio: Option<String>,
         pub name: Option<String>,
     }
-    #[derive(Debug, Clone, __g::serde::Serialize, __g::serde::Deserialize)]
+    #[derive(
+        ::std::fmt::Debug,
+        ::core::clone::Clone,
+        __g::serde::Serialize,
+        __g::serde::Deserialize
+    )]
     #[cfg_attr(feature = "ssr", derive(__g::gel_derive::Queryable))]
     pub struct Output {
         pub created_at: __g::DateTimeAlias,
@@ -258,8 +283,8 @@ pub mod select_user {
         conn.query_single(QUERY, props).await
     }
     #[derive(
-        Debug,
-        Clone,
+        ::std::fmt::Debug,
+        ::core::clone::Clone,
         __g::serde::Serialize,
         __g::serde::Deserialize,
         __g::typed_builder::TypedBuilder
@@ -280,7 +305,12 @@ pub mod select_user {
             map.encode(encoder)
         }
     }
-    #[derive(Debug, Clone, __g::serde::Serialize, __g::serde::Deserialize)]
+    #[derive(
+        ::std::fmt::Debug,
+        ::core::clone::Clone,
+        __g::serde::Serialize,
+        __g::serde::Deserialize
+    )]
     #[cfg_attr(feature = "ssr", derive(__g::gel_derive::Queryable))]
     pub struct Output {
         pub id: __g::uuid::Uuid,

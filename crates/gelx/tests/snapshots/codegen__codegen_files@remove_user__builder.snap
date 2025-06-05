@@ -18,7 +18,7 @@ pub mod example {
     ) -> ::core::result::Result<Option<Output>, __g::gel_errors::Error> {
         conn.query_single(QUERY, props).await
     }
-    #[derive(Debug, Clone)]
+    #[derive(::std::fmt::Debug, ::core::clone::Clone)]
     pub struct Input {
         pub id: __g::uuid::Uuid,
     }
@@ -33,7 +33,7 @@ pub mod example {
             map.encode(encoder)
         }
     }
-    #[derive(Debug, Clone)]
+    #[derive(::std::fmt::Debug, ::core::clone::Clone)]
     pub struct Output {
         pub id: __g::uuid::Uuid,
     }

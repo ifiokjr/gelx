@@ -17,16 +17,17 @@ pub mod example {
         conn.query(QUERY, &()).await
     }
     pub type Input = ();
-    #[derive(Debug, Clone, Copy)]
+    #[derive(::std::fmt::Debug, ::core::clone::Clone, ::core::marker::Copy)]
     pub enum DefaultAccountProvider {
         Github,
     }
-    impl From<DefaultAccountProvider> for __g::gel_protocol::value::Value {
+    impl ::core::convert::From<DefaultAccountProvider>
+    for __g::gel_protocol::value::Value {
         fn from(value: DefaultAccountProvider) -> Self {
             __g::gel_protocol::value::Value::Enum(value.as_ref().into())
         }
     }
-    #[derive(Debug, Clone)]
+    #[derive(::std::fmt::Debug, ::core::clone::Clone)]
     pub struct Output {
         pub provider: DefaultAccountProvider,
     }

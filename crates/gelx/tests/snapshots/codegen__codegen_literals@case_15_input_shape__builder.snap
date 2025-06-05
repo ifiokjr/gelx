@@ -17,18 +17,19 @@ pub mod example {
         conn.query_required_single(QUERY, &()).await
     }
     pub type Input = ();
-    #[derive(Debug, Clone, Copy)]
+    #[derive(::std::fmt::Debug, ::core::clone::Clone, ::core::marker::Copy)]
     pub enum DefaultRelationshipType {
         Follow,
         Block,
         Mute,
     }
-    impl From<DefaultRelationshipType> for __g::gel_protocol::value::Value {
+    impl ::core::convert::From<DefaultRelationshipType>
+    for __g::gel_protocol::value::Value {
         fn from(value: DefaultRelationshipType) -> Self {
             __g::gel_protocol::value::Value::Enum(value.as_ref().into())
         }
     }
-    #[derive(Debug, Clone)]
+    #[derive(::std::fmt::Debug, ::core::clone::Clone)]
     pub struct Output {
         pub my_string: DefaultRelationshipType,
         pub my_number: i64,

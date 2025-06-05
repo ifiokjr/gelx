@@ -7,9 +7,9 @@
 #![allow(clippy::all)]
 use super::*;
 #[derive(
-    Debug,
-    Clone,
-    Copy,
+    ::std::fmt::Debug,
+    ::core::clone::Clone,
+    ::core::marker::Copy,
     __g::serde::Serialize,
     __g::serde::Deserialize,
     __g::strum::AsRefStr,
@@ -26,15 +26,15 @@ pub enum Awesomeness {
     Somewhat,
     NotReally,
 }
-impl From<Awesomeness> for __g::gel_protocol::value::Value {
+impl ::core::convert::From<Awesomeness> for __g::gel_protocol::value::Value {
     fn from(value: Awesomeness) -> Self {
         __g::gel_protocol::value::Value::Enum(value.as_ref().into())
     }
 }
 #[derive(
-    Debug,
-    Clone,
-    Copy,
+    ::std::fmt::Debug,
+    ::core::clone::Clone,
+    ::core::marker::Copy,
     __g::serde::Serialize,
     __g::serde::Deserialize,
     __g::strum::AsRefStr,
@@ -57,7 +57,7 @@ pub enum Smartness {
     #[strum(serialize = "genius")]
     Genius,
 }
-impl From<Smartness> for __g::gel_protocol::value::Value {
+impl ::core::convert::From<Smartness> for __g::gel_protocol::value::Value {
     fn from(value: Smartness) -> Self {
         __g::gel_protocol::value::Value::Enum(value.as_ref().into())
     }

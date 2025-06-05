@@ -1,4 +1,5 @@
 module additional {
+	global alternative: str;
 	scalar type Awesomeness extending enum<Very, Somewhat, NotReally>;
 	scalar type smartness extending enum<low, mid, genius>;
 }
