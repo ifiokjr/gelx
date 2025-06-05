@@ -168,4 +168,6 @@ pub mod exports {
 			pub use super::Geography;
 		}
 	}
+
+	pub use super::check_scalar;
 }

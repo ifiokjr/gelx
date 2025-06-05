@@ -142,7 +142,7 @@ impl From<Geography> for Value {
 	}
 }
 
-fn check_scalar(
+pub fn check_scalar(
 	ctx: &DescriptorContext,
 	type_pos: TypePos,
 	type_id: Uuid,
