@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.0](https://github.com/ifiokjr/gelx/compare/gelx_build-v0.7.1...gelx_build-v0.8.0) - 2025-06-06
+
+### <!-- 0 -->🎉 Added
+
+- support custom scalar types in CLI
+
 ## [0.7.1](https://github.com/ifiokjr/gelx/compare/gelx_build-v0.7.0...gelx_build-v0.7.1) - 2025-06-04
 
 ### <!-- 1 -->🐛 Bug Fixes
