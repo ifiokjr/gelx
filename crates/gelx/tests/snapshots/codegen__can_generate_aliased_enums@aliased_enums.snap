@@ -44,6 +44,7 @@ impl __g::gel_tokio::GlobalsDelta for Globals {
         modifier.set("default::current_user_id", self.current_user_id);
     }
 }
+#[cfg(feature = "ssr")]
 impl Globals {
     /// Create a gel client with the globals.
     pub async fn into_client(

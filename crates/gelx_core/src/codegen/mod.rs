@@ -514,7 +514,7 @@ impl<'a> ModuleNode<'a> {
 							#(#setters)*
 						}
 					}
-
+					#queryable_annotation
 					impl Globals {
 						/// Create a gel client with the globals.
 						pub async fn into_client(self) -> ::core::result::Result<#exports_ident::gel_tokio::Client, #exports_ident::gel_tokio::Error> {

@@ -1,11 +1,16 @@
-mod db;
-
-use db::*;
-use gelx::create_client;
-
+#[cfg(feature = "ssr")]
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
-	let client = create_client().await?;
+	use gelx::exports::uuid::Uuid;
+	use gelx_example::*;
+
+	// Create a client with the default globals.
+	let client = Globals::builder()
+		.current_user_id(Uuid::max())
+		.alternative("test")
+		.build()
+		.into_client()
+		.await?;
 	let props = select_user::Input::builder().slug("test").build();
 	let query = select_user::query(&client, &props).await?;
 	println!("{query:?}");
@@ -22,3 +27,6 @@ async fn main() -> anyhow::Result<()> {
 
 	Ok(())
 }
+
+#[cfg(not(feature = "ssr"))]
+fn main() {}

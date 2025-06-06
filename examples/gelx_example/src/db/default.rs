@@ -13,8 +13,6 @@ mod account {
     ::std::fmt::Debug,
     ::core::clone::Clone,
     ::core::marker::Copy,
-    __g::serde::Serialize,
-    __g::serde::Deserialize,
     __g::strum::AsRefStr,
     __g::strum::Display,
     __g::strum::EnumString,
@@ -22,7 +20,11 @@ mod account {
     __g::strum::FromRepr,
     __g::strum::IntoStaticStr
 )]
-#[cfg_attr(feature = "ssr", derive(__g::gel_derive::Queryable))]
+#[cfg_attr(
+    feature = "with_serde",
+    derive(__g::serde::Serialize, __g::serde::Deserialize)
+)]
+#[cfg_attr(feature = "with_query", derive(__g::gel_derive::Queryable))]
 #[strum(crate = "__g::strum")]
 pub enum AccountProvider {
     Github,
@@ -38,14 +40,13 @@ mod email {
 mod location {
     use super::*;
 }
-#[derive(
-    ::std::fmt::Debug,
-    ::core::clone::Clone,
-    __g::serde::Serialize,
-    __g::serde::Deserialize
+#[derive(::std::fmt::Debug, ::core::clone::Clone)]
+#[cfg_attr(
+    feature = "with_serde",
+    derive(__g::serde::Serialize, __g::serde::Deserialize)
 )]
 pub struct Position(pub i32);
-#[cfg(feature = "ssr")]
+#[cfg(feature = "with_query")]
 impl __g::gel_protocol::queryable::Queryable for Position {
     type Args = <i32 as __g::gel_protocol::queryable::Queryable>::Args;
     fn decode(
@@ -107,8 +108,6 @@ mod relationship {
     ::std::fmt::Debug,
     ::core::clone::Clone,
     ::core::marker::Copy,
-    __g::serde::Serialize,
-    __g::serde::Deserialize,
     __g::strum::AsRefStr,
     __g::strum::Display,
     __g::strum::EnumString,
@@ -116,7 +115,11 @@ mod relationship {
     __g::strum::FromRepr,
     __g::strum::IntoStaticStr
 )]
-#[cfg_attr(feature = "ssr", derive(__g::gel_derive::Queryable))]
+#[cfg_attr(
+    feature = "with_serde",
+    derive(__g::serde::Serialize, __g::serde::Deserialize)
+)]
+#[cfg_attr(feature = "with_query", derive(__g::gel_derive::Queryable))]
 #[strum(crate = "__g::strum")]
 pub enum RelationshipType {
     Follow,
@@ -132,8 +135,6 @@ impl ::core::convert::From<RelationshipType> for __g::gel_protocol::value::Value
     ::std::fmt::Debug,
     ::core::clone::Clone,
     ::core::marker::Copy,
-    __g::serde::Serialize,
-    __g::serde::Deserialize,
     __g::strum::AsRefStr,
     __g::strum::Display,
     __g::strum::EnumString,
@@ -141,7 +142,11 @@ impl ::core::convert::From<RelationshipType> for __g::gel_protocol::value::Value
     __g::strum::FromRepr,
     __g::strum::IntoStaticStr
 )]
-#[cfg_attr(feature = "ssr", derive(__g::gel_derive::Queryable))]
+#[cfg_attr(
+    feature = "with_serde",
+    derive(__g::serde::Serialize, __g::serde::Deserialize)
+)]
+#[cfg_attr(feature = "with_query", derive(__g::gel_derive::Queryable))]
 #[strum(crate = "__g::strum")]
 pub enum Role {
     None,

@@ -1,3 +1,4 @@
+use gel_protocol::value::Value;
 use gel_tokio::Queryable;
 use strum::AsRefStr;
 
@@ -13,9 +14,9 @@ pub enum SchemaCardinality {
 	One,
 	Many,
 }
-impl ::core::convert::From<SchemaCardinality> for gel_protocol::value::Value {
+impl From<SchemaCardinality> for Value {
 	fn from(value: SchemaCardinality) -> Self {
-		gel_protocol::value::Value::Enum(value.as_ref().into())
+		Value::Enum(value.as_ref().into())
 	}
 }
 

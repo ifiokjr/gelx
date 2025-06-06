@@ -11,27 +11,26 @@ pub use default::*;
 pub mod additional;
 #[path = "default.rs"]
 pub mod default;
-#[derive(
-    ::std::fmt::Debug,
-    ::core::clone::Clone,
-    __g::serde::Serialize,
-    __g::serde::Deserialize,
-    __g::typed_builder::TypedBuilder
+#[derive(::std::fmt::Debug, ::core::clone::Clone, __g::typed_builder::TypedBuilder)]
+#[cfg_attr(
+    feature = "with_serde",
+    derive(__g::serde::Serialize, __g::serde::Deserialize)
 )]
-#[cfg_attr(feature = "ssr", derive(__g::gel_derive::Queryable))]
+#[cfg_attr(feature = "with_query", derive(__g::gel_derive::Queryable))]
 #[builder(crate_module_path = __g::typed_builder)]
 #[builder(field_defaults(default, setter(into, strip_option(fallback_suffix = "_opt"))))]
 pub struct Globals {
     pub alternative: Option<String>,
     pub current_user_id: Option<__g::uuid::Uuid>,
 }
-#[cfg(feature = "ssr")]
+#[cfg(feature = "with_query")]
 impl __g::gel_tokio::GlobalsDelta for Globals {
     fn apply(self, modifier: &mut __g::gel_tokio::state::GlobalsModifier<'_>) {
         modifier.set("additional::alternative", self.alternative);
         modifier.set("default::current_user_id", self.current_user_id);
     }
 }
+#[cfg(feature = "with_query")]
 impl Globals {
     /// Create a gel client with the globals.
     pub async fn into_client(
@@ -51,7 +50,7 @@ impl Globals {
 pub mod insert_location {
     use ::gelx::exports as __g;
     /// Execute the desired query.
-    #[cfg(feature = "ssr")]
+    #[cfg(feature = "with_query")]
     pub async fn query(
         client: &__g::gel_tokio::Client,
         props: &Input,
@@ -59,21 +58,19 @@ pub mod insert_location {
         client.query_required_single(QUERY, props).await
     }
     /// Compose the query as part of a larger transaction.
-    #[cfg(feature = "ssr")]
+    #[cfg(feature = "with_query")]
     pub async fn transaction(
         conn: &mut __g::gel_tokio::Transaction,
         props: &Input,
     ) -> ::core::result::Result<Output, __g::gel_errors::Error> {
         conn.query_required_single(QUERY, props).await
     }
-    #[derive(
-        ::std::fmt::Debug,
-        ::core::clone::Clone,
-        __g::serde::Serialize,
-        __g::serde::Deserialize,
-        __g::typed_builder::TypedBuilder
+    #[derive(::std::fmt::Debug, ::core::clone::Clone, __g::typed_builder::TypedBuilder)]
+    #[cfg_attr(
+        feature = "with_serde",
+        derive(__g::serde::Serialize, __g::serde::Deserialize)
     )]
-    #[cfg_attr(feature = "ssr", derive(__g::gel_derive::Queryable))]
+    #[cfg_attr(feature = "with_query", derive(__g::gel_derive::Queryable))]
     #[builder(crate_module_path = __g::typed_builder)]
     pub struct Input {
         #[builder(setter(into))]
@@ -92,13 +89,12 @@ pub mod insert_location {
             map.encode(encoder)
         }
     }
-    #[derive(
-        ::std::fmt::Debug,
-        ::core::clone::Clone,
-        __g::serde::Serialize,
-        __g::serde::Deserialize
+    #[derive(::std::fmt::Debug, ::core::clone::Clone)]
+    #[cfg_attr(
+        feature = "with_serde",
+        derive(__g::serde::Serialize, __g::serde::Deserialize)
     )]
-    #[cfg_attr(feature = "ssr", derive(__g::gel_derive::Queryable))]
+    #[cfg_attr(feature = "with_query", derive(__g::gel_derive::Queryable))]
     pub struct Output {
         pub point: __g::Geometry,
         pub area: __g::Geography,
@@ -109,7 +105,7 @@ pub mod insert_location {
 pub mod insert_position {
     use ::gelx::exports as __g;
     /// Execute the desired query.
-    #[cfg(feature = "ssr")]
+    #[cfg(feature = "with_query")]
     pub async fn query(
         client: &__g::gel_tokio::Client,
         props: &Input,
@@ -117,21 +113,19 @@ pub mod insert_position {
         client.query_required_single(QUERY, props).await
     }
     /// Compose the query as part of a larger transaction.
-    #[cfg(feature = "ssr")]
+    #[cfg(feature = "with_query")]
     pub async fn transaction(
         conn: &mut __g::gel_tokio::Transaction,
         props: &Input,
     ) -> ::core::result::Result<Output, __g::gel_errors::Error> {
         conn.query_required_single(QUERY, props).await
     }
-    #[derive(
-        ::std::fmt::Debug,
-        ::core::clone::Clone,
-        __g::serde::Serialize,
-        __g::serde::Deserialize,
-        __g::typed_builder::TypedBuilder
+    #[derive(::std::fmt::Debug, ::core::clone::Clone, __g::typed_builder::TypedBuilder)]
+    #[cfg_attr(
+        feature = "with_serde",
+        derive(__g::serde::Serialize, __g::serde::Deserialize)
     )]
-    #[cfg_attr(feature = "ssr", derive(__g::gel_derive::Queryable))]
+    #[cfg_attr(feature = "with_query", derive(__g::gel_derive::Queryable))]
     #[builder(crate_module_path = __g::typed_builder)]
     pub struct Input {
         #[builder(setter(into))]
@@ -148,13 +142,12 @@ pub mod insert_position {
             map.encode(encoder)
         }
     }
-    #[derive(
-        ::std::fmt::Debug,
-        ::core::clone::Clone,
-        __g::serde::Serialize,
-        __g::serde::Deserialize
+    #[derive(::std::fmt::Debug, ::core::clone::Clone)]
+    #[cfg_attr(
+        feature = "with_serde",
+        derive(__g::serde::Serialize, __g::serde::Deserialize)
     )]
-    #[cfg_attr(feature = "ssr", derive(__g::gel_derive::Queryable))]
+    #[cfg_attr(feature = "with_query", derive(__g::gel_derive::Queryable))]
     pub struct Output {
         pub id: __g::uuid::Uuid,
         pub position: super::default::Position,
@@ -165,7 +158,7 @@ pub mod insert_position {
 pub mod insert_user {
     use ::gelx::exports as __g;
     /// Execute the desired query.
-    #[cfg(feature = "ssr")]
+    #[cfg(feature = "with_query")]
     pub async fn query(
         client: &__g::gel_tokio::Client,
         props: &Input,
@@ -173,21 +166,19 @@ pub mod insert_user {
         client.query_required_single(QUERY, props).await
     }
     /// Compose the query as part of a larger transaction.
-    #[cfg(feature = "ssr")]
+    #[cfg(feature = "with_query")]
     pub async fn transaction(
         conn: &mut __g::gel_tokio::Transaction,
         props: &Input,
     ) -> ::core::result::Result<Output, __g::gel_errors::Error> {
         conn.query_required_single(QUERY, props).await
     }
-    #[derive(
-        ::std::fmt::Debug,
-        ::core::clone::Clone,
-        __g::serde::Serialize,
-        __g::serde::Deserialize,
-        __g::typed_builder::TypedBuilder
+    #[derive(::std::fmt::Debug, ::core::clone::Clone, __g::typed_builder::TypedBuilder)]
+    #[cfg_attr(
+        feature = "with_serde",
+        derive(__g::serde::Serialize, __g::serde::Deserialize)
     )]
-    #[cfg_attr(feature = "ssr", derive(__g::gel_derive::Queryable))]
+    #[cfg_attr(feature = "with_query", derive(__g::gel_derive::Queryable))]
     #[builder(crate_module_path = __g::typed_builder)]
     pub struct Input {
         #[builder(setter(into))]
@@ -209,13 +200,12 @@ pub mod insert_user {
             map.encode(encoder)
         }
     }
-    #[derive(
-        ::std::fmt::Debug,
-        ::core::clone::Clone,
-        __g::serde::Serialize,
-        __g::serde::Deserialize
+    #[derive(::std::fmt::Debug, ::core::clone::Clone)]
+    #[cfg_attr(
+        feature = "with_serde",
+        derive(__g::serde::Serialize, __g::serde::Deserialize)
     )]
-    #[cfg_attr(feature = "ssr", derive(__g::gel_derive::Queryable))]
+    #[cfg_attr(feature = "with_query", derive(__g::gel_derive::Queryable))]
     pub struct Output {
         pub id: __g::uuid::Uuid,
         pub name: Option<String>,
@@ -228,7 +218,7 @@ pub mod insert_user {
 pub mod remove_user {
     use ::gelx::exports as __g;
     /// Execute the desired query.
-    #[cfg(feature = "ssr")]
+    #[cfg(feature = "with_query")]
     pub async fn query(
         client: &__g::gel_tokio::Client,
         props: &Input,
@@ -236,21 +226,19 @@ pub mod remove_user {
         client.query_single(QUERY, props).await
     }
     /// Compose the query as part of a larger transaction.
-    #[cfg(feature = "ssr")]
+    #[cfg(feature = "with_query")]
     pub async fn transaction(
         conn: &mut __g::gel_tokio::Transaction,
         props: &Input,
     ) -> ::core::result::Result<Option<Output>, __g::gel_errors::Error> {
         conn.query_single(QUERY, props).await
     }
-    #[derive(
-        ::std::fmt::Debug,
-        ::core::clone::Clone,
-        __g::serde::Serialize,
-        __g::serde::Deserialize,
-        __g::typed_builder::TypedBuilder
+    #[derive(::std::fmt::Debug, ::core::clone::Clone, __g::typed_builder::TypedBuilder)]
+    #[cfg_attr(
+        feature = "with_serde",
+        derive(__g::serde::Serialize, __g::serde::Deserialize)
     )]
-    #[cfg_attr(feature = "ssr", derive(__g::gel_derive::Queryable))]
+    #[cfg_attr(feature = "with_query", derive(__g::gel_derive::Queryable))]
     #[builder(crate_module_path = __g::typed_builder)]
     pub struct Input {
         #[builder(setter(into))]
@@ -267,13 +255,12 @@ pub mod remove_user {
             map.encode(encoder)
         }
     }
-    #[derive(
-        ::std::fmt::Debug,
-        ::core::clone::Clone,
-        __g::serde::Serialize,
-        __g::serde::Deserialize
+    #[derive(::std::fmt::Debug, ::core::clone::Clone)]
+    #[cfg_attr(
+        feature = "with_serde",
+        derive(__g::serde::Serialize, __g::serde::Deserialize)
     )]
-    #[cfg_attr(feature = "ssr", derive(__g::gel_derive::Queryable))]
+    #[cfg_attr(feature = "with_query", derive(__g::gel_derive::Queryable))]
     pub struct Output {
         pub id: __g::uuid::Uuid,
     }
@@ -283,7 +270,7 @@ pub mod remove_user {
 pub mod select_accounts {
     use ::gelx::exports as __g;
     /// Execute the desired query.
-    #[cfg(feature = "ssr")]
+    #[cfg(feature = "with_query")]
     pub async fn query(
         client: &__g::gel_tokio::Client,
         props: &Input,
@@ -291,21 +278,19 @@ pub mod select_accounts {
         client.query(QUERY, props).await
     }
     /// Compose the query as part of a larger transaction.
-    #[cfg(feature = "ssr")]
+    #[cfg(feature = "with_query")]
     pub async fn transaction(
         conn: &mut __g::gel_tokio::Transaction,
         props: &Input,
     ) -> ::core::result::Result<Vec<Output>, __g::gel_errors::Error> {
         conn.query(QUERY, props).await
     }
-    #[derive(
-        ::std::fmt::Debug,
-        ::core::clone::Clone,
-        __g::serde::Serialize,
-        __g::serde::Deserialize,
-        __g::typed_builder::TypedBuilder
+    #[derive(::std::fmt::Debug, ::core::clone::Clone, __g::typed_builder::TypedBuilder)]
+    #[cfg_attr(
+        feature = "with_serde",
+        derive(__g::serde::Serialize, __g::serde::Deserialize)
     )]
-    #[cfg_attr(feature = "ssr", derive(__g::gel_derive::Queryable))]
+    #[cfg_attr(feature = "with_query", derive(__g::gel_derive::Queryable))]
     #[builder(crate_module_path = __g::typed_builder)]
     pub struct Input {
         #[builder(setter(into))]
@@ -322,13 +307,12 @@ pub mod select_accounts {
             map.encode(encoder)
         }
     }
-    #[derive(
-        ::std::fmt::Debug,
-        ::core::clone::Clone,
-        __g::serde::Serialize,
-        __g::serde::Deserialize
+    #[derive(::std::fmt::Debug, ::core::clone::Clone)]
+    #[cfg_attr(
+        feature = "with_serde",
+        derive(__g::serde::Serialize, __g::serde::Deserialize)
     )]
-    #[cfg_attr(feature = "ssr", derive(__g::gel_derive::Queryable))]
+    #[cfg_attr(feature = "with_query", derive(__g::gel_derive::Queryable))]
     pub struct OutputUser {
         pub slug: String,
         pub id: __g::uuid::Uuid,
@@ -337,13 +321,12 @@ pub mod select_accounts {
         pub bio: Option<String>,
         pub name: Option<String>,
     }
-    #[derive(
-        ::std::fmt::Debug,
-        ::core::clone::Clone,
-        __g::serde::Serialize,
-        __g::serde::Deserialize
+    #[derive(::std::fmt::Debug, ::core::clone::Clone)]
+    #[cfg_attr(
+        feature = "with_serde",
+        derive(__g::serde::Serialize, __g::serde::Deserialize)
     )]
-    #[cfg_attr(feature = "ssr", derive(__g::gel_derive::Queryable))]
+    #[cfg_attr(feature = "with_query", derive(__g::gel_derive::Queryable))]
     pub struct Output {
         pub created_at: __g::DateTimeAlias,
         pub id: __g::uuid::Uuid,
@@ -364,7 +347,7 @@ pub mod select_accounts {
 pub mod select_user {
     use ::gelx::exports as __g;
     /// Execute the desired query.
-    #[cfg(feature = "ssr")]
+    #[cfg(feature = "with_query")]
     pub async fn query(
         client: &__g::gel_tokio::Client,
         props: &Input,
@@ -372,21 +355,19 @@ pub mod select_user {
         client.query_single(QUERY, props).await
     }
     /// Compose the query as part of a larger transaction.
-    #[cfg(feature = "ssr")]
+    #[cfg(feature = "with_query")]
     pub async fn transaction(
         conn: &mut __g::gel_tokio::Transaction,
         props: &Input,
     ) -> ::core::result::Result<Option<Output>, __g::gel_errors::Error> {
         conn.query_single(QUERY, props).await
     }
-    #[derive(
-        ::std::fmt::Debug,
-        ::core::clone::Clone,
-        __g::serde::Serialize,
-        __g::serde::Deserialize,
-        __g::typed_builder::TypedBuilder
+    #[derive(::std::fmt::Debug, ::core::clone::Clone, __g::typed_builder::TypedBuilder)]
+    #[cfg_attr(
+        feature = "with_serde",
+        derive(__g::serde::Serialize, __g::serde::Deserialize)
     )]
-    #[cfg_attr(feature = "ssr", derive(__g::gel_derive::Queryable))]
+    #[cfg_attr(feature = "with_query", derive(__g::gel_derive::Queryable))]
     #[builder(crate_module_path = __g::typed_builder)]
     pub struct Input {
         #[builder(setter(into))]
@@ -403,13 +384,12 @@ pub mod select_user {
             map.encode(encoder)
         }
     }
-    #[derive(
-        ::std::fmt::Debug,
-        ::core::clone::Clone,
-        __g::serde::Serialize,
-        __g::serde::Deserialize
+    #[derive(::std::fmt::Debug, ::core::clone::Clone)]
+    #[cfg_attr(
+        feature = "with_serde",
+        derive(__g::serde::Serialize, __g::serde::Deserialize)
     )]
-    #[cfg_attr(feature = "ssr", derive(__g::gel_derive::Queryable))]
+    #[cfg_attr(feature = "with_query", derive(__g::gel_derive::Queryable))]
     pub struct Output {
         pub id: __g::uuid::Uuid,
         pub name: Option<String>,

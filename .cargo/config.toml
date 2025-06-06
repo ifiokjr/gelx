@@ -1,5 +1,6 @@
 [alias]
 # bins
+all-features = ["bin", "cargo-all-features"]
 deny = ["bin", "cargo-deny"]
 insta = ["bin", "cargo-insta"]
 llvm-cov = ["bin", "cargo-llvm-cov"]

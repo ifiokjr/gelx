@@ -10,8 +10,6 @@ use super::*;
     ::std::fmt::Debug,
     ::core::clone::Clone,
     ::core::marker::Copy,
-    __g::serde::Serialize,
-    __g::serde::Deserialize,
     __g::strum::AsRefStr,
     __g::strum::Display,
     __g::strum::EnumString,
@@ -19,7 +17,11 @@ use super::*;
     __g::strum::FromRepr,
     __g::strum::IntoStaticStr
 )]
-#[cfg_attr(feature = "ssr", derive(__g::gel_derive::Queryable))]
+#[cfg_attr(
+    feature = "with_serde",
+    derive(__g::serde::Serialize, __g::serde::Deserialize)
+)]
+#[cfg_attr(feature = "with_query", derive(__g::gel_derive::Queryable))]
 #[strum(crate = "__g::strum")]
 pub enum Awesomeness {
     Very,
@@ -35,8 +37,6 @@ impl ::core::convert::From<Awesomeness> for __g::gel_protocol::value::Value {
     ::std::fmt::Debug,
     ::core::clone::Clone,
     ::core::marker::Copy,
-    __g::serde::Serialize,
-    __g::serde::Deserialize,
     __g::strum::AsRefStr,
     __g::strum::Display,
     __g::strum::EnumString,
@@ -44,16 +44,20 @@ impl ::core::convert::From<Awesomeness> for __g::gel_protocol::value::Value {
     __g::strum::FromRepr,
     __g::strum::IntoStaticStr
 )]
-#[cfg_attr(feature = "ssr", derive(__g::gel_derive::Queryable))]
+#[cfg_attr(
+    feature = "with_serde",
+    derive(__g::serde::Serialize, __g::serde::Deserialize)
+)]
+#[cfg_attr(feature = "with_query", derive(__g::gel_derive::Queryable))]
 #[strum(crate = "__g::strum")]
 pub enum Smartness {
-    #[serde(rename = "low")]
+    #[cfg_attr(feature = "with_serde", serde(rename = "low"))]
     #[strum(serialize = "low")]
     Low,
-    #[serde(rename = "mid")]
+    #[cfg_attr(feature = "with_serde", serde(rename = "mid"))]
     #[strum(serialize = "mid")]
     Mid,
-    #[serde(rename = "genius")]
+    #[cfg_attr(feature = "with_serde", serde(rename = "genius"))]
     #[strum(serialize = "genius")]
     Genius,
 }

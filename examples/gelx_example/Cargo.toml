@@ -11,7 +11,7 @@ rust-version = { workspace = true }
 [dependencies]
 anyhow = { workspace = true, default-features = true }
 gel-protocol = { workspace = true, default-features = true }
-gelx = { workspace = true, default-features = true, features = ["with_all", "serde", "strum", "query", "builder"] }
+gelx = { workspace = true, features = ["strum", "builder"] }
 serde = { workspace = true, default-features = true, features = ["derive"] }
 strum = { workspace = true, default-features = true, features = ["derive"] }
 tokio = { workspace = true, default-features = true, features = ["full"] }
@@ -21,16 +21,19 @@ workspace = true
 
 [features]
 default = ["ssr"]
-ssr = ["gelx/query", "gelx/serde", "gelx/strum"]
+ssr = ["with_query", "with_serde"]
+with_all = ["gelx/with_all"]
+with_serde = ["gelx/serde"]
+with_query = ["gelx/query"]
 
 [package.metadata.gelx]
 queries_path = "./queries"
-features = { query = "ssr" }
+features = { query = "with_query", serde = "with_serde" }
 output_path = "./src/db"
 input_struct_name = "Input"
 output_struct_name = "Output"
 query_function_name = "query"
 transaction_function_name = "transaction"
-# gel_config_path = "./gel.toml"
-# gel_instance = "$GEL_INSTANCE"
-# gel_branch = "$GEL_BRANCH"
+
+[package.metadata.cargo-all-features]
+allowlist = ["ssr", "with_all", "with_query", "with_serde"]

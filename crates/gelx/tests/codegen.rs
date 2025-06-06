@@ -10,17 +10,11 @@ use rstest::rstest;
 fn get_features() -> String {
 	let mut features = Vec::new();
 
-	#[cfg(feature = "builder")]
-	features.push("builder");
-
 	#[cfg(feature = "query")]
 	features.push("query");
 
 	#[cfg(feature = "serde")]
 	features.push("serde");
-
-	#[cfg(feature = "strum")]
-	features.push("strum");
 
 	if !features.is_empty() {
 		features.insert(0, "_");
