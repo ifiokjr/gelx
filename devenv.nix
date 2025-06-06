@@ -74,12 +74,19 @@
     '';
     description = "Reset the local database.";
   };
+  scripts."db:restart" = {
+    exec = ''
+      set -e
+      gel instance restart --instance $GEL_INSTANCE
+    '';
+    description = "Reset the local database.";
+  };
   scripts."db:up" = {
     exec = ''
       set -e
       gel watch --instance $GEL_INSTANCE --migrate
     '';
-    description = "Watch changes to the local database.";
+    description = "Restart the local database.";
   };
   scripts."update:deps" = {
     exec = ''

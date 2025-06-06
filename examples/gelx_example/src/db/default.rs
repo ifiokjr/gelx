@@ -64,8 +64,8 @@ impl __g::gel_protocol::queryable::Queryable for Position {
             ctx,
             type_pos,
             __g::uuid::Uuid::from_bytes([
-                20u8, 41u8, 255u8, 176u8, 65u8, 247u8, 17u8, 240u8, 182u8, 41u8, 237u8,
-                62u8, 152u8, 170u8, 52u8, 22u8,
+                198u8, 101u8, 10u8, 120u8, 66u8, 209u8, 17u8, 240u8, 175u8, 163u8, 31u8,
+                171u8, 222u8, 52u8, 143u8, 173u8,
             ]),
             "default::Position",
         )?;
