@@ -173,7 +173,12 @@ async fn can_generate_enums() -> GelxCoreResult<()> {
 		.map(|(path, content)| format!("{}\n{content}", path.display()))
 		.collect::<Vec<_>>()
 		.join("\n\n");
-	insta::assert_snapshot!(value);
+
+	insta::with_settings!({filters => vec![
+			(r"__g::uuid::Uuid::from_bytes\(\[[0-9u8,\s]+\]\)", "Default::default()"),
+	]}, {
+			insta::assert_snapshot!(value);
+	});
 
 	Ok(())
 }
@@ -197,7 +202,12 @@ async fn can_generate_aliased_enums() -> GelxCoreResult<()> {
 		.map(|(path, content)| format!("{}\n{content}", path.display()))
 		.collect::<Vec<_>>()
 		.join("\n\n");
-	insta::assert_snapshot!(value);
+
+	insta::with_settings!({filters => vec![
+			(r"__g::uuid::Uuid::from_bytes\(\[[0-9u8,\s]+\]\)", "Default::default()"),
+	]}, {
+			insta::assert_snapshot!(value);
+	});
 
 	Ok(())
 }

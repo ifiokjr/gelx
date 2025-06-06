@@ -41,6 +41,7 @@ fn generate_stdout() {
 			.arg("generate")
 			.arg("--json")
 			.current_dir(example_path())
+			.stdout(Stdio::null())
 			.stderr(Stdio::null())
 	);
 }

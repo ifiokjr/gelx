@@ -44,7 +44,7 @@ wkb = { workspace = true, default-features = true, optional = true }
 [dev-dependencies]
 assert2 = { workspace = true, default-features = true }
 gelx_core = { workspace = true, default-features = true }
-insta = { workspace = true, default-features = true, features = ["ron", "json", "redactions"] }
+insta = { workspace = true, default-features = true, features = ["ron", "json", "redactions", "filters"] }
 proc-macro2 = { workspace = true, default-features = true }
 rstest = { workspace = true, default-features = true }
 rustversion = { workspace = true, default-features = true }
