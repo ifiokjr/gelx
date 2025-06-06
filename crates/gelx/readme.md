@@ -208,6 +208,88 @@ If there are changes that haven't been accounted for, the check will fail with a
 
 More information can be found in the [`gelx_cli` readme](https://github.com/ifiokjr/gelx/blob/main/crates/gelx_cli/readme.md).
 
+### Globals
+
+The `gelx_cli` will generate a `Globals` struct for your project. It iterates over all the `schema::Global` types defined in your `.gel` schema to generate a `Globals`struct. This struct can be used to create a gel client.
+
+For example if you have the following globals in your schema.
+
+```edgeql
+module default {
+	global current_user_id: uuid;
+	global current_user := (
+  	select User filter .id = global current_user_id
+	);
+	global alternative: str;
+}
+```
+
+The generated `Globals` struct will look like the following. Notice how the `current_user` global which is an alias type is ignored. This is because it can't be set externally and is automatically derived from the `current_user_id` global (it only exists within the database).
+
+```rust,ignore
+// src/db/mod.rs
+use ::gelx::exports as __g;
+#[derive(
+	::std::fmt::Debug,
+	::core::clone::Clone,
+	__g::serde::Serialize,
+	__g::serde::Deserialize,
+	__g::typed_builder::TypedBuilder,
+)]
+#[cfg_attr(feature = "ssr", derive(__g::gel_derive::Queryable))]
+#[builder(crate_module_path = __g::typed_builder)]
+#[builder(field_defaults(default, setter(into, strip_option(fallback_suffix = "_opt"))))]
+pub struct Globals {
+	pub alternative: Option<String>,
+	pub current_user_id: Option<__g::uuid::Uuid>,
+}
+#[cfg(feature = "ssr")]
+impl __g::gel_tokio::GlobalsDelta for Globals {
+	fn apply(self, modifier: &mut __g::gel_tokio::state::GlobalsModifier<'_>) {
+		modifier.set("additional::alternative", self.alternative);
+		modifier.set("default::current_user_id", self.current_user_id);
+	}
+}
+impl Globals {
+	/// Create a gel client with the globals.
+	pub async fn into_client(
+		self,
+	) -> ::core::result::Result<__g::gel_tokio::Client, __g::gel_tokio::Error> {
+		let client = __g::gel_tokio::create_client().await?.with_globals(self);
+		Ok(client)
+	}
+
+	/// Create a gel client with the globals.
+	pub async fn to_client(
+		&self,
+	) -> ::core::result::Result<__g::gel_tokio::Client, __g::gel_tokio::Error> {
+		let client = self.clone().into_client().await?;
+		Ok(client)
+	}
+}
+```
+
+The above code can be used to create a gel client with the globals.
+
+```rust,ignore
+use crate::db::Globals;
+use gelx::exports::uuid::Uuid;
+
+// Using the builder pattern
+let client = Globals::builder()
+	.current_user_id(Uuid::new_v4())
+	.alternative("test")
+	.build()
+	.into_client()
+	.await?;
+
+// Using the `to_client` method
+let client = Globals {
+	current_user_id: Some(Uuid::new_v4()),
+	alternative: Some("test".to_string()),
+}.into_client().await?;
+```
+
 ## Configuration
 
 The following configuration options are supported and the provided defaults will be used if not specified.

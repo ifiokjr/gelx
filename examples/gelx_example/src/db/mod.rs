@@ -11,6 +11,43 @@ pub use default::*;
 pub mod additional;
 #[path = "default.rs"]
 pub mod default;
+#[derive(
+    ::std::fmt::Debug,
+    ::core::clone::Clone,
+    __g::serde::Serialize,
+    __g::serde::Deserialize,
+    __g::typed_builder::TypedBuilder
+)]
+#[cfg_attr(feature = "ssr", derive(__g::gel_derive::Queryable))]
+#[builder(crate_module_path = __g::typed_builder)]
+#[builder(field_defaults(default, setter(into, strip_option(fallback_suffix = "_opt"))))]
+pub struct Globals {
+    pub alternative: Option<String>,
+    pub current_user_id: Option<__g::uuid::Uuid>,
+}
+#[cfg(feature = "ssr")]
+impl __g::gel_tokio::GlobalsDelta for Globals {
+    fn apply(self, modifier: &mut __g::gel_tokio::state::GlobalsModifier<'_>) {
+        modifier.set("additional::alternative", self.alternative);
+        modifier.set("default::current_user_id", self.current_user_id);
+    }
+}
+impl Globals {
+    /// Create a gel client with the globals.
+    pub async fn into_client(
+        self,
+    ) -> ::core::result::Result<__g::gel_tokio::Client, __g::gel_tokio::Error> {
+        let client = __g::gel_tokio::create_client().await?.with_globals(self);
+        Ok(client)
+    }
+    /// Create a gel client with the globals.
+    pub async fn to_client(
+        &self,
+    ) -> ::core::result::Result<__g::gel_tokio::Client, __g::gel_tokio::Error> {
+        let client = self.clone().into_client().await?;
+        Ok(client)
+    }
+}
 pub mod insert_location {
     use ::gelx::exports as __g;
     /// Execute the desired query.
@@ -37,6 +74,7 @@ pub mod insert_location {
         __g::typed_builder::TypedBuilder
     )]
     #[cfg_attr(feature = "ssr", derive(__g::gel_derive::Queryable))]
+    #[builder(crate_module_path = __g::typed_builder)]
     pub struct Input {
         #[builder(setter(into))]
         pub point: __g::Geometry,
@@ -94,6 +132,7 @@ pub mod insert_position {
         __g::typed_builder::TypedBuilder
     )]
     #[cfg_attr(feature = "ssr", derive(__g::gel_derive::Queryable))]
+    #[builder(crate_module_path = __g::typed_builder)]
     pub struct Input {
         #[builder(setter(into))]
         pub position: super::default::Position,
@@ -149,6 +188,7 @@ pub mod insert_user {
         __g::typed_builder::TypedBuilder
     )]
     #[cfg_attr(feature = "ssr", derive(__g::gel_derive::Queryable))]
+    #[builder(crate_module_path = __g::typed_builder)]
     pub struct Input {
         #[builder(setter(into))]
         pub name: String,
@@ -211,6 +251,7 @@ pub mod remove_user {
         __g::typed_builder::TypedBuilder
     )]
     #[cfg_attr(feature = "ssr", derive(__g::gel_derive::Queryable))]
+    #[builder(crate_module_path = __g::typed_builder)]
     pub struct Input {
         #[builder(setter(into))]
         pub id: __g::uuid::Uuid,
@@ -265,6 +306,7 @@ pub mod select_accounts {
         __g::typed_builder::TypedBuilder
     )]
     #[cfg_attr(feature = "ssr", derive(__g::gel_derive::Queryable))]
+    #[builder(crate_module_path = __g::typed_builder)]
     pub struct Input {
         #[builder(setter(into))]
         pub provider: super::default::AccountProvider,
@@ -345,6 +387,7 @@ pub mod select_user {
         __g::typed_builder::TypedBuilder
     )]
     #[cfg_attr(feature = "ssr", derive(__g::gel_derive::Queryable))]
+    #[builder(crate_module_path = __g::typed_builder)]
     pub struct Input {
         #[builder(setter(into))]
         pub slug: String,

@@ -2,10 +2,10 @@
 #![doc(html_logo_url = "https://raw.githubusercontent.com/ifiokjr/gelx/main/setup/assets/logo.png")]
 #![doc = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/readme.md"))]
 
+mod codegen;
 mod constants;
 mod errors;
 mod metadata;
-mod types;
 mod utils;
 
 use std::collections::HashMap;
@@ -38,16 +38,13 @@ use syn::punctuated::Punctuated;
 use tokio::runtime::Runtime;
 use typed_builder::TypedBuilder;
 
-use crate::constants::PROPS_NAME;
-use crate::constants::QUERY_PROP_NAME;
-use crate::constants::TRANSACTION_PROP_NAME;
-pub use crate::constants::TYPES_QUERY;
+pub use crate::codegen::*;
+pub use crate::constants::*;
 pub use crate::errors::*;
 pub use crate::metadata::*;
-pub use crate::types::*;
 pub use crate::utils::*;
 
-/// Get the descriptor asynchronously.
+/// Get the query descriptor asynchronously.
 pub async fn get_descriptor(
 	query: &str,
 	metadata: &GelxMetadata,

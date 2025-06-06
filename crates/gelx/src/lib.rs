@@ -9,7 +9,8 @@ use cfg_if::cfg_if;
 
 cfg_if! {
 	if #[cfg(feature = "query")] {
-		pub use gel_tokio::create_client;
+		mod client;
+		pub use client::*;
 	}
 }
 
