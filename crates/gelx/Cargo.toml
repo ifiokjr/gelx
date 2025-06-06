@@ -59,6 +59,7 @@ trybuild = { workspace = true, default-features = true }
 default = [
 	"with_all",
 	"builder",
+	"strum",
 ]
 
 # ! #### Types

@@ -308,8 +308,7 @@ queries_path = "./queries"
 #
 # - `query` - When enabled you must include `gel-protocol` as a dependency.
 # - `serde` - Enable `serde` for the generated code.
-# - `strum` - When enabled you must include `strum` as a dependency.
-features = { query = true, strum = true, serde = true }
+features = { query = true, serde = true }
 
 # The location of the generated code when using the `gelx` CLI.
 output_path = "./src/db"
@@ -333,22 +332,29 @@ query_constant_name = "QUERY"
 exports_alias = "__g"
 
 # The macros which are always derived for the generated structs.
-struct_derive_macros = ["Debug", "Clone"]
+struct_derive_macros = [
+	"::std::fmt::Debug",
+	"::core::clone::Clone",
+]
 
 # The macros which are always derived for the generated enums.
-enum_derive_macros = ["Debug", "Clone", "Copy"]
+enum_derive_macros = [
+	"::std::fmt::Debug",
+	"::core::clone::Clone",
+	"::core::marker::Copy",
+]
 
 # The relative path to the `gel` config file. This is optional, and if not
 # provided, the `gel` config will be read from the environment variables.
-# gel_config_path = "./gel.toml"
+gel_config_path = "./gel.toml"
 
 # The name of the `gel` instance to use. This is optional, and if not provided,
 # the environment variable `$GEL_INSTANCE` will be used.
-# gel_instance = "$GEL_INSTANCE"
+gel_instance = "$GEL_INSTANCE"
 
 # The name of the `gel` branch to use. This is optional, and if not provided,
 # the environment variable `$GEL_BRANCH` will be used.
-# gel_branch = "$GEL_BRANCH"
+gel_branch = "$GEL_BRANCH"
 ```
 
 ## `Geometry` and `Geography`
