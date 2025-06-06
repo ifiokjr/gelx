@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.8.1](https://github.com/ifiokjr/gelx/compare/v0.8.0...v0.8.1) - 2025-06-06
+
+### <!-- 0 -->🎉 Added
+
+- *(gelx)* make `strum` a default feature
+
+### <!-- 1 -->🐛 Bug Fixes
+
+- add annotation to generated `Globals`
+
 ## [0.8.0](https://github.com/ifiokjr/gelx/compare/v0.7.1...v0.8.0) - 2025-06-06
 
 ### <!-- 0 -->🎉 Added

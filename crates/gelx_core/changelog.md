@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.8.1](https://github.com/ifiokjr/gelx/compare/gelx_core-v0.8.0...gelx_core-v0.8.1) - 2025-06-06
+
+### <!-- 1 -->🐛 Bug Fixes
+
+- add annotation to generated `Globals`
+
+### <!-- 2 -->🚜 Refactor
+
+- *(core)* improve codegen code structure
+
 ## [0.8.0](https://github.com/ifiokjr/gelx/compare/gelx_core-v0.7.1...gelx_core-v0.8.0) - 2025-06-06
 
 ### <!-- 0 -->🎉 Added
