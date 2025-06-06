@@ -59,7 +59,7 @@ runs:
       uses: actions/cache@v4
       with:
         path: ./.bin
-        key: ${{ runner.os }}-cargo-bin-${{ hashFiles('rust-toolchain.toml') }}-${{ env.RUSTUP_TOOLCHAIN }}
+        key: ${{ runner.os }}-cargo-bin-${{ hashFiles('rust-toolchain.toml', 'Cargo.toml') }}-${{ env.RUSTUP_TOOLCHAIN }}
         restore-keys: |
           ${{ runner.os }}-cargo-bin-
 

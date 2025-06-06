@@ -71,7 +71,7 @@ gelx_core = { path = "./crates/gelx_core", version = "0.8.0" }
 gelx_macros = { path = "./crates/gelx_macros", version = "0.8.0" }
 
 [workspace.metadata.bin]
-cargo-all-features = { version = "1.10.0" }
+cargo-all-features = { version = "1.10.0", bins = ["cargo-build-all-features", "cargo-check-all-features", "cargo-test-all-features"] }
 cargo-deny = { version = "0.18.2" }
 cargo-insta = { version = "1.43.1" }
 cargo-llvm-cov = { version = "0.6.16" }

@@ -149,7 +149,7 @@ jobs:
       issues: write
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
-    needs: [test]
+    needs: [test, build_example, build, lint]
     steps:
       - name: setup rust
         uses: dtolnay/rust-toolchain@stable

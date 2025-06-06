@@ -1,6 +1,8 @@
 [alias]
 # bins
-all-features = ["bin", "cargo-all-features"]
+build-all-features = ["bin", "cargo-build-all-features"]
+check-all-features = ["bin", "cargo-check-all-features"]
+test-all-features = ["bin", "cargo-test-all-features"]
 deny = ["bin", "cargo-deny"]
 insta = ["bin", "cargo-insta"]
 llvm-cov = ["bin", "cargo-llvm-cov"]
