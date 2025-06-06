@@ -26,6 +26,7 @@ pub mod example {
         __g::typed_builder::TypedBuilder,
         __g::gel_derive::Queryable
     )]
+    #[builder(crate_module_path = __g::typed_builder)]
     pub struct Input {
         #[builder(setter(into))]
         pub starts_with: String,

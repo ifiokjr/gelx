@@ -416,6 +416,11 @@ impl GelxFeatures {
 					if is_input {
 						let entry = features_map.entry(self.builder.alias()).or_default();
 						entry.push(quote!(#exports_ident::typed_builder::TypedBuilder));
+						extra_tokens.extend(self.wrap_annotation(
+							FeatureName::Builder,
+							&quote!(builder(crate_module_path=#exports_ident::typed_builder)),
+							is_macro,
+						));
 					}
 				}
 				FeatureName::Query => {
