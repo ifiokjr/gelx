@@ -101,6 +101,14 @@
     '';
     description = "Build documentation site.";
   };
+  scripts."build:example" = {
+    exec = ''
+      set -e
+      cd $DEVENV_ROOT/examples/gelx_example
+      cargo build-all-features --all-features
+    '';
+    description = "Build the example project using all features.";
+  };
   scripts."fix:all" = {
     exec = ''
       set -e

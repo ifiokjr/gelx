@@ -121,6 +121,27 @@ jobs:
       - name: build
         run: cargo build
 
+  build_example:
+    timeout-minutes: 60
+    runs-on: "ubuntu-latest"
+    strategy:
+      matrix:
+        version: ["1.85.0", stable, nightly]
+    env:
+      RUSTUP_TOOLCHAIN: ${{ matrix.version }}
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v4
+
+      - name: setup
+        uses: ./.github/actions/devenv
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          nix-cache: /tmp/nixcache
+
+      - name: build example with all features
+        run: build:example
+
   release:
     permissions:
       pull-requests: write
