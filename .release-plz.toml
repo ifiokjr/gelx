@@ -22,7 +22,6 @@ changelog_path = "crates/gelx_build/changelog.md"
 publish = true
 release = true
 git_tag_enable = true
-git_release_enable = true
 
 [[package]]
 name = "gelx_cli"
@@ -30,7 +29,6 @@ changelog_path = "crates/gelx_cli/changelog.md"
 publish = true
 release = true
 git_tag_enable = true
-git_release_enable = true
 
 [[package]]
 name = "gelx_core"
