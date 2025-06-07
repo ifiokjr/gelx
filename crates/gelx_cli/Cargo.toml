@@ -34,3 +34,6 @@ insta-cmd = { workspace = true, default-features = true }
 
 [lints]
 workspace = true
+
+[profile.release]
+strip = "symbols"
