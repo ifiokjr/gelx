@@ -22,7 +22,7 @@ bytes = { version = "1", default-features = false }
 cfg-if = { version = "1", default-features = false }
 check_keyword = { version = "0.4", default-features = false }
 chrono = { version = "0.4", default-features = false }
-clap = { version = "4.5.38", default-features = false }
+clap = { version = "4", default-features = false }
 derive_more = { version = "2", default-features = false }
 document-features = { version = "0.2", default-features = false }
 futures = { version = "0.3", default-features = false }
@@ -75,7 +75,7 @@ cargo-all-features = { version = "1.10.0", bins = ["cargo-build-all-features", "
 cargo-deny = { version = "0.18.2" }
 cargo-insta = { version = "1.43.1" }
 cargo-llvm-cov = { version = "0.6.16" }
-cargo-nextest = { version = "0.9.97" }
+cargo-nextest = { version = "0.9.98" }
 
 [workspace.lints.rust]
 # Group lints
