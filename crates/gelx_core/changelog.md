@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.8.2](https://github.com/ifiokjr/gelx/compare/gelx_core-v0.8.1...gelx_core-v0.8.2) - 2025-06-09
+
+### <!-- 0 -->🎉 Added
+
+- *(gelx)* remove peer `gel_protocol` requirement with `query` feature
+
 ## [0.8.1](https://github.com/ifiokjr/gelx/compare/gelx_core-v0.8.0...gelx_core-v0.8.1) - 2025-06-06
 
 ### <!-- 1 -->🐛 Bug Fixes
