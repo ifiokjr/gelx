@@ -23,6 +23,7 @@ pub mod example {
         __g::gel_derive::Queryable
     )]
     #[builder(crate_module_path = __g::typed_builder)]
+    #[gel(crate_path = __g::gel_protocol)]
     pub struct Input {
         #[builder(setter(into))]
         pub name: String,
@@ -50,6 +51,7 @@ pub mod example {
         __g::serde::Deserialize,
         __g::gel_derive::Queryable
     )]
+    #[gel(crate_path = __g::gel_protocol)]
     pub struct Output {
         pub id: __g::uuid::Uuid,
         pub name: Option<String>,

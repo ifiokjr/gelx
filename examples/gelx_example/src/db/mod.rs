@@ -18,6 +18,7 @@ pub mod default;
 )]
 #[cfg_attr(feature = "with_query", derive(__g::gel_derive::Queryable))]
 #[builder(crate_module_path = __g::typed_builder)]
+#[cfg_attr(feature = "with_query", gel(crate_path = __g::gel_protocol))]
 #[builder(field_defaults(default, setter(into, strip_option(fallback_suffix = "_opt"))))]
 pub struct Globals {
     pub alternative: Option<String>,
@@ -72,6 +73,7 @@ pub mod insert_location {
     )]
     #[cfg_attr(feature = "with_query", derive(__g::gel_derive::Queryable))]
     #[builder(crate_module_path = __g::typed_builder)]
+    #[cfg_attr(feature = "with_query", gel(crate_path = __g::gel_protocol))]
     pub struct Input {
         #[builder(setter(into))]
         pub point: __g::Geometry,
@@ -95,6 +97,7 @@ pub mod insert_location {
         derive(__g::serde::Serialize, __g::serde::Deserialize)
     )]
     #[cfg_attr(feature = "with_query", derive(__g::gel_derive::Queryable))]
+    #[cfg_attr(feature = "with_query", gel(crate_path = __g::gel_protocol))]
     pub struct Output {
         pub point: __g::Geometry,
         pub area: __g::Geography,
@@ -127,6 +130,7 @@ pub mod insert_position {
     )]
     #[cfg_attr(feature = "with_query", derive(__g::gel_derive::Queryable))]
     #[builder(crate_module_path = __g::typed_builder)]
+    #[cfg_attr(feature = "with_query", gel(crate_path = __g::gel_protocol))]
     pub struct Input {
         #[builder(setter(into))]
         pub position: super::default::Position,
@@ -148,6 +152,7 @@ pub mod insert_position {
         derive(__g::serde::Serialize, __g::serde::Deserialize)
     )]
     #[cfg_attr(feature = "with_query", derive(__g::gel_derive::Queryable))]
+    #[cfg_attr(feature = "with_query", gel(crate_path = __g::gel_protocol))]
     pub struct Output {
         pub id: __g::uuid::Uuid,
         pub position: super::default::Position,
@@ -180,6 +185,7 @@ pub mod insert_user {
     )]
     #[cfg_attr(feature = "with_query", derive(__g::gel_derive::Queryable))]
     #[builder(crate_module_path = __g::typed_builder)]
+    #[cfg_attr(feature = "with_query", gel(crate_path = __g::gel_protocol))]
     pub struct Input {
         #[builder(setter(into))]
         pub name: String,
@@ -206,6 +212,7 @@ pub mod insert_user {
         derive(__g::serde::Serialize, __g::serde::Deserialize)
     )]
     #[cfg_attr(feature = "with_query", derive(__g::gel_derive::Queryable))]
+    #[cfg_attr(feature = "with_query", gel(crate_path = __g::gel_protocol))]
     pub struct Output {
         pub id: __g::uuid::Uuid,
         pub name: Option<String>,
@@ -240,6 +247,7 @@ pub mod remove_user {
     )]
     #[cfg_attr(feature = "with_query", derive(__g::gel_derive::Queryable))]
     #[builder(crate_module_path = __g::typed_builder)]
+    #[cfg_attr(feature = "with_query", gel(crate_path = __g::gel_protocol))]
     pub struct Input {
         #[builder(setter(into))]
         pub id: __g::uuid::Uuid,
@@ -261,6 +269,7 @@ pub mod remove_user {
         derive(__g::serde::Serialize, __g::serde::Deserialize)
     )]
     #[cfg_attr(feature = "with_query", derive(__g::gel_derive::Queryable))]
+    #[cfg_attr(feature = "with_query", gel(crate_path = __g::gel_protocol))]
     pub struct Output {
         pub id: __g::uuid::Uuid,
     }
@@ -292,6 +301,7 @@ pub mod select_accounts {
     )]
     #[cfg_attr(feature = "with_query", derive(__g::gel_derive::Queryable))]
     #[builder(crate_module_path = __g::typed_builder)]
+    #[cfg_attr(feature = "with_query", gel(crate_path = __g::gel_protocol))]
     pub struct Input {
         #[builder(setter(into))]
         pub provider: super::default::AccountProvider,
@@ -313,6 +323,7 @@ pub mod select_accounts {
         derive(__g::serde::Serialize, __g::serde::Deserialize)
     )]
     #[cfg_attr(feature = "with_query", derive(__g::gel_derive::Queryable))]
+    #[cfg_attr(feature = "with_query", gel(crate_path = __g::gel_protocol))]
     pub struct OutputUser {
         pub slug: String,
         pub id: __g::uuid::Uuid,
@@ -327,6 +338,7 @@ pub mod select_accounts {
         derive(__g::serde::Serialize, __g::serde::Deserialize)
     )]
     #[cfg_attr(feature = "with_query", derive(__g::gel_derive::Queryable))]
+    #[cfg_attr(feature = "with_query", gel(crate_path = __g::gel_protocol))]
     pub struct Output {
         pub created_at: __g::DateTimeAlias,
         pub id: __g::uuid::Uuid,
@@ -369,6 +381,7 @@ pub mod select_user {
     )]
     #[cfg_attr(feature = "with_query", derive(__g::gel_derive::Queryable))]
     #[builder(crate_module_path = __g::typed_builder)]
+    #[cfg_attr(feature = "with_query", gel(crate_path = __g::gel_protocol))]
     pub struct Input {
         #[builder(setter(into))]
         pub slug: String,
@@ -390,6 +403,7 @@ pub mod select_user {
         derive(__g::serde::Serialize, __g::serde::Deserialize)
     )]
     #[cfg_attr(feature = "with_query", derive(__g::gel_derive::Queryable))]
+    #[cfg_attr(feature = "with_query", gel(crate_path = __g::gel_protocol))]
     pub struct Output {
         pub id: __g::uuid::Uuid,
         pub name: Option<String>,

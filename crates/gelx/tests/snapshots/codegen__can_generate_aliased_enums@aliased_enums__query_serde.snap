@@ -27,6 +27,7 @@ pub mod default;
     derive(__g::typed_builder::TypedBuilder, __g::gel_derive::Queryable)
 )]
 #[cfg_attr(feature = "ssr", builder(crate_module_path = __g::typed_builder))]
+#[cfg_attr(feature = "ssr", gel(crate_path = __g::gel_protocol))]
 #[cfg_attr(
     feature = "ssr",
     builder(
@@ -91,6 +92,7 @@ use super::*;
         __g::strum::IntoStaticStr
     )
 )]
+#[cfg_attr(feature = "ssr", gel(crate_path = __g::gel_protocol))]
 #[cfg_attr(feature = "ssr", strum(crate = "__g::strum"))]
 pub enum Awesomeness {
     Very,
@@ -122,15 +124,19 @@ impl ::core::convert::From<Awesomeness> for __g::gel_protocol::value::Value {
         __g::strum::IntoStaticStr
     )
 )]
+#[cfg_attr(feature = "ssr", gel(crate_path = __g::gel_protocol))]
 #[cfg_attr(feature = "ssr", strum(crate = "__g::strum"))]
 pub enum Smartness {
     #[serde(rename = "low")]
+    #[cfg_attr(feature = "ssr", gel(rename = "low"))]
     #[cfg_attr(feature = "ssr", strum(serialize = "low"))]
     Low,
     #[serde(rename = "mid")]
+    #[cfg_attr(feature = "ssr", gel(rename = "mid"))]
     #[cfg_attr(feature = "ssr", strum(serialize = "mid"))]
     Mid,
     #[serde(rename = "genius")]
+    #[cfg_attr(feature = "ssr", gel(rename = "genius"))]
     #[cfg_attr(feature = "ssr", strum(serialize = "genius"))]
     Genius,
 }
@@ -173,6 +179,7 @@ mod account {
         __g::strum::IntoStaticStr
     )
 )]
+#[cfg_attr(feature = "ssr", gel(crate_path = __g::gel_protocol))]
 #[cfg_attr(feature = "ssr", strum(crate = "__g::strum"))]
 pub enum AccountProvider {
     Github,
@@ -270,6 +277,7 @@ mod relationship {
         __g::strum::IntoStaticStr
     )
 )]
+#[cfg_attr(feature = "ssr", gel(crate_path = __g::gel_protocol))]
 #[cfg_attr(feature = "ssr", strum(crate = "__g::strum"))]
 pub enum RelationshipType {
     Follow,
@@ -301,6 +309,7 @@ impl ::core::convert::From<RelationshipType> for __g::gel_protocol::value::Value
         __g::strum::IntoStaticStr
     )
 )]
+#[cfg_attr(feature = "ssr", gel(crate_path = __g::gel_protocol))]
 #[cfg_attr(feature = "ssr", strum(crate = "__g::strum"))]
 pub enum Role {
     None,

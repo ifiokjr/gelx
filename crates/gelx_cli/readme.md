@@ -34,14 +34,14 @@ Inside a single crate project add the following to the `Cargo.toml` file:
 
 ```toml
 [package.metadata.bin]
-gelx_cli = { version = "0.7.1", bins = ["gelx"] }
+gelx_cli = { version = "0.8.2", bins = ["gelx"] }
 ```
 
 Inside a workspace add the following to the `Cargo.toml` file:
 
 ```toml
 [workspace.metadata.bin]
-gelx_cli = { version = "0.7.1", bins = ["gelx"] }
+gelx_cli = { version = "0.8.2", bins = ["gelx"] }
 ```
 
 Then run the following command to access gelx:

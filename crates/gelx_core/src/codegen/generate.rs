@@ -38,29 +38,30 @@ pub(crate) fn generate_enum(
 	let pascal_local_name = format_ident!("{}", local_name.to_pascal_case().into_safe());
 	let enum_values_tokens = enum_values.iter().map(|value| {
 		let pascal_value = value.to_pascal_case();
-		let annotation = if value == &pascal_value {
-			TokenStream::new()
-		} else {
-			let serde_annotation = metadata.features.wrap_annotation(
+		let mut annotations = TokenStream::new();
+
+		if value != &pascal_value {
+			annotations.extend(metadata.features.wrap_annotation(
 				FeatureName::Serde,
 				&quote!(serde(rename = #value)),
 				is_macro,
-			);
-			let strum_annotation = metadata.features.wrap_annotation(
+			));
+			annotations.extend(metadata.features.wrap_annotation(
+				FeatureName::Query,
+				&quote!(gel(rename = #value)),
+				is_macro,
+			));
+			annotations.extend(metadata.features.wrap_annotation(
 				FeatureName::Strum,
 				&quote!(strum(serialize = #value)),
 				is_macro,
-			);
+			));
+		}
 
-			quote! {
-				#serde_annotation
-				#strum_annotation
-			}
-		};
 		let enum_value_token = format_ident!("{}", pascal_value);
 
 		quote! {
-			#annotation
+			#annotations
 			#enum_value_token
 		}
 	});

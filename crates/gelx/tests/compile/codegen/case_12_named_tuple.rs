@@ -20,6 +20,7 @@ pub mod example {
         __g::serde::Deserialize,
         __g::gel_derive::Queryable
     )]
+    #[gel(crate_path = __g::gel_protocol)]
     pub struct Output {
         pub fruit: String,
         pub quantity: f64,

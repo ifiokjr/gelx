@@ -25,6 +25,7 @@ mod account {
     derive(__g::serde::Serialize, __g::serde::Deserialize)
 )]
 #[cfg_attr(feature = "with_query", derive(__g::gel_derive::Queryable))]
+#[cfg_attr(feature = "with_query", gel(crate_path = __g::gel_protocol))]
 #[strum(crate = "__g::strum")]
 pub enum AccountProvider {
     Github,
@@ -120,6 +121,7 @@ mod relationship {
     derive(__g::serde::Serialize, __g::serde::Deserialize)
 )]
 #[cfg_attr(feature = "with_query", derive(__g::gel_derive::Queryable))]
+#[cfg_attr(feature = "with_query", gel(crate_path = __g::gel_protocol))]
 #[strum(crate = "__g::strum")]
 pub enum RelationshipType {
     Follow,
@@ -147,6 +149,7 @@ impl ::core::convert::From<RelationshipType> for __g::gel_protocol::value::Value
     derive(__g::serde::Serialize, __g::serde::Deserialize)
 )]
 #[cfg_attr(feature = "with_query", derive(__g::gel_derive::Queryable))]
+#[cfg_attr(feature = "with_query", gel(crate_path = __g::gel_protocol))]
 #[strum(crate = "__g::strum")]
 pub enum Role {
     None,

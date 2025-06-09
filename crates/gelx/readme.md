@@ -18,19 +18,13 @@ To install the `gelx` crate, you can use the following commands.
 
 ```bash
 cargo add gelx
-
-# Optional dependency when using the `query` feature
-cargo add gel-protocol
 ```
 
 Or, add the following directly to your `Cargo.toml` file.
 
 ```toml
 [dependencies]
-gelx = "0.4"
-
-# Optional dependencies
-gel-protocol = "0.8" # needed when using the `query` feature
+gelx = "0.8"
 ```
 
 Make sure you've [installed](https://docs.geldata.com/reference/using/cli#ref-cli-gel-install) the `gel` CLI for your platform.

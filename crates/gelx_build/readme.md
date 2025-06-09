@@ -18,7 +18,7 @@ This crate is only needed if you want to customise the configuration of the `gel
 
 ```toml
 [build-dependencies]
-gelx_build = "0.6"
+gelx_build = "0.8"
 ```
 
 or via the command line:

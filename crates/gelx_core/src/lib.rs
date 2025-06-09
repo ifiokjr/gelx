@@ -523,6 +523,11 @@ fn explore_object_shape_descriptor(
 			&quote!(serde(rename = #name)),
 			is_macro,
 		));
+		let query_annotation = (&safe_name != name).then_some(metadata.features.wrap_annotation(
+			FeatureName::Query,
+			&quote!(gel(rename = #name)),
+			is_macro,
+		));
 
 		let builder_fields = {
 			match element.cardinality() {
@@ -544,6 +549,7 @@ fn explore_object_shape_descriptor(
 
 		struct_fields.push(quote! {
 			#serde_annotation
+			#query_annotation
 			#builder_annotation
 			pub #safe_name_ident: #output_token,
 		});

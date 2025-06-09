@@ -426,6 +426,11 @@ impl GelxFeatures {
 				FeatureName::Query => {
 					let entry = features_map.entry(self.query.alias()).or_default();
 					entry.push(quote!(#exports_ident::gel_derive::Queryable));
+					extra_tokens.extend(self.wrap_annotation(
+						FeatureName::Query,
+						&quote!(gel(crate_path = #exports_ident::gel_protocol)),
+						is_macro,
+					));
 				}
 				FeatureName::Strum => {
 					let entry = features_map.entry(self.strum.alias()).or_default();

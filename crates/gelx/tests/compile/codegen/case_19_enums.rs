@@ -27,6 +27,7 @@ pub mod example {
         __g::strum::FromRepr,
         __g::strum::IntoStaticStr
     )]
+    #[gel(crate_path = __g::gel_protocol)]
     #[strum(crate = "__g::strum")]
     pub enum DefaultAccountProvider {
         Github,
@@ -44,6 +45,7 @@ pub mod example {
         __g::serde::Deserialize,
         __g::gel_derive::Queryable
     )]
+    #[gel(crate_path = __g::gel_protocol)]
     pub struct Output {
         pub provider: DefaultAccountProvider,
     }

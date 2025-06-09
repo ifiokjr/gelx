@@ -20,6 +20,7 @@ pub mod example {
         __g::serde::Deserialize,
         __g::gel_derive::Queryable
     )]
+    #[gel(crate_path = __g::gel_protocol)]
     pub struct OutputBasesSet {
         pub id: __g::uuid::Uuid,
     }
@@ -30,6 +31,7 @@ pub mod example {
         __g::serde::Deserialize,
         __g::gel_derive::Queryable
     )]
+    #[gel(crate_path = __g::gel_protocol)]
     pub struct OutputUnionOfSet {
         pub id: __g::uuid::Uuid,
     }
@@ -40,6 +42,7 @@ pub mod example {
         __g::serde::Deserialize,
         __g::gel_derive::Queryable
     )]
+    #[gel(crate_path = __g::gel_protocol)]
     pub struct OutputIntersectionOfSet {
         pub id: __g::uuid::Uuid,
     }
@@ -50,6 +53,7 @@ pub mod example {
         __g::serde::Deserialize,
         __g::gel_derive::Queryable
     )]
+    #[gel(crate_path = __g::gel_protocol)]
     pub struct OutputPointersSetPointersSet {
         pub card: Option<String>,
         pub name: String,
@@ -65,6 +69,7 @@ pub mod example {
         __g::serde::Deserialize,
         __g::gel_derive::Queryable
     )]
+    #[gel(crate_path = __g::gel_protocol)]
     pub struct OutputPointersSet {
         pub card: Option<String>,
         pub name: String,
@@ -83,6 +88,7 @@ pub mod example {
         __g::serde::Deserialize,
         __g::gel_derive::Queryable
     )]
+    #[gel(crate_path = __g::gel_protocol)]
     pub struct OutputExclusivesSet {
         pub target: Option<String>,
     }
@@ -93,6 +99,7 @@ pub mod example {
         __g::serde::Deserialize,
         __g::gel_derive::Queryable
     )]
+    #[gel(crate_path = __g::gel_protocol)]
     pub struct OutputBacklinksSet {
         pub card: String,
         pub name: String,
@@ -108,6 +115,7 @@ pub mod example {
         __g::serde::Deserialize,
         __g::gel_derive::Queryable
     )]
+    #[gel(crate_path = __g::gel_protocol)]
     pub struct OutputBacklinkStubsArray {
         pub card: String,
         pub name: String,
@@ -122,6 +130,7 @@ pub mod example {
         __g::serde::Deserialize,
         __g::gel_derive::Queryable
     )]
+    #[gel(crate_path = __g::gel_protocol)]
     pub struct OutputTupleElementsSet {
         pub target_id: __g::uuid::Uuid,
         pub name: Option<String>,
@@ -133,6 +142,7 @@ pub mod example {
         __g::serde::Deserialize,
         __g::gel_derive::Queryable
     )]
+    #[gel(crate_path = __g::gel_protocol)]
     pub struct Output {
         pub id: __g::uuid::Uuid,
         pub name: String,
