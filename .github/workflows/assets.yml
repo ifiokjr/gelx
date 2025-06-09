@@ -1,3 +1,5 @@
+name: "assets"
+
 on:
   release:
     types: [created]
@@ -39,12 +41,14 @@ jobs:
       - name: install rust toolchain
         uses: dtolnay/rust-toolchain@stable
 
-      - uses: taiki-e/setup-cross-toolchain-action@v1
+      - name: setup cross toolchain
+        uses: taiki-e/setup-cross-toolchain-action@v1
         with:
           target: ${{ matrix.target }}
         if: startsWith(matrix.os, 'ubuntu') && !contains(matrix.target, '-musl')
 
-      - uses: taiki-e/install-action@v2
+      - name: install cross
+        uses: taiki-e/install-action@v2
         with:
           tool: cross
         if: contains(matrix.target, '-musl')
