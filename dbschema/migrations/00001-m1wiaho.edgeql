@@ -1,4 +1,4 @@
-CREATE MIGRATION m1gd2vrayu62apz6e4sv7yxgpubfuh2kbrxq75rf56blckov5atcsa
+CREATE MIGRATION m1wiahotdsp5yuxymm7qfxct4gqhmjpsr7voj3v5rxxke5hc57nxra
     ONTO initial
 {
   CREATE EXTENSION postgis VERSION '3.5';
@@ -12,6 +12,7 @@ CREATE MIGRATION m1gd2vrayu62apz6e4sv7yxgpubfuh2kbrxq75rf56blckov5atcsa
   };
   CREATE SCALAR TYPE default::RelationshipType EXTENDING enum<Follow, Block, Mute>;
   CREATE SCALAR TYPE default::Role EXTENDING enum<None, Editor, Moderator, Admin, Owner>;
+  CREATE SCALAR TYPE default::UserId EXTENDING std::sequence;
   CREATE GLOBAL additional::alternative -> std::str;
   CREATE GLOBAL default::current_user_id -> std::uuid;
   CREATE ABSTRACT TYPE default::CreatedAt {
