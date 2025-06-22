@@ -171,7 +171,7 @@ pub(crate) fn generate_scalar(
 			}
 		}
 		impl ::std::ops::Deref for #struct_name {
-			type Target = i32;
+			type Target = #wrapped_struct_type;
 			fn deref(&self) -> &Self::Target {
 				&self.0
 			}

@@ -11,6 +11,8 @@ module default {
 		constraint max_value(1_000_000);
 	}
 
+	scalar type UserId extending sequence;
+
 	type Simple {
 		required position: Position;
 	}
