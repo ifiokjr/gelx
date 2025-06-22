@@ -72,10 +72,10 @@ gelx_macros = { path = "./crates/gelx_macros", version = "0.8.2" }
 
 [workspace.metadata.bin]
 cargo-all-features = { version = "1.10.0", bins = ["cargo-build-all-features", "cargo-check-all-features", "cargo-test-all-features"] }
-cargo-deny = { version = "0.18.2" }
+cargo-deny = { version = "0.18.3" }
 cargo-insta = { version = "1.43.1" }
 cargo-llvm-cov = { version = "0.6.16" }
-cargo-nextest = { version = "0.9.98" }
+cargo-nextest = { version = "0.9.99" }
 
 [workspace.lints.rust]
 # Group lints
