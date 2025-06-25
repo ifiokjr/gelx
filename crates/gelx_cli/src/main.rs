@@ -10,6 +10,9 @@ async fn main() -> GelxCoreResult<()> {
 
 	match cli.run().await {
 		Ok(()) => std::process::exit(0),
-		Err(_) => std::process::exit(1),
+		Err(err) => {
+			eprintln!("{err}");
+			std::process::exit(1)
+		}
 	}
 }
