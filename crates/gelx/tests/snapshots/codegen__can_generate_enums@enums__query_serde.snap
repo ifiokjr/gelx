@@ -295,6 +295,61 @@ mod team {
 mod user {
     use super::*;
 }
+#[derive(
+    ::std::fmt::Debug,
+    ::core::clone::Clone,
+    __g::serde::Serialize,
+    __g::serde::Deserialize
+)]
+pub struct UserId(pub i64);
+impl __g::gel_protocol::queryable::Queryable for UserId {
+    type Args = <i64 as __g::gel_protocol::queryable::Queryable>::Args;
+    fn decode(
+        decoder: &__g::gel_protocol::queryable::Decoder,
+        args: &Self::Args,
+        buf: &[u8],
+    ) -> Result<Self, __g::gel_protocol::errors::DecodeError> {
+        Ok(Self(i64::decode(decoder, args, buf)?))
+    }
+    fn check_descriptor(
+        ctx: &__g::gel_protocol::queryable::DescriptorContext,
+        type_pos: __g::gel_protocol::descriptors::TypePos,
+    ) -> Result<Self::Args, __g::gel_protocol::queryable::DescriptorMismatch> {
+        __g::check_scalar(
+            ctx,
+            type_pos,
+            Default::default(),
+            "default::UserId",
+        )?;
+        Ok(())
+    }
+}
+impl ::core::convert::From<UserId> for __g::gel_protocol::value::Value {
+    fn from(value: UserId) -> Self {
+        value.0.into()
+    }
+}
+impl ::core::convert::From<UserId> for i64 {
+    fn from(value: UserId) -> Self {
+        value.0
+    }
+}
+impl ::core::convert::From<i64> for UserId {
+    fn from(value: i64) -> Self {
+        UserId(value)
+    }
+}
+impl ::std::ops::Deref for UserId {
+    type Target = i64;
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+impl ::std::ops::DerefMut for UserId {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
+    }
+}
 mod wallet {
     use super::*;
 }

@@ -1,4 +1,4 @@
-CREATE MIGRATION m1t4ayeeqtb64azjiif36j7f3pfi7atxjk77eqdggqu4zvgusg77kq
+CREATE MIGRATION m1sxwa4zhaq4adwbh6ansh4kjh4iuqdy77shmazpjhspslcmvlq6oa
     ONTO initial
 {
   CREATE EXTENSION pgcrypto VERSION '1.3';
@@ -27,10 +27,10 @@ CREATE MIGRATION m1t4ayeeqtb64azjiif36j7f3pfi7atxjk77eqdggqu4zvgusg77kq
       CREATE REQUIRED PROPERTY updated_at: std::datetime {
           SET default := (std::datetime_of_statement());
           CREATE REWRITE
-              INSERT
+              INSERT 
               USING (std::datetime_of_statement());
           CREATE REWRITE
-              UPDATE
+              UPDATE 
               USING (std::datetime_of_statement());
       };
   };
@@ -132,7 +132,7 @@ CREATE MIGRATION m1t4ayeeqtb64azjiif36j7f3pfi7atxjk77eqdggqu4zvgusg77kq
           SET readonly := true;
           CREATE CONSTRAINT std::exclusive;
           CREATE REWRITE
-              INSERT
+              INSERT 
               USING (std::str_trim(std::str_lower(.email)));
       };
   };

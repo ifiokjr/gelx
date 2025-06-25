@@ -65,8 +65,8 @@ impl __g::gel_protocol::queryable::Queryable for Position {
             ctx,
             type_pos,
             __g::uuid::Uuid::from_bytes([
-                58u8, 58u8, 111u8, 150u8, 81u8, 131u8, 17u8, 240u8, 176u8, 232u8, 229u8,
-                247u8, 184u8, 152u8, 53u8, 71u8,
+                220u8, 17u8, 218u8, 2u8, 81u8, 171u8, 17u8, 240u8, 158u8, 238u8, 177u8,
+                65u8, 137u8, 3u8, 89u8, 98u8,
             ]),
             "default::Position",
         )?;
@@ -171,6 +171,64 @@ mod team {
 }
 mod user {
     use super::*;
+}
+#[derive(::std::fmt::Debug, ::core::clone::Clone)]
+#[cfg_attr(
+    feature = "with_serde",
+    derive(__g::serde::Serialize, __g::serde::Deserialize)
+)]
+pub struct UserId(pub i64);
+#[cfg(feature = "with_query")]
+impl __g::gel_protocol::queryable::Queryable for UserId {
+    type Args = <i64 as __g::gel_protocol::queryable::Queryable>::Args;
+    fn decode(
+        decoder: &__g::gel_protocol::queryable::Decoder,
+        args: &Self::Args,
+        buf: &[u8],
+    ) -> Result<Self, __g::gel_protocol::errors::DecodeError> {
+        Ok(Self(i64::decode(decoder, args, buf)?))
+    }
+    fn check_descriptor(
+        ctx: &__g::gel_protocol::queryable::DescriptorContext,
+        type_pos: __g::gel_protocol::descriptors::TypePos,
+    ) -> Result<Self::Args, __g::gel_protocol::queryable::DescriptorMismatch> {
+        __g::check_scalar(
+            ctx,
+            type_pos,
+            __g::uuid::Uuid::from_bytes([
+                220u8, 19u8, 85u8, 108u8, 81u8, 171u8, 17u8, 240u8, 188u8, 191u8, 67u8,
+                85u8, 87u8, 176u8, 199u8, 165u8,
+            ]),
+            "default::UserId",
+        )?;
+        Ok(())
+    }
+}
+impl ::core::convert::From<UserId> for __g::gel_protocol::value::Value {
+    fn from(value: UserId) -> Self {
+        value.0.into()
+    }
+}
+impl ::core::convert::From<UserId> for i64 {
+    fn from(value: UserId) -> Self {
+        value.0
+    }
+}
+impl ::core::convert::From<i64> for UserId {
+    fn from(value: i64) -> Self {
+        UserId(value)
+    }
+}
+impl ::std::ops::Deref for UserId {
+    type Target = i64;
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+impl ::std::ops::DerefMut for UserId {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
+    }
 }
 mod wallet {
     use super::*;
