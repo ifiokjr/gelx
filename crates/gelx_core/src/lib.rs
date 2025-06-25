@@ -54,21 +54,22 @@ pub async fn get_descriptor(
 	let pool = Pool::new(&config);
 	let mut pool_connection = Box::pin(pool.acquire()).await?;
 	let connection = pool_connection.inner();
-	let allow_capabilities = Capabilities::MODIFICATIONS | Capabilities::DDL;
 	let flags = CompilationOptions {
 		implicit_limit: None,
 		implicit_typenames: false,
 		implicit_typeids: false,
 		explicit_objectids: true,
-		allow_capabilities,
+		allow_capabilities: Capabilities::ALL,
 		io_format: IoFormat::Binary,
 		expected_cardinality: Cardinality::Many,
 		input_language: InputLanguage::EdgeQL,
 	};
 
-	Ok(connection
+	let result = connection
 		.parse(&flags, query, &state, &Arc::new(HashMap::default()))
-		.await?)
+		.await;
+
+	Ok(result?)
 }
 
 /// Get the descriptor synchronously.
@@ -186,7 +187,8 @@ fn wrap_token_with_cardinality(
 	};
 
 	match cardinality {
-		Cardinality::NoResult | Cardinality::AtMostOne => quote!(Option<#token>),
+		Cardinality::NoResult => quote!(()),
+		Cardinality::AtMostOne => quote!(Option<#token>),
 		Cardinality::One => token,
 		Cardinality::Many | Cardinality::AtLeastOne => quote!(Vec<#token>),
 	}

@@ -21,12 +21,14 @@ pub mod default;
 #[cfg_attr(feature = "with_query", gel(crate_path = __g::gel_protocol))]
 #[builder(field_defaults(default, setter(into, strip_option(fallback_suffix = "_opt"))))]
 pub struct Globals {
+    pub client_token: Option<String>,
     pub alternative: Option<String>,
     pub current_user_id: Option<__g::uuid::Uuid>,
 }
 #[cfg(feature = "with_query")]
 impl __g::gel_tokio::GlobalsDelta for Globals {
     fn apply(self, modifier: &mut __g::gel_tokio::state::GlobalsModifier<'_>) {
+        modifier.set("ext::auth::client_token", self.client_token);
         modifier.set("additional::alternative", self.alternative);
         modifier.set("default::current_user_id", self.current_user_id);
     }
@@ -47,6 +49,27 @@ impl Globals {
         let client = self.clone().into_client().await?;
         Ok(client)
     }
+}
+pub mod auth_allowed_redirect_urls {
+    use ::gelx::exports as __g;
+    /// Execute the desired query.
+    #[cfg(feature = "with_query")]
+    pub async fn query(
+        client: &__g::gel_tokio::Client,
+    ) -> ::core::result::Result<(), __g::gel_errors::Error> {
+        client.execute(QUERY, &()).await
+    }
+    /// Compose the query as part of a larger transaction.
+    #[cfg(feature = "with_query")]
+    pub async fn transaction(
+        conn: &mut __g::gel_tokio::Transaction,
+    ) -> ::core::result::Result<(), __g::gel_errors::Error> {
+        conn.execute(QUERY, &()).await
+    }
+    pub type Input = ();
+    pub type Output = ();
+    /// The original query string provided to the macro. Can be reused in your codebase.
+    pub const QUERY: &str = "# This query is used to set the allowed redirect URLs for the auth system. Unfortunately,\n# `configure` can't be used with parameters.\n#\n# `non-constant expression in CONFIGURE DATABASE SET`\nconfigure current branch set ext::auth::AuthConfig::allowed_redirect_urls := {\n    'https://example.com',\n    'https://example.com/auth',\n    'https://localhost:3000',\n    'https://localhost:3000/auth'\n};\n";
 }
 pub mod insert_location {
     use ::gelx::exports as __g;
@@ -340,11 +363,11 @@ pub mod select_accounts {
     #[cfg_attr(feature = "with_query", derive(__g::gel_derive::Queryable))]
     #[cfg_attr(feature = "with_query", gel(crate_path = __g::gel_protocol))]
     pub struct Output {
+        pub access_token: Option<String>,
+        pub access_token_expires_at: Option<__g::DateTimeAlias>,
         pub created_at: __g::DateTimeAlias,
         pub id: __g::uuid::Uuid,
         pub updated_at: __g::DateTimeAlias,
-        pub access_token: Option<String>,
-        pub access_token_expires_at: Option<__g::DateTimeAlias>,
         pub provider: super::default::AccountProvider,
         pub provider_account_id: String,
         pub refresh_token: Option<String>,

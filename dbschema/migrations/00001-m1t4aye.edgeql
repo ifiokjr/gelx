@@ -1,6 +1,8 @@
-CREATE MIGRATION m1wiahotdsp5yuxymm7qfxct4gqhmjpsr7voj3v5rxxke5hc57nxra
+CREATE MIGRATION m1t4ayeeqtb64azjiif36j7f3pfi7atxjk77eqdggqu4zvgusg77kq
     ONTO initial
 {
+  CREATE EXTENSION pgcrypto VERSION '1.3';
+  CREATE EXTENSION auth VERSION '1.0';
   CREATE EXTENSION postgis VERSION '3.5';
   CREATE MODULE additional IF NOT EXISTS;
   CREATE SCALAR TYPE additional::Awesomeness EXTENDING enum<Very, Somewhat, NotReally>;
@@ -25,10 +27,10 @@ CREATE MIGRATION m1wiahotdsp5yuxymm7qfxct4gqhmjpsr7voj3v5rxxke5hc57nxra
       CREATE REQUIRED PROPERTY updated_at: std::datetime {
           SET default := (std::datetime_of_statement());
           CREATE REWRITE
-              INSERT 
+              INSERT
               USING (std::datetime_of_statement());
           CREATE REWRITE
-              UPDATE 
+              UPDATE
               USING (std::datetime_of_statement());
       };
   };
@@ -130,7 +132,7 @@ CREATE MIGRATION m1wiahotdsp5yuxymm7qfxct4gqhmjpsr7voj3v5rxxke5hc57nxra
           SET readonly := true;
           CREATE CONSTRAINT std::exclusive;
           CREATE REWRITE
-              INSERT 
+              INSERT
               USING (std::str_trim(std::str_lower(.email)));
       };
   };

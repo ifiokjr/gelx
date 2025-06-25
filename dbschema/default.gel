@@ -1,4 +1,5 @@
 using extension postgis;
+using extension auth;
 
 module default {
   global current_user_id: uuid;
@@ -25,15 +26,15 @@ module default {
   type Account extending CreatedAt, UpdatedAt {
     required provider: AccountProvider;
     required provider_account_id: str;
+    required user: User {
+      on target delete delete source;
+    };
     username: str;
     access_token: str;
     access_token_expires_at: datetime;
     refresh_token: str;
     refresh_token_expires_at: datetime;
     scope: str;
-    required user: User {
-      on target delete delete source;
-    };
   }
 
   type Email extending VerifiedAt, CreatedAt, UpdatedAt {
