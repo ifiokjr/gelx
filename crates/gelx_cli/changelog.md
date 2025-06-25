@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.8.4](https://github.com/ifiokjr/gelx/compare/gelx_cli-v0.8.3...gelx_cli-v0.8.4) - 2025-06-25
+
+### <!-- 0 -->🎉 Added
+
+- *(gelx_cli)* print error when cli fails
+
 ## [0.8.3](https://github.com/ifiokjr/gelx/compare/gelx_cli-v0.8.2...gelx_cli-v0.8.3) - 2025-06-22
 
 ### <!-- 7 -->⚙️ Miscellaneous Tasks

@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.8.4](https://github.com/ifiokjr/gelx/compare/v0.8.3...v0.8.4) - 2025-06-25
+
+### <!-- 0 -->🎉 Added
+
+- *(gelx)* allow `configure` queries
+
+### <!-- 6 -->🧪 Testing
+
+- update snapshots to fix errors
+
 ## [0.8.2](https://github.com/ifiokjr/gelx/compare/v0.8.1...v0.8.2) - 2025-06-09
 
 ### <!-- 0 -->🎉 Added
