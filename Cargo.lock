@@ -949,7 +949,7 @@ dependencies = [
 
 [[package]]
 name = "gelx"
-version = "0.8.3"
+version = "0.8.4"
 dependencies = [
  "assert2",
  "async-trait",
@@ -987,7 +987,7 @@ dependencies = [
 
 [[package]]
 name = "gelx_build"
-version = "0.8.3"
+version = "0.8.4"
 dependencies = [
  "base64 0.22.1",
  "gelx_core",
@@ -998,7 +998,7 @@ dependencies = [
 
 [[package]]
 name = "gelx_cli"
-version = "0.8.3"
+version = "0.8.4"
 dependencies = [
  "clap",
  "futures",
@@ -1015,7 +1015,7 @@ dependencies = [
 
 [[package]]
 name = "gelx_core"
-version = "0.8.3"
+version = "0.8.4"
 dependencies = [
  "assert2",
  "base64 0.22.1",
@@ -1050,7 +1050,7 @@ dependencies = [
 
 [[package]]
 name = "gelx_example"
-version = "0.8.3"
+version = "0.8.4"
 dependencies = [
  "anyhow",
  "gel-protocol",
@@ -1062,7 +1062,7 @@ dependencies = [
 
 [[package]]
 name = "gelx_macros"
-version = "0.8.3"
+version = "0.8.4"
 dependencies = [
  "gelx_core",
  "proc-macro2",
