@@ -28,8 +28,8 @@ document-features = { version = "0.2", default-features = false }
 futures = { version = "0.3", default-features = false }
 gel-derive = { version = "0.7.3", default-features = false }
 gel-errors = { version = "0.5", default-features = false }
-gel-protocol = { version = "0.8", default-features = false }
-gel-tokio = { version = "0.10.16", default-features = false }
+gel-protocol = { version = "0.9", default-features = false }
+gel-tokio = { version = "0.11", default-features = false }
 geo = { version = "0.30", default-features = false }
 geo-traits = { version = "0.3", default-features = false }
 geo-types = { version = "0.7", default-features = false }
@@ -56,8 +56,8 @@ syn = { version = "2", default-features = false }
 test-log = { version = "0.2", default-features = false }
 thiserror = { version = "2", default-features = false }
 tokio = { version = "1", default-features = false }
-toml = { version = "0.8", default-features = false }
-toml_edit = { version = "0.22", default-features = false }
+toml = { version = "0.9", default-features = false }
+toml_edit = { version = "0.23", default-features = false }
 trybuild = { version = "1", default-features = false }
 typed-builder = { version = "0.21", default-features = false }
 uuid = { version = "1", default-features = false }
