@@ -379,6 +379,61 @@ pub mod select_accounts {
     /// The original query string provided to the macro. Can be reused in your codebase.
     pub const QUERY: &str = "select Account {**} filter .provider = <AccountProvider>$provider;";
 }
+pub mod select_test_user {
+    use ::gelx::exports as __g;
+    /// Execute the desired query.
+    #[cfg(feature = "with_query")]
+    pub async fn query(
+        client: &__g::gel_tokio::Client,
+        props: &Input,
+    ) -> ::core::result::Result<Option<Output>, __g::gel_errors::Error> {
+        client.query_single(QUERY, props).await
+    }
+    /// Compose the query as part of a larger transaction.
+    #[cfg(feature = "with_query")]
+    pub async fn transaction(
+        conn: &mut __g::gel_tokio::Transaction,
+        props: &Input,
+    ) -> ::core::result::Result<Option<Output>, __g::gel_errors::Error> {
+        conn.query_single(QUERY, props).await
+    }
+    #[derive(::std::fmt::Debug, ::core::clone::Clone, __g::typed_builder::TypedBuilder)]
+    #[cfg_attr(
+        feature = "with_serde",
+        derive(__g::serde::Serialize, __g::serde::Deserialize)
+    )]
+    #[cfg_attr(feature = "with_query", derive(__g::gel_derive::Queryable))]
+    #[builder(crate_module_path = __g::typed_builder)]
+    #[cfg_attr(feature = "with_query", gel(crate_path = __g::gel_protocol))]
+    pub struct Input {
+        #[builder(setter(into))]
+        pub username: String,
+    }
+    impl __g::gel_protocol::query_arg::QueryArgs for Input {
+        fn encode(
+            &self,
+            encoder: &mut __g::gel_protocol::query_arg::Encoder,
+        ) -> core::result::Result<(), __g::gel_errors::Error> {
+            let map = __g::gel_protocol::named_args! {
+                "username" => self.username.clone(),
+            };
+            map.encode(encoder)
+        }
+    }
+    #[derive(::std::fmt::Debug, ::core::clone::Clone)]
+    #[cfg_attr(
+        feature = "with_serde",
+        derive(__g::serde::Serialize, __g::serde::Deserialize)
+    )]
+    #[cfg_attr(feature = "with_query", derive(__g::gel_derive::Queryable))]
+    #[cfg_attr(feature = "with_query", gel(crate_path = __g::gel_protocol))]
+    pub struct Output {
+        pub id: __g::uuid::Uuid,
+        pub public_id: super::default::UserId,
+    }
+    /// The original query string provided to the macro. Can be reused in your codebase.
+    pub const QUERY: &str = "select assert_single((\n\tselect TestUser { id, public_id } filter .active and .namelc = str_lower(<str>$username)\n))\n";
+}
 pub mod select_user {
     use ::gelx::exports as __g;
     /// Execute the desired query.

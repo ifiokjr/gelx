@@ -101,6 +101,43 @@ pub(crate) fn maybe_uuid_to_token_name(uuid: &Uuid, exports_ident: &Ident) -> Op
 	}
 }
 
+pub(crate) fn maybe_uuid_to_import(uuid: &Uuid, exports_ident: &Ident) -> Option<TokenStream> {
+	match *uuid {
+		STD_UUID => Some(quote!(#exports_ident::gel_protocol::codec::STD_UUID)),
+		STD_STR => Some(quote!(#exports_ident::gel_protocol::codec::STD_STR)),
+		STD_BYTES => Some(quote!(#exports_ident::gel_protocol::codec::STD_BYTES)),
+		STD_INT16 => Some(quote!(#exports_ident::gel_protocol::codec::STD_INT16)),
+		STD_INT32 => Some(quote!(#exports_ident::gel_protocol::codec::STD_INT32)),
+		STD_INT64 => Some(quote!(#exports_ident::gel_protocol::codec::STD_INT64)),
+		STD_FLOAT32 => Some(quote!(#exports_ident::gel_protocol::codec::STD_FLOAT32)),
+		STD_FLOAT64 => Some(quote!(#exports_ident::gel_protocol::codec::STD_FLOAT64)),
+		STD_DECIMAL => Some(quote!(#exports_ident::gel_protocol::codec::STD_DECIMAL)),
+		STD_BOOL => Some(quote!(#exports_ident::gel_protocol::codec::STD_BOOL)),
+		STD_DATETIME | STD_PG_TIMESTAMPTZ => {
+			Some(quote!(#exports_ident::gel_protocol::codec::STD_DATETIME))
+		}
+		CAL_LOCAL_DATETIME | STD_PG_TIMESTAMP => {
+			Some(quote!(#exports_ident::gel_protocol::codec::CAL_LOCAL_DATETIME))
+		}
+		CAL_LOCAL_DATE | STD_PG_DATE => {
+			Some(quote!(#exports_ident::gel_protocol::codec::CAL_LOCAL_DATE))
+		}
+		CAL_LOCAL_TIME => Some(quote!(#exports_ident::gel_protocol::codec::CAL_LOCAL_TIME)),
+		STD_DURATION => Some(quote!(#exports_ident::gel_protocol::codec::STD_DURATION)),
+		CAL_RELATIVE_DURATION => {
+			Some(quote!(#exports_ident::gel_protocol::codec::CAL_RELATIVE_DURATION ))
+		}
+		CAL_DATE_DURATION => Some(quote!(#exports_ident::gel_protocol::codec::CAL_DATE_DURATION)),
+		STD_JSON | STD_PG_JSON => Some(quote!(#exports_ident::gel_protocol::codec::STD_JSON)),
+		STD_BIGINT => Some(quote!(#exports_ident::gel_protocol::codec::STD_BIGINT)),
+		CFG_MEMORY => Some(quote!(#exports_ident::gel_protocol::codec::CFG_MEMORY)),
+		PGVECTOR_VECTOR => Some(quote!(#exports_ident::gel_protocol::codec::PGVECTOR_VECTOR)),
+		POSTGIS_GEOMETRY => Some(quote!(#exports_ident::gel_protocol::codec::POSTGIS_GEOMETRY)),
+		POSTGIS_GEOGRAPHY => Some(quote!(#exports_ident::gel_protocol::codec::POSTGIS_GEOGRAPHY)),
+		_ => None,
+	}
+}
+
 /// Taken from <https://github.com/launchbadge/sqlx/blob/f69f370f25f099fd5732a5383ceffc76f724c482/sqlx-macros-core/src/common.rs#L1C1-L37C2>
 pub fn resolve_path(path: impl AsRef<Path>, error_span: Span) -> syn::Result<PathBuf> {
 	let path = path.as_ref();

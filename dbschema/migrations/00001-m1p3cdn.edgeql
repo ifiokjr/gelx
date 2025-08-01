@@ -1,4 +1,4 @@
-CREATE MIGRATION m1sxwa4zhaq4adwbh6ansh4kjh4iuqdy77shmazpjhspslcmvlq6oa
+CREATE MIGRATION m1p3cdncbbuklymorof33l2snlig7ytag6vyt7e3sm3xp2ygiia2gq
     ONTO initial
 {
   CREATE EXTENSION pgcrypto VERSION '1.3';
@@ -152,5 +152,19 @@ CREATE MIGRATION m1sxwa4zhaq4adwbh6ansh4kjh4iuqdy77shmazpjhspslcmvlq6oa
   };
   CREATE TYPE default::Simple {
       CREATE REQUIRED PROPERTY position: default::Position;
+  };
+  CREATE TYPE default::TestUser {
+      CREATE REQUIRED PROPERTY name: std::str {
+          CREATE CONSTRAINT std::exclusive;
+          CREATE CONSTRAINT std::max_len_value(40);
+      };
+      CREATE PROPERTY namelc := (std::str_lower(.name));
+      CREATE CONSTRAINT std::exclusive ON (.namelc);
+      CREATE REQUIRED PROPERTY active: std::bool {
+          SET default := true;
+      };
+      CREATE REQUIRED PROPERTY public_id: default::UserId {
+          CREATE CONSTRAINT std::exclusive;
+      };
   };
 };

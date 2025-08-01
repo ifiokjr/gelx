@@ -222,7 +222,7 @@ impl __g::gel_protocol::queryable::Queryable for Position {
         __g::check_scalar(
             ctx,
             type_pos,
-            Default::default(),
+            __g::gel_protocol::codec::STD_INT32,
             "default::Position",
         )?;
         Ok(())
@@ -332,6 +332,9 @@ mod simple {
 mod team {
     use super::*;
 }
+mod test_user {
+    use super::*;
+}
 mod user {
     use super::*;
 }
@@ -359,7 +362,7 @@ impl __g::gel_protocol::queryable::Queryable for UserId {
         __g::check_scalar(
             ctx,
             type_pos,
-            Default::default(),
+            __g::gel_protocol::codec::STD_INT64,
             "default::UserId",
         )?;
         Ok(())

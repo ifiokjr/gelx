@@ -14,6 +14,21 @@ module default {
 
 	scalar type UserId extending sequence;
 
+    type TestUser {
+      required public_id: UserId {
+        constraint exclusive;
+      }
+      required active: bool {
+        default := true;
+      }
+      required name: str {
+        constraint exclusive;
+        constraint max_len_value(40);
+      }
+      namelc := str_lower(.name);
+      constraint exclusive on (.namelc);
+    }
+
 	type Simple {
 		required position: Position;
 	}

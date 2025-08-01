@@ -25,6 +25,12 @@ async fn main() -> anyhow::Result<()> {
 	let query = insert_position::query(&client, &props).await?;
 	println!("{:?}", query.position);
 
+	let props = select_test_user::Input::builder()
+		.username("custom")
+		.build();
+	let query = select_test_user::query(&client, &props).await?;
+	println!("{query:?}");
+
 	Ok(())
 }
 

@@ -64,10 +64,7 @@ impl __g::gel_protocol::queryable::Queryable for Position {
         __g::check_scalar(
             ctx,
             type_pos,
-            __g::uuid::Uuid::from_bytes([
-                220u8, 17u8, 218u8, 2u8, 81u8, 171u8, 17u8, 240u8, 158u8, 238u8, 177u8,
-                65u8, 137u8, 3u8, 89u8, 98u8,
-            ]),
+            __g::gel_protocol::codec::STD_INT32,
             "default::Position",
         )?;
         Ok(())
@@ -169,6 +166,9 @@ mod simple {
 mod team {
     use super::*;
 }
+mod test_user {
+    use super::*;
+}
 mod user {
     use super::*;
 }
@@ -195,10 +195,7 @@ impl __g::gel_protocol::queryable::Queryable for UserId {
         __g::check_scalar(
             ctx,
             type_pos,
-            __g::uuid::Uuid::from_bytes([
-                220u8, 19u8, 85u8, 108u8, 81u8, 171u8, 17u8, 240u8, 188u8, 191u8, 67u8,
-                85u8, 87u8, 176u8, 199u8, 165u8,
-            ]),
+            __g::gel_protocol::codec::STD_INT64,
             "default::UserId",
         )?;
         Ok(())

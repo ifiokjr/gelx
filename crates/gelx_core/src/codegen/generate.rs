@@ -2,17 +2,16 @@ use check_keyword::CheckKeyword;
 use gel_tokio::Client;
 use heck::ToPascalCase;
 use indexmap::IndexMap;
-use proc_macro2::Span;
 use proc_macro2::TokenStream;
 use quote::format_ident;
 use quote::quote;
-use syn::LitByte;
 use uuid::Uuid;
 
 use super::*;
 use crate::FeatureName;
 use crate::GelxCoreResult;
 use crate::GelxMetadata;
+use crate::maybe_uuid_to_import;
 use crate::maybe_uuid_to_token_name;
 
 /// Generate the custom types.
@@ -102,10 +101,9 @@ pub(crate) fn generate_scalar(
 		return TokenStream::new();
 	};
 
-	let Some(wrapped_struct_type) = maybe_uuid_to_token_name(&parent_scalar.id, &exports_ident)
-	else {
-		return TokenStream::new();
-	};
+	let wrapped_struct_type =
+		maybe_uuid_to_token_name(&parent_scalar.id, &exports_ident).unwrap_or_default();
+	let parent_uuid = maybe_uuid_to_import(&parent_scalar.id, &exports_ident).unwrap_or_default();
 
 	let struct_name = module_name.name_ident(false);
 	let derive_macro_paths = metadata.struct_derive_macro_paths();
@@ -116,12 +114,6 @@ pub(crate) fn generate_scalar(
 		false,
 		is_macro,
 	);
-	let uuid_bytes = scalar_type.id.as_bytes();
-	// 1. Convert each byte to a proc_macro2::Literal
-	let byte_literals: Vec<LitByte> = uuid_bytes
-		.iter()
-		.map(|&byte| LitByte::new(byte, Span::call_site()))
-		.collect();
 	let type_name = &scalar_type.name;
 	let queryable_annotation = metadata.features.annotate(FeatureName::Query, false);
 
@@ -148,7 +140,7 @@ pub(crate) fn generate_scalar(
 				#exports_ident::check_scalar(
 					ctx,
 					type_pos,
-					#exports_ident::uuid::Uuid::from_bytes([ #( #byte_literals ),* ]),
+					#parent_uuid,
 					#type_name,
 				)?;
 				Ok(())
