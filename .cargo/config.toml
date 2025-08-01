@@ -5,6 +5,7 @@ check-all-features = ["bin", "cargo-check-all-features"]
 test-all-features = ["bin", "cargo-test-all-features"]
 deny = ["bin", "cargo-deny"]
 insta = ["bin", "cargo-insta"]
+interactive-update = ["bin", "cargo-interactive-update"]
 llvm-cov = ["bin", "cargo-llvm-cov"]
 nextest = ["bin", "cargo-nextest"]
 

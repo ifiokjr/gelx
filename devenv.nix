@@ -1,20 +1,19 @@
 { pkgs, lib, ... }:
 
 {
-  packages =
-    [
-      pkgs.cargo-binstall
-      pkgs.cargo-run-bin
-      pkgs.dprint
-      pkgs.gel
-      pkgs.nixfmt-rfc-style
-      pkgs.rustup
-      pkgs.shfmt
-    ]
-    ++ lib.optionals pkgs.stdenv.isDarwin [
-      pkgs.libiconv
-      pkgs.coreutils
-    ];
+  packages = [
+    pkgs.cargo-binstall
+    pkgs.cargo-run-bin
+    pkgs.dprint
+    pkgs.gel
+    pkgs.nixfmt-rfc-style
+    pkgs.rustup
+    pkgs.shfmt
+  ]
+  ++ lib.optionals pkgs.stdenv.isDarwin [
+    pkgs.libiconv
+    pkgs.coreutils
+  ];
 
   # disable dotenv since it breaks the variable interpolation supported by `direnv`
   dotenv.disableHint = true;
