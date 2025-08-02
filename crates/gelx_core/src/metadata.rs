@@ -67,6 +67,9 @@ pub struct GelxMetadata {
 	#[builder(default = default_struct_derive_macros())]
 	#[serde(default = "default_struct_derive_macros")]
 	pub struct_derive_macros: Vec<String>,
+	#[builder(default = default_struct_derive_macros())]
+	#[serde(default = "default_struct_derive_macros")]
+	pub scalar_derive_macros: Vec<String>,
 	#[builder(default = default_enum_derive_macros())]
 	#[serde(default = "default_enum_derive_macros")]
 	pub enum_derive_macros: Vec<String>,
@@ -200,6 +203,13 @@ impl GelxMetadata {
 
 	pub fn struct_derive_macro_paths(&self) -> Vec<syn::Path> {
 		self.struct_derive_macros
+			.iter()
+			.filter_map(|s| syn::parse_str::<syn::Path>(s).ok())
+			.collect()
+	}
+
+	pub fn scalar_derive_macro_paths(&self) -> Vec<syn::Path> {
+		self.scalar_derive_macros
 			.iter()
 			.filter_map(|s| syn::parse_str::<syn::Path>(s).ok())
 			.collect()

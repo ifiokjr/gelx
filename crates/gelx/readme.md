@@ -331,6 +331,13 @@ struct_derive_macros = [
 	"::core::clone::Clone",
 ]
 
+# The macros which are always derived for the generated scalar types which are wrapper structs.
+# As envisiaged by <https://github.com/ifiokjr/gelx/issues/29>
+scalar_derive_macros = [
+	"::std::fmt::Debug",
+	"::core::clone::Clone",
+]
+
 # The macros which are always derived for the generated enums.
 enum_derive_macros = [
 	"::std::fmt::Debug",

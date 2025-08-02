@@ -106,7 +106,7 @@ pub(crate) fn generate_scalar(
 	let parent_uuid = maybe_uuid_to_import(&parent_scalar.id, &exports_ident).unwrap_or_default();
 
 	let struct_name = module_name.name_ident(false);
-	let derive_macro_paths = metadata.struct_derive_macro_paths();
+	let derive_macro_paths = metadata.scalar_derive_macro_paths();
 	let struct_derive_tokens = metadata.features.get_derive_features(
 		&[FeatureName::Serde, FeatureName::Builder],
 		&exports_ident,

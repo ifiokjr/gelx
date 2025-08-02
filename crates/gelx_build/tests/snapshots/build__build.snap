@@ -11,6 +11,7 @@ transaction_function_name = "transaction"
 query_constant_name = "QUERY"
 exports_alias = "__g"
 struct_derive_macros = ["::std::fmt::Debug", "::core::clone::Clone"]
+scalar_derive_macros = ["::std::fmt::Debug", "::core::clone::Clone"]
 enum_derive_macros = ["::std::fmt::Debug", "::core::clone::Clone", "::core::marker::Copy"]
 
 [features]
