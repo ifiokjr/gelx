@@ -44,6 +44,7 @@ uuid = { workspace = true, default-features = true, features = ["serde"] }
 [dev-dependencies]
 assert2 = { workspace = true, default-features = true }
 insta = { workspace = true, default-features = true }
+rstest = { workspace = true }
 tokio = { workspace = true, default-features = true, features = ["time", "test-util"] }
 
 [features]

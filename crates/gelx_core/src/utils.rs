@@ -9,8 +9,6 @@ use gel_protocol::codec::CAL_LOCAL_TIME;
 use gel_protocol::codec::CAL_RELATIVE_DURATION;
 use gel_protocol::codec::CFG_MEMORY;
 use gel_protocol::codec::PGVECTOR_VECTOR;
-use gel_protocol::codec::POSTGIS_BOX_2D;
-use gel_protocol::codec::POSTGIS_BOX_3D;
 use gel_protocol::codec::POSTGIS_GEOGRAPHY;
 use gel_protocol::codec::POSTGIS_GEOMETRY;
 use gel_protocol::codec::STD_BIGINT;
@@ -26,7 +24,6 @@ use gel_protocol::codec::STD_INT32;
 use gel_protocol::codec::STD_INT64;
 use gel_protocol::codec::STD_JSON;
 use gel_protocol::codec::STD_PG_DATE;
-use gel_protocol::codec::STD_PG_INTERVAL;
 use gel_protocol::codec::STD_PG_JSON;
 use gel_protocol::codec::STD_PG_TIMESTAMP;
 use gel_protocol::codec::STD_PG_TIMESTAMPTZ;
@@ -39,35 +36,8 @@ use quote::quote;
 use syn::Ident;
 
 pub(crate) fn uuid_to_token_name(uuid: &Uuid, exports_ident: &Ident) -> TokenStream {
-	match *uuid {
-		STD_UUID => quote!(#exports_ident::uuid::Uuid),
-		STD_STR => quote!(String),
-		STD_BYTES => quote!(#exports_ident::bytes::Bytes),
-		STD_INT16 => quote!(i16),
-		STD_INT32 => quote!(i32),
-		STD_INT64 => quote!(i64),
-		STD_FLOAT32 => quote!(f32),
-		STD_FLOAT64 => quote!(f64),
-		STD_DECIMAL => quote!(#exports_ident::DecimalAlias),
-		STD_BOOL => quote!(bool),
-		STD_DATETIME | STD_PG_TIMESTAMPTZ => quote!(#exports_ident::DateTimeAlias),
-		CAL_LOCAL_DATETIME | STD_PG_TIMESTAMP => quote!(#exports_ident::LocalDatetimeAlias),
-		CAL_LOCAL_DATE | STD_PG_DATE => quote!(#exports_ident::LocalDateAlias),
-		CAL_LOCAL_TIME => quote!(#exports_ident::LocalTimeAlias),
-		STD_DURATION => quote!(#exports_ident::gel_protocol::model::Duration),
-		CAL_RELATIVE_DURATION => quote!(#exports_ident::gel_protocol::model::RelativeDuration),
-		CAL_DATE_DURATION => quote!(#exports_ident::gel_protocol::model::DateDuration),
-		STD_JSON | STD_PG_JSON => quote!(#exports_ident::gel_protocol::model::Json),
-		STD_BIGINT => quote!(#exports_ident::BigIntAlias),
-		CFG_MEMORY => quote!(#exports_ident::gel_protocol::model::ConfigMemory),
-		PGVECTOR_VECTOR => quote!(#exports_ident::gel_protocol::model::Vector),
-		STD_PG_INTERVAL => todo!("STD_PG_INTERVAL not yet implemented"),
-		POSTGIS_GEOMETRY => quote!(#exports_ident::Geometry),
-		POSTGIS_GEOGRAPHY => quote!(#exports_ident::Geography),
-		POSTGIS_BOX_2D => todo!("POSTGIS_BOX_2D not yet implemented"),
-		POSTGIS_BOX_3D => todo!("POSTGIS_BOX_3D not yet implemented"),
-		_ => quote!(#exports_ident::gel_protocol::value::Value),
-	}
+	maybe_uuid_to_token_name(uuid, exports_ident)
+		.unwrap_or(quote!(#exports_ident::gel_protocol::value::Value))
 }
 
 pub(crate) fn maybe_uuid_to_token_name(uuid: &Uuid, exports_ident: &Ident) -> Option<TokenStream> {
@@ -181,6 +151,9 @@ pub fn prettify(source: &str) -> syn::Result<String> {
 #[cfg(test)]
 mod tests {
 	use assert2::check;
+	use quote::format_ident;
+	use rstest::rstest;
+	use syn::Ident;
 
 	use super::*;
 	use crate::GelxCoreResult;
@@ -201,5 +174,104 @@ mod tests {
 		let result = prettify(content);
 
 		check!(result.is_err(), "result should be an error");
+	}
+
+	#[rstest]
+	#[case::std_uuid(STD_UUID, "exports::uuid::Uuid")]
+	#[case::std_str(STD_STR, "String")]
+	#[case::std_bytes(STD_BYTES, "exports::bytes::Bytes")]
+	#[case::std_int16(STD_INT16, "i16")]
+	#[case::std_int32(STD_INT32, "i32")]
+	#[case::std_int64(STD_INT64, "i64")]
+	#[case::std_float32(STD_FLOAT32, "f32")]
+	#[case::std_float64(STD_FLOAT64, "f64")]
+	#[case::std_decimal(STD_DECIMAL, "exports::DecimalAlias")]
+	#[case::std_bool(STD_BOOL, "bool")]
+	#[case::std_datetime(STD_DATETIME, "exports::DateTimeAlias")]
+	#[case::std_pg_timestamptz(STD_PG_TIMESTAMPTZ, "exports::DateTimeAlias")]
+	#[case::cal_local_datetime(CAL_LOCAL_DATETIME, "exports::LocalDatetimeAlias")]
+	#[case::std_pg_timestamp(STD_PG_TIMESTAMP, "exports::LocalDatetimeAlias")]
+	#[case::cal_local_date(CAL_LOCAL_DATE, "exports::LocalDateAlias")]
+	#[case::std_pg_date(STD_PG_DATE, "exports::LocalDateAlias")]
+	#[case::cal_local_time(CAL_LOCAL_TIME, "exports::LocalTimeAlias")]
+	#[case::std_duration(STD_DURATION, "exports::gel_protocol::model::Duration")]
+	#[case::cal_relative_duration(
+		CAL_RELATIVE_DURATION,
+		"exports::gel_protocol::model::RelativeDuration"
+	)]
+	#[case::cal_date_duration(CAL_DATE_DURATION, "exports::gel_protocol::model::DateDuration")]
+	#[case::std_json(STD_JSON, "exports::gel_protocol::model::Json")]
+	#[case::std_pg_json(STD_PG_JSON, "exports::gel_protocol::model::Json")]
+	#[case::std_bigint(STD_BIGINT, "exports::BigIntAlias")]
+	#[case::cfg_memory(CFG_MEMORY, "exports::gel_protocol::model::ConfigMemory")]
+	#[case::pgvector_vector(PGVECTOR_VECTOR, "exports::gel_protocol::model::Vector")]
+	#[case::postgis_geometry(POSTGIS_GEOMETRY, "exports::Geometry")]
+	#[case::postgis_geography(POSTGIS_GEOGRAPHY, "exports::Geography")]
+	fn test_maybe_uuid_to_token_name(#[case] uuid: Uuid, #[case] expected: &str) {
+		let exports_ident = format_ident!("exports");
+		let result = maybe_uuid_to_token_name(&uuid, &exports_ident);
+		assert!(
+			result
+				.unwrap()
+				.to_string()
+				.replace(' ', "")
+				.contains(expected)
+		);
+	}
+
+	#[test]
+	fn test_maybe_uuid_to_token_name_none() {
+		let exports_ident = format_ident!("exports");
+		let default_uuid = Uuid::default();
+		let result = maybe_uuid_to_token_name(&default_uuid, &exports_ident);
+		assert!(result.is_none());
+	}
+
+	#[rstest]
+	#[case::std_uuid(STD_UUID, "STD_UUID")]
+	#[case::std_str(STD_STR, "STD_STR")]
+	#[case::std_bytes(STD_BYTES, "STD_BYTES")]
+	#[case::std_int16(STD_INT16, "STD_INT16")]
+	#[case::std_int32(STD_INT32, "STD_INT32")]
+	#[case::std_int64(STD_INT64, "STD_INT64")]
+	#[case::std_float32(STD_FLOAT32, "STD_FLOAT32")]
+	#[case::std_float64(STD_FLOAT64, "STD_FLOAT64")]
+	#[case::std_decimal(STD_DECIMAL, "STD_DECIMAL")]
+	#[case::std_bool(STD_BOOL, "STD_BOOL")]
+	#[case::std_datetime(STD_DATETIME, "STD_DATETIME")]
+	#[case::std_pg_timestamptz(STD_PG_TIMESTAMPTZ, "STD_DATETIME")]
+	#[case::cal_local_datetime(CAL_LOCAL_DATETIME, "CAL_LOCAL_DATETIME")]
+	#[case::std_pg_timestamp(STD_PG_TIMESTAMP, "CAL_LOCAL_DATETIME")]
+	#[case::cal_local_date(CAL_LOCAL_DATE, "CAL_LOCAL_DATE")]
+	#[case::std_pg_date(STD_PG_DATE, "CAL_LOCAL_DATE")]
+	#[case::cal_local_time(CAL_LOCAL_TIME, "CAL_LOCAL_TIME")]
+	#[case::std_duration(STD_DURATION, "STD_DURATION")]
+	#[case::cal_relative_duration(CAL_RELATIVE_DURATION, "CAL_RELATIVE_DURATION")]
+	#[case::cal_date_duration(CAL_DATE_DURATION, "CAL_DATE_DURATION")]
+	#[case::std_json(STD_JSON, "STD_JSON")]
+	#[case::std_pg_json(STD_PG_JSON, "STD_JSON")]
+	#[case::std_bigint(STD_BIGINT, "STD_BIGINT")]
+	#[case::cfg_memory(CFG_MEMORY, "CFG_MEMORY")]
+	#[case::pgvector_vector(PGVECTOR_VECTOR, "PGVECTOR_VECTOR")]
+	#[case::postgis_geometry(POSTGIS_GEOMETRY, "POSTGIS_GEOMETRY")]
+	#[case::postgis_geography(POSTGIS_GEOGRAPHY, "POSTGIS_GEOGRAPHY")]
+	fn test_maybe_uuid_to_import(#[case] uuid: Uuid, #[case] expected: &str) {
+		let exports_ident = Ident::new("exports", Span::call_site());
+		let result = maybe_uuid_to_import(&uuid, &exports_ident);
+		assert!(
+			result
+				.unwrap()
+				.to_string()
+				.replace(' ', "")
+				.contains(expected)
+		);
+	}
+
+	#[test]
+	fn test_maybe_uuid_to_import_none() {
+		let exports_ident = Ident::new("exports", Span::call_site());
+		let default_uuid = Uuid::default(); // A UUID not in the match arms
+		let result = maybe_uuid_to_import(&default_uuid, &exports_ident);
+		assert!(result.is_none());
 	}
 }
