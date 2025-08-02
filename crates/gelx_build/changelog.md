@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.5](https://github.com/ifiokjr/gelx/compare/gelx_build-v0.8.4...gelx_build-v0.8.5) - 2025-08-02
+
+### <!-- 0 -->🎉 Added
+
+- *(gelx)* add `scalar_derive_macros` setting
+
 ## [0.8.2](https://github.com/ifiokjr/gelx/compare/gelx_build-v0.8.1...gelx_build-v0.8.2) - 2025-06-09
 
 ### <!-- 0 -->🎉 Added
